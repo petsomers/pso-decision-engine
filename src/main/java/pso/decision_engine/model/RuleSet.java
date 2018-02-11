@@ -17,7 +17,7 @@ public class RuleSet {
 	private String createdBy;
 	private String version;
 	private LocalDateTime uploadDate;
-	private Hashtable<String, ParameterType> inputParameters;
+	private Hashtable<String, ParameterType> inputParameters=new Hashtable<>();
 	private List<Rule> rules;
 	private Hashtable<String, Integer> rowLabels;
 	
