@@ -1,8 +1,10 @@
 package pso.decision_engine.service.impl;
 
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashSet;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -12,6 +14,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
+import pso.decision_engine.model.ExcelParserException;
 import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.enums.Comparator;
@@ -21,7 +24,20 @@ import pso.decision_engine.model.enums.ParameterType;
 public class ExcelParserServiceImpl {
 	
 	public RuleSet parseExcel(InputStream is) throws Exception {
+		try {
+			return doParseExcel(is);
+		} catch (ExcelParserException epe) {
+			RuleSet rs=new RuleSet();
+			rs.setParseError(epe.getMessage());
+			return rs;
+		}
+	}
+	
+	private RuleSet doParseExcel(InputStream is) throws ExcelParserException, Exception {
 		RuleSet rs=new RuleSet();
+		rs.setId(Base64.getEncoder().encodeToString(
+				ByteBuffer.allocate(8).putLong(System.currentTimeMillis()).array()
+				));
 		rs.setUploadDate(LocalDateTime.now());
 		try (XSSFWorkbook wb = new XSSFWorkbook(is)) {
 			for (int sheetNumber=0;sheetNumber<wb.getNumberOfSheets();sheetNumber++) {
@@ -89,7 +105,7 @@ public class ExcelParserServiceImpl {
 		}
 	}
 	
-	private void parseRuleSheet(Sheet sheet, RuleSet rs) {
+	private void parseRuleSheet(Sheet sheet, RuleSet rs) throws ExcelParserException {
 		String sheetName=sheet.getSheetName();
 		int firstRowNum=sheet.getFirstRowNum();
 		int lastRowNum=sheet.getLastRowNum();
@@ -106,6 +122,13 @@ public class ExcelParserServiceImpl {
 			rule.setParameterName(getCellValueNoNull(row.getCell(1)));
 			if (rule.getParameterName().isEmpty()) continue;
 			rs.getRules().add(rule);
+			
+			if (!rule.getLabel().isEmpty()) {
+				if (rs.getRowLabels().containsKey(rule.getLabel())) {
+					throw new ExcelParserException("Duplicate Label: "+rule.getLabel()+" on sheet '"+sheetName+"' and row "+(r+1));
+				}
+				rs.getRowLabels().put(rule.getLabel(), rs.getRules().size()-1);
+			}
 			
 			Comparator comparator=toComparator(getCellValueNoNull(row.getCell(2)));
 			rule.setComparator(comparator);

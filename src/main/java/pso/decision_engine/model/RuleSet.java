@@ -14,15 +14,16 @@ import pso.decision_engine.model.enums.ParameterType;
 public class RuleSet {
 
 	private String name;
+	private String id;
 	private String restEndPoint;
 	private String createdBy;
 	private String version;
 	private LocalDateTime uploadDate;
 	private Hashtable<String, ParameterType> inputParameters=new Hashtable<>();
 	private List<Rule> rules=new ArrayList<>();
-	private Hashtable<String, Integer> rowLabels;
+	private Hashtable<String, Integer> rowLabels=new Hashtable<>();
 	
 	private HashMap<String, HashSet<Object>> lists=new HashMap<>();
 	
-	
+	private String parseError;
 }
