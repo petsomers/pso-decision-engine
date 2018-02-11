@@ -33,6 +33,7 @@ public class ExcelParserServiceImpl {
 		int firstRowNum=sheet.getFirstRowNum();
 		int lastRowNum=sheet.getLastRowNum();
 		ArrayList<String> parameterNames=new ArrayList<>();
+		ArrayList<ParameterType> parameterTypes=new ArrayList<>();
 		for (int r=firstRowNum;r<=lastRowNum;r++) {
 			Row row=sheet.getRow(r);
 			if (row==null) continue;
@@ -43,34 +44,33 @@ public class ExcelParserServiceImpl {
 				String cv=getCellValueNoNull(cell);
 				cv=cv==null?cv="":cv.trim();
 				if ("Excel Format Version".equalsIgnoreCase(cv)) {
-					rs.setVersion(getCellValueNoNull(row.getCell(c)));
+					rs.setVersion(getCellValueNoNull(row.getCell(++c)));
 					c=lastCellNum;
 				} else if ("Rule Set Name".equalsIgnoreCase(cv)) {
-					rs.setName(getCellValueNoNull(row.getCell(c)));
+					rs.setName(getCellValueNoNull(row.getCell(++c)));
 					c=lastCellNum;
 				} else if ("Rest Endpoint".equalsIgnoreCase(cv)) {
-					rs.setRestEndPoint(getCellValueNoNull(row.getCell(c)));
+					rs.setRestEndPoint(getCellValueNoNull(row.getCell(++c)));
 					c=lastCellNum;
 				} else if ("Created by".equalsIgnoreCase(cv)) {
-					rs.setCreatedBy(getCellValueNoNull(row.getCell(c)));
+					rs.setCreatedBy(getCellValueNoNull(row.getCell(++c)));
 					c=lastCellNum;
 				} else if ("Input fields".equalsIgnoreCase(cv)) {
-					rs.setVersion(getCellValueNoNull(row.getCell(c)));
-					int i=0;
 					for (c=c+1;c<lastCellNum;c++) {
 						parameterNames.add(getCellValueNoNull(row.getCell(c)));
-						i++;
 					}
 				} else if ("Input Types".equalsIgnoreCase(cv)) {
-					int i=0;
 					for (c=c+1;c<lastCellNum;c++) {
-						i++;
-						ParameterType tp=toParameterType(getCellValueNoNull(row.getCell(c)));
-						String parameterName=parameterNames.get(i);
-						if (!parameterName.isEmpty() && tp!=null) {
-							rs.getInputParameters().put(parameterName, tp);
-						}
+						parameterTypes.add(toParameterType(getCellValueNoNull(row.getCell(c))));
 					}
+				}
+			}
+		}
+		if (parameterNames.size()>0 && parameterNames.size()<=parameterTypes.size()) {
+			for (int i=0;i<parameterNames.size();i++) {
+				ParameterType pt=parameterTypes.get(i);
+				if (pt!=null) {
+					rs.getInputParameters().put(parameterNames.get(i), pt);	
 				}
 			}
 		}
@@ -85,7 +85,7 @@ public class ExcelParserServiceImpl {
 		switch (s.toUpperCase()) {
 			case "TEXT": return ParameterType.TEXT;
 			case "DECIMAL": return ParameterType.DECIMAL;
-			case "NUMERIC": return ParameterType.NUMERIC;
+			case "INTEGER": return ParameterType.INTEGER;
 			default: return null;
 		}
 	}
