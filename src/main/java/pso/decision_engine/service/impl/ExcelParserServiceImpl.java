@@ -11,8 +11,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
-import pso.decision_engine.model.InputParameter;
+import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.model.enums.Comparator;
 import pso.decision_engine.model.enums.ParameterType;
 
 @Service
@@ -22,8 +23,19 @@ public class ExcelParserServiceImpl {
 		RuleSet rs=new RuleSet();
 		rs.setUploadDate(LocalDateTime.now());
 		try (XSSFWorkbook wb = new XSSFWorkbook(is)) {
-			Sheet sheet=wb.getSheetAt(0);
-			parseInfoSheet(sheet, rs);		
+			for (int sheetNumber=0;sheetNumber<wb.getNumberOfSheets();sheetNumber++) {
+				Sheet sheet=wb.getSheetAt(sheetNumber);
+				String sheetName=sheet.getSheetName().toUpperCase();
+				boolean infoLoaded=false;
+				if ("INFO".equalsIgnoreCase(sheetName) && !infoLoaded) {
+					parseInfoSheet(sheet, rs);
+					infoLoaded=true;
+				} else if (sheetName.startsWith("RULES")) {
+					parseRuleSheet(sheet, rs);
+				} else if (sheetName.startsWith("LISTS")) {
+					parseListsSheet(sheet, rs);
+				}
+			}
 		}
 		
 		return rs;
@@ -55,11 +67,11 @@ public class ExcelParserServiceImpl {
 				} else if ("Created by".equalsIgnoreCase(cv)) {
 					rs.setCreatedBy(getCellValueNoNull(row.getCell(++c)));
 					c=lastCellNum;
-				} else if ("Input fields".equalsIgnoreCase(cv)) {
+				} else if ("Parameter Names".equalsIgnoreCase(cv)) {
 					for (c=c+1;c<lastCellNum;c++) {
 						parameterNames.add(getCellValueNoNull(row.getCell(c)));
 					}
-				} else if ("Input Types".equalsIgnoreCase(cv)) {
+				} else if ("Parameter Types".equalsIgnoreCase(cv)) {
 					for (c=c+1;c<lastCellNum;c++) {
 						parameterTypes.add(toParameterType(getCellValueNoNull(row.getCell(c))));
 					}
@@ -76,6 +88,48 @@ public class ExcelParserServiceImpl {
 		}
 	}
 	
+	private void parseRuleSheet(Sheet sheet, RuleSet rs) {
+		String sheetName=sheet.getSheetName();
+		int firstRowNum=sheet.getFirstRowNum();
+		int lastRowNum=sheet.getLastRowNum();
+		if (firstRowNum!=0 && lastRowNum < 3) {
+			return;
+		}
+		for (int r=2;r<=lastRowNum;r++) {
+			Row row=sheet.getRow(r);
+			if (row==null) continue;
+			Rule rule=new Rule();
+			rule.setRowNumber(r+1);
+			rule.setSheetName(sheetName);
+			rule.setLabel(getCellValueNoNull(row.getCell(0)));
+			rule.setParameterName(getCellValueNoNull(row.getCell(1)));
+			if (rule.getParameterName().isEmpty()) continue;
+			rs.getRules().add(rule);
+			
+			Comparator comparator=toComparator(getCellValueNoNull(row.getCell(2)));
+			rule.setComparator(comparator);
+			
+			String value1=getCellValueNoNull(row.getCell(3));
+			String value2="";
+			if (value1.indexOf(';')>0) {
+				String [] values=value1.split(";");
+				value1=values[0];
+				value2=values[1];
+			}
+			rule.setValue1(value1); // todo: convert to correct type STRING/LONG/DOUBLE
+			rule.setValue2(value2);
+			rule.setPositiveResult(getCellValueNoNull(row.getCell(4)));
+			rule.setNegativeResult(getCellValueNoNull(row.getCell(5)));
+			rule.setRemark(getCellValueNoNull(row.getCell(6)));
+		}
+	}
+	
+	
+	private void parseListsSheet(Sheet sheet, RuleSet rs) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	private static String getCellValueNoNull(Cell cell) {
 		String cv=new DataFormatter().formatCellValue(cell).toString();
 		return cv==null?cv="":cv.trim();
@@ -87,6 +141,23 @@ public class ExcelParserServiceImpl {
 			case "DECIMAL": return ParameterType.DECIMAL;
 			case "INTEGER": return ParameterType.INTEGER;
 			default: return null;
+		}
+	}
+	
+	private Comparator toComparator(String s) {
+		switch(s.toUpperCase()) {
+			case "=": return Comparator.EQUAL_TO;
+			case "<": return Comparator.SMALLER_THAN;
+			case ">": return Comparator.GREATER_THAN;
+			case "<=": return Comparator.SMALLER_OR_EQUAL_TO;
+			case ">=": return Comparator.GREATER_OR_EQUAL_TO;
+			case "BETWEEN": return Comparator.BETWEEN;
+			case "IN LIST": return Comparator.IN_LIST;
+			case "STARTS WITH": return Comparator.STARTS_WITH;
+			case "CONTAINS": return Comparator.CONTAINS;
+			case "ENDS WITH": return Comparator.ENDS_WITH;
+			default: return null;
+			
 		}
 	}
 }

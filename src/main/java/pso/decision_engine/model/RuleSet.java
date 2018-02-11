@@ -1,6 +1,7 @@
 package pso.decision_engine.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -18,7 +19,7 @@ public class RuleSet {
 	private String version;
 	private LocalDateTime uploadDate;
 	private Hashtable<String, ParameterType> inputParameters=new Hashtable<>();
-	private List<Rule> rules;
+	private List<Rule> rules=new ArrayList<>();
 	private Hashtable<String, Integer> rowLabels;
 	
 	private HashMap<String, HashSet<Object>> lists;
