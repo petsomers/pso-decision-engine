@@ -3,6 +3,7 @@ package pso.decision_engine.service.impl;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -126,7 +127,37 @@ public class ExcelParserServiceImpl {
 	
 	
 	private void parseListsSheet(Sheet sheet, RuleSet rs) {
-		// TODO Auto-generated method stub
+		String sheetName=sheet.getSheetName();
+		int firstRowNum=sheet.getFirstRowNum();
+		int lastRowNum=sheet.getLastRowNum();
+		if (firstRowNum!=0 && lastRowNum < 1) {
+			return;
+		}
+		ArrayList<String> listNames=new ArrayList<>();
+		Row row=sheet.getRow(0);
+		int cellCount=0;
+		for (int col=0;col<=row.getLastCellNum();col++) {
+			String listName=getCellValueNoNull(row.getCell(col));
+			listNames.add(listName);
+			if (!listName.isEmpty()) {
+				cellCount=listNames.size();
+			}
+		}
+		for (String listName:listNames) {
+			rs.getLists().put(listName, new HashSet<Object>());
+		}
+		for (int rowNumber=1; rowNumber<=lastRowNum;rowNumber++) {
+			row=sheet.getRow(rowNumber);
+			for (int cellNumber=0;cellNumber<cellCount;cellNumber++) {
+				String value=getCellValueNoNull(row.getCell(cellNumber));
+				if (!value.isEmpty()) {
+					String listName=listNames.get(cellNumber);
+					if (!listName.isEmpty()) {
+						rs.getLists().get(listName).add(value);
+					}
+				}
+			}
+		}
 		
 	}
 	

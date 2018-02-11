@@ -22,7 +22,7 @@ public class RuleSet {
 	private List<Rule> rules=new ArrayList<>();
 	private Hashtable<String, Integer> rowLabels;
 	
-	private HashMap<String, HashSet<Object>> lists;
+	private HashMap<String, HashSet<Object>> lists=new HashMap<>();
 	
 	
 }
