@@ -25,7 +25,8 @@ public class DecisionEngineApplication {
 	
 	@RequestMapping(value = "/test",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     RuleSet test() throws Exception {
-		try (FileInputStream fi=new FileInputStream("C:\\SonyWorkspace\\documents\\projects\\aep\\decision engine\\Decision Engine Input - version 2.xlsx")) {
+		//try (FileInputStream fi=new FileInputStream("C:\\SonyWorkspace\\documents\\projects\\aep\\decision engine\\Decision Engine Input - version 2.xlsx")) {
+		try (FileInputStream fi=new FileInputStream("C:\\temp\\Decision Engine Input - version 3 - BIG.xlsx")) {
 			return excelParserService.parseExcel(fi);
 		}
     }

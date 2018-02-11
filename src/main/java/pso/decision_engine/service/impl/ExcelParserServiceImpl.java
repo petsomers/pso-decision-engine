@@ -144,7 +144,8 @@ public class ExcelParserServiceImpl {
 			}
 		}
 		for (String listName:listNames) {
-			rs.getLists().put(listName, new HashSet<Object>());
+			if (!listName.isEmpty())
+				rs.getLists().put(listName, new HashSet<Object>());
 		}
 		for (int rowNumber=1; rowNumber<=lastRowNum;rowNumber++) {
 			row=sheet.getRow(rowNumber);
