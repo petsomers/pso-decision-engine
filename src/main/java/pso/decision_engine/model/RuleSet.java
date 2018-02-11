@@ -23,7 +23,8 @@ public class RuleSet {
 	private List<Rule> rules=new ArrayList<>();
 	private Hashtable<String, Integer> rowLabels=new Hashtable<>();
 	
-	private HashMap<String, HashSet<Object>> lists=new HashMap<>();
+	// List are always strings. (also for INTEGER values)
+	private HashMap<String, HashSet<String>> lists=new HashMap<>();
 	
 	private String parseError;
 }

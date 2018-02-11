@@ -35,9 +35,7 @@ public class ExcelParserServiceImpl {
 	
 	private RuleSet doParseExcel(InputStream is) throws ExcelParserException, Exception {
 		RuleSet rs=new RuleSet();
-		rs.setId(Base64.getEncoder().encodeToString(
-				ByteBuffer.allocate(8).putLong(System.currentTimeMillis()).array()
-				));
+		rs.setId(createShortUniqueId());
 		rs.setUploadDate(LocalDateTime.now());
 		try (XSSFWorkbook wb = new XSSFWorkbook(is)) {
 			for (int sheetNumber=0;sheetNumber<wb.getNumberOfSheets();sheetNumber++) {
@@ -58,6 +56,12 @@ public class ExcelParserServiceImpl {
 		return rs;
 	}
 	
+	private String createShortUniqueId() {
+		return Base64.getEncoder().encodeToString(
+				ByteBuffer.allocate(8).putLong(System.currentTimeMillis()).array()
+				);
+	}
+
 	private void parseInfoSheet(Sheet sheet, RuleSet rs) {
 		int firstRowNum=sheet.getFirstRowNum();
 		int lastRowNum=sheet.getLastRowNum();
@@ -168,7 +172,7 @@ public class ExcelParserServiceImpl {
 		}
 		for (String listName:listNames) {
 			if (!listName.isEmpty())
-				rs.getLists().put(listName, new HashSet<Object>());
+				rs.getLists().put(listName, new HashSet<String>());
 		}
 		for (int rowNumber=1; rowNumber<=lastRowNum;rowNumber++) {
 			row=sheet.getRow(rowNumber);
