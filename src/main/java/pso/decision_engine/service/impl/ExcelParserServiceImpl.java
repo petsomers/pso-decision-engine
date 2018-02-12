@@ -17,10 +17,15 @@ import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.enums.Comparator;
 import pso.decision_engine.model.enums.ParameterType;
+import pso.decision_engine.service.ExcelParserService;
 
 @Service
-public class ExcelParserServiceImpl {
+public class ExcelParserServiceImpl implements ExcelParserService {
 	
+	/* (non-Javadoc)
+	 * @see pso.decision_engine.service.impl.ExcelParserService#parseExcel(java.lang.String, java.io.File)
+	 */
+	@Override
 	public RuleSet parseExcel(String id, File f) throws Exception {
 		try {
 			return doParseExcel(id, f);

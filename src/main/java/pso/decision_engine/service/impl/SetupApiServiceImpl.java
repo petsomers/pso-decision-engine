@@ -3,15 +3,11 @@ package pso.decision_engine.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,25 +16,32 @@ import org.springframework.util.StreamUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import ch.qos.logback.classic.turbo.MatchingFilter;
 import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.ExcelParseResult;
 import pso.decision_engine.model.ExcelParserException;
 import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.service.ExcelParserService;
+import pso.decision_engine.service.SetupApiService;
 
 @Service
-public class SetupApiServiceImpl {
+public class SetupApiServiceImpl implements SetupApiService {
 
 	@Autowired
 	private AppConfig appConfig;
 	
 	@Autowired
-	private ExcelParserServiceImpl excelParserService;
+	private ExcelParserService excelParserService;
 	
 	ObjectMapper mapper=new ObjectMapper();
 	{
 		mapper.enable(SerializationFeature.INDENT_OUTPUT);
 	}
 	
+	/* (non-Javadoc)
+	 * @see pso.decision_engine.service.impl.SetupApiService#addExcelFile(java.io.InputStream)
+	 */
+	@Override
 	public ExcelParseResult addExcelFile(InputStream in) throws IOException {
 		String id=createShortUniqueId();
 		Path outputFile=Paths.get(appConfig.getDataDirectory(), "temp", id+".xlsx");
@@ -74,6 +77,6 @@ public class SetupApiServiceImpl {
 	
 	DateTimeFormatter ldtformatter = DateTimeFormatter.ofPattern("yyMMddHHmmssms");
 	private String createShortUniqueId() {
-		return LocalDateTime.now().format(ldtformatter);
+		return LocalDateTime.now().format(ldtformatter)+Math.round(Math.random()*100d);
 	}
 }
