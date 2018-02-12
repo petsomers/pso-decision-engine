@@ -1,10 +1,8 @@
 package pso.decision_engine.service.impl;
 
-import java.io.InputStream;
-import java.nio.ByteBuffer;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashSet;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,9 +21,9 @@ import pso.decision_engine.model.enums.ParameterType;
 @Service
 public class ExcelParserServiceImpl {
 	
-	public RuleSet parseExcel(InputStream is) throws Exception {
+	public RuleSet parseExcel(String id, File f) throws Exception {
 		try {
-			return doParseExcel(is);
+			return doParseExcel(id, f);
 		} catch (ExcelParserException epe) {
 			RuleSet rs=new RuleSet();
 			rs.setParseError(epe.getMessage());
@@ -33,11 +31,10 @@ public class ExcelParserServiceImpl {
 		}
 	}
 	
-	private RuleSet doParseExcel(InputStream is) throws ExcelParserException, Exception {
+	private RuleSet doParseExcel(String id, File f) throws ExcelParserException, Exception {
 		RuleSet rs=new RuleSet();
-		rs.setId(createShortUniqueId());
 		rs.setUploadDate(LocalDateTime.now());
-		try (XSSFWorkbook wb = new XSSFWorkbook(is)) {
+		try (XSSFWorkbook wb = new XSSFWorkbook(f)) {
 			for (int sheetNumber=0;sheetNumber<wb.getNumberOfSheets();sheetNumber++) {
 				Sheet sheet=wb.getSheetAt(sheetNumber);
 				String sheetName=sheet.getSheetName().toUpperCase();
@@ -56,12 +53,6 @@ public class ExcelParserServiceImpl {
 		return rs;
 	}
 	
-	private String createShortUniqueId() {
-		return Base64.getEncoder().encodeToString(
-				ByteBuffer.allocate(8).putLong(System.currentTimeMillis()).array()
-				);
-	}
-
 	private void parseInfoSheet(Sheet sheet, RuleSet rs) {
 		int firstRowNum=sheet.getFirstRowNum();
 		int lastRowNum=sheet.getLastRowNum();
