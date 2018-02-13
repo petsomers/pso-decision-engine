@@ -2,6 +2,7 @@ package pso.decision_engine.persistence.impl;
 
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.util.HashSet;
 
 import javax.annotation.PostConstruct;
 
@@ -84,12 +85,12 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	
 	@Override
 	public void saveRuleSet(RuleSet ruleSet) {
-		MapSqlParameterSource parameters=new MapSqlParameterSource();
-		parameters.addValue("ruleSetId", ruleSet.getId());
-		parameters.addValue("restEndPoint", ruleSet.getRestEndPoint());
-		parameters.addValue("createdBy", ruleSet.getCreatedBy());
-		parameters.addValue("version", ruleSet.getVersion());
-		parameters.addValue("uploadDate", Timestamp.valueOf(ruleSet.getUploadDate()));
+		MapSqlParameterSource parameters=new MapSqlParameterSource()
+		.addValue("ruleSetId", ruleSet.getId())
+		.addValue("restEndPoint", ruleSet.getRestEndPoint())
+		.addValue("createdBy", ruleSet.getCreatedBy())
+		.addValue("version", ruleSet.getVersion())
+		.addValue("uploadDate", Timestamp.valueOf(ruleSet.getUploadDate()));
 		
 		jdbcTemplate.update(
 			"INSERT INTO RuleSet (ruleSetId, restEndPoint, createdBy, version, uploadDate) "+
@@ -135,7 +136,34 @@ public class RuleSetDaoImpl implements RuleSetDao {
 			":comparator, :value1, :value2, :positiveResult, :negativeResult, :remark)",rules);
 		rules=null;
 		
-
+		i=0;
+		for (String listName:ruleSet.getLists().keySet()) {
+			parameters=new MapSqlParameterSource()
+					.addValue("ruleSetId", ruleSet.getId())
+					.addValue("listId", i)
+					.addValue("listName", listName);
+			jdbcTemplate.update(
+				"INSERT INTO RuleSetList (ruleSetId, listId, listName) "+
+				"values (:ruleSetId, :listId, :listName)", parameters);
+			HashSet<String> values=ruleSet.getLists().get(listName);
+			MapSqlParameterSource[] listValues=new MapSqlParameterSource[values.size()];
+			int j=0;
+			for (String value:values) {
+				listValues[j++]=
+					new MapSqlParameterSource()
+					.addValue("ruleSetId", ruleSet.getId())
+					.addValue("listId", i)
+					.addValue("listValue", value);
+			};
+			jdbcTemplate.batchUpdate(
+				"INSERT INTO RuleSetListValues (ruleSetId, listId, listValue) "+
+				"values (:ruleSetId, :listId, :listValue)", listValues);
+			listValues=null;
+			i++;
+		}
+		
+				
+				
 	}
 	
 	public void setActiveRuleSet(String restEndPoint, String ruleSetId) {
@@ -147,6 +175,10 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	}
 	
 	public RuleSet getActiveRuleSet(String restEndPoint) {
+		return null;
+	}
+	
+	public RuleSet getActiveRuleSetId(String restEndPoint) {
 		return null;
 	}
 	
