@@ -38,6 +38,7 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 	
 	private RuleSet doParseExcel(String id, File f) throws ExcelParserException, Exception {
 		RuleSet rs=new RuleSet();
+		rs.setId(id);
 		rs.setUploadDate(LocalDateTime.now());
 		try (XSSFWorkbook wb = new XSSFWorkbook(f)) {
 			for (int sheetNumber=0;sheetNumber<wb.getNumberOfSheets();sheetNumber++) {

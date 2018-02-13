@@ -16,11 +16,11 @@ import org.springframework.util.StreamUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import ch.qos.logback.classic.turbo.MatchingFilter;
 import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.ExcelParseResult;
 import pso.decision_engine.model.ExcelParserException;
 import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.persistence.impl.RuleSetDao;
 import pso.decision_engine.service.ExcelParserService;
 import pso.decision_engine.service.SetupApiService;
 
@@ -29,6 +29,9 @@ public class SetupApiServiceImpl implements SetupApiService {
 
 	@Autowired
 	private AppConfig appConfig;
+	
+	@Autowired
+	private RuleSetDao ruleSetDao;
 	
 	@Autowired
 	private ExcelParserService excelParserService;
@@ -67,6 +70,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 			Files.move(outputFile, moveToFile);
 			Path jsonFile=Paths.get(appConfig.getDataDirectory(), result.getRestEndPoint(), id+".json");
 			mapper.writeValue(jsonFile.toFile(), rs);
+			ruleSetDao.saveRuleSet(rs);
 		} else {
 			Path moveToFile=Paths.get(appConfig.getDataDirectory(), "error", id+".xlsx");
 			moveToFile.toFile().getParentFile().mkdirs();

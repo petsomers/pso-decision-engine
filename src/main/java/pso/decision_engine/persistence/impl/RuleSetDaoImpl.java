@@ -1,16 +1,21 @@
 package pso.decision_engine.persistence.impl;
 
+import java.sql.Timestamp;
+import java.sql.Types;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Component;
 
 import pso.decision_engine.model.RuleSet;
 
 @Component
-public class RuleSetDaoImpl {
+public class RuleSetDaoImpl implements RuleSetDao {
 	
 	private NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -23,12 +28,17 @@ public class RuleSetDaoImpl {
 	{
 		"CREATE TABLE IF NOT EXISTS RuleSet ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
-		"restEndPoint VARCHAR(20) NOT NULL, "+
+		"restEndPoint VARCHAR(50) NOT NULL, "+
 		"createdBy VARCHAR(50), "+
 		"version VARCHAR(20), "+
 		"uploadDate TIMESTAMP NOT NULL, "+
 		"PRIMARY KEY (ruleSetId))",
-
+		
+		"CREATE TABLE IF NOT EXISTS ActiveRuleSet ("+
+		"restEndPoint VARCHAR(50) NOT NULL, "+
+		"ruleSetId VARCHAR(20) NOT NULL, "+
+		"PRIMARY KEY (restEndPoint))",
+		
 		"CREATE TABLE IF NOT EXISTS RuleSetParameters ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
 		"parameterName VARCHAR(40) NOT NULL, "+
@@ -72,8 +82,45 @@ public class RuleSetDaoImpl {
 		}
 	}
 	
+	@Override
 	public void saveRuleSet(RuleSet ruleSet) {
+		MapSqlParameterSource parameters=new MapSqlParameterSource();
+		parameters.addValue("ruleSetId", ruleSet.getId());
+		parameters.addValue("restEndPoint", ruleSet.getRestEndPoint());
+		parameters.addValue("createdBy", ruleSet.getCreatedBy());
+		parameters.addValue("version", ruleSet.getVersion());
+		parameters.addValue("uploadDate", Timestamp.valueOf(ruleSet.getUploadDate()));
 		
+		jdbcTemplate.update(
+			"INSERT INTO RuleSet (ruleSetId, restEndPoint, createdBy, version, uploadDate) "+
+			"values (:ruleSetId, :restEndPoint, :createdBy, :version, :uploadDate)", parameters);
+		
+		MapSqlParameterSource[] inputParameters=new MapSqlParameterSource[ruleSet.getInputParameters().size()];
+		int i=0;
+		for (String parameterName:ruleSet.getInputParameters().keySet()) {
+			inputParameters[i++]=
+				new MapSqlParameterSource()
+				.addValue("ruleSetId", ruleSet.getId())
+				.addValue("parameterName", parameterName)
+				.addValue("parameterType", ruleSet.getInputParameters().get(parameterName).toString());
+		};
+		jdbcTemplate.batchUpdate(
+			"INSERT INTO RuleSetParameters (ruleSetId, parameterName, parameterType) "+
+			"values (:ruleSetId, :parameterName, :parameterType)", inputParameters);
+		inputParameters=null;
+		
+	}
+	
+	public void setActiveRuleSet(String restEndPoint, String ruleSetId) {
+		
+	}
+	
+	public RuleSet getRuleSet(String ruleSetId) {
+		return null;
+	}
+	
+	public RuleSet getActiveRuleSet(String restEndPoint) {
+		return null;
 	}
 
 }
