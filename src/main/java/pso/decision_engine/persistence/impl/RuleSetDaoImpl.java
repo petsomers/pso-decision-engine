@@ -1,18 +1,18 @@
 package pso.decision_engine.persistence.impl;
 
 import java.sql.Timestamp;
-import java.sql.Types;
+import java.text.DecimalFormat;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Component;
 
+import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.utils.ComparatorHelper;
 
 @Component
 public class RuleSetDaoImpl implements RuleSetDao {
@@ -109,6 +109,33 @@ public class RuleSetDaoImpl implements RuleSetDao {
 			"values (:ruleSetId, :parameterName, :parameterType)", inputParameters);
 		inputParameters=null;
 		
+		MapSqlParameterSource[] rules=new MapSqlParameterSource[ruleSet.getRules().size()];
+		i=0;
+		for (Rule rule:ruleSet.getRules()) {
+			rules[i]=
+				new MapSqlParameterSource()
+				.addValue("ruleSetId", ruleSet.getId())
+				.addValue("ruleNumber", i++)
+				.addValue("sheetName", rule.getSheetName())
+				.addValue("rowNumber", rule.getRowNumber())
+				.addValue("rowLabel", rule.getLabel())
+				.addValue("parameterName", rule.getParameterName())
+				.addValue("comparator", ComparatorHelper.comparatorToShortString(rule.getComparator()))
+				.addValue("value1", valueToString(rule.getValue1()))
+				.addValue("value2", valueToString(rule.getValue1()))
+				.addValue("positiveResult", rule.getPositiveResult())
+				.addValue("negativeResult", rule.getNegativeResult())
+				.addValue("remark", rule.getRemark());
+		}
+		jdbcTemplate.batchUpdate(
+			"INSERT INTO Rule ( "+
+			"ruleSetId, ruleNumber, sheetName, rowNumber, rowLabel, parameterName, "+ 
+			"comparator, value1, value2, positiveResult, negativeResult, remark) values "+
+			"(:ruleSetId, :ruleNumber, :sheetName, :rowNumber, :rowLabel, :parameterName, "+ 
+			":comparator, :value1, :value2, :positiveResult, :negativeResult, :remark)",rules);
+		rules=null;
+		
+
 	}
 	
 	public void setActiveRuleSet(String restEndPoint, String ruleSetId) {
@@ -120,6 +147,14 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	}
 	
 	public RuleSet getActiveRuleSet(String restEndPoint) {
+		return null;
+	}
+	
+	private DecimalFormat df=new DecimalFormat("#.###");
+	private String valueToString(Object o) {
+		if (o==null) return null;
+		if (o instanceof String) return ((String) o).trim();
+		if (o instanceof Double) return df.format((Double) o);
 		return null;
 	}
 

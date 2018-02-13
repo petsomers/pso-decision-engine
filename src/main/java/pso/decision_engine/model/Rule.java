@@ -1,7 +1,12 @@
 package pso.decision_engine.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import lombok.Data;
 import pso.decision_engine.model.enums.Comparator;
+import pso.decision_engine.utils.JsonSerializerUtils.JsonComparatorDeSerializer;
+import pso.decision_engine.utils.JsonSerializerUtils.JsonComparatorSerializer;
 
 @Data
 public class Rule {
@@ -9,6 +14,9 @@ public class Rule {
 	private int rowNumber;
 	private String label;
 	private String parameterName;
+	
+	@JsonSerialize(using=JsonComparatorSerializer.class)
+	@JsonDeserialize(using = JsonComparatorDeSerializer.class)
 	private Comparator comparator;
 	private Object value1;
 	private Object value2;

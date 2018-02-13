@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pso.decision_engine.model.ExcelParserException;
@@ -18,10 +19,11 @@ import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.enums.Comparator;
 import pso.decision_engine.model.enums.ParameterType;
 import pso.decision_engine.service.ExcelParserService;
+import pso.decision_engine.utils.ComparatorHelper;
 
 @Service
 public class ExcelParserServiceImpl implements ExcelParserService {
-	
+
 	/* (non-Javadoc)
 	 * @see pso.decision_engine.service.impl.ExcelParserService#parseExcel(java.lang.String, java.io.File)
 	 */
@@ -131,7 +133,7 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 				rs.getRowLabels().put(rule.getLabel(), rs.getRules().size()-1);
 			}
 			
-			Comparator comparator=toComparator(getCellValueNoNull(row.getCell(2)));
+			Comparator comparator=ComparatorHelper.shortStringToComparator(getCellValueNoNull(row.getCell(2)));
 			rule.setComparator(comparator);
 			
 			String value1=getCellValueNoNull(row.getCell(3));
@@ -197,23 +199,6 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 			case "DECIMAL": return ParameterType.DECIMAL;
 			case "INTEGER": return ParameterType.INTEGER;
 			default: return null;
-		}
-	}
-	
-	private Comparator toComparator(String s) {
-		switch(s.toUpperCase()) {
-			case "=": return Comparator.EQUAL_TO;
-			case "<": return Comparator.SMALLER_THAN;
-			case ">": return Comparator.GREATER_THAN;
-			case "<=": return Comparator.SMALLER_OR_EQUAL_TO;
-			case ">=": return Comparator.GREATER_OR_EQUAL_TO;
-			case "BETWEEN": return Comparator.BETWEEN;
-			case "IN LIST": return Comparator.IN_LIST;
-			case "STARTS WITH": return Comparator.STARTS_WITH;
-			case "CONTAINS": return Comparator.CONTAINS;
-			case "ENDS WITH": return Comparator.ENDS_WITH;
-			default: return null;
-			
 		}
 	}
 }
