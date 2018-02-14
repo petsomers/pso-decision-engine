@@ -37,15 +37,4 @@ public class EngineServiceImpl implements EngineService {
 	public void switchActiveRuleSet(String ruleSetId) {
 		
 	}
-	
-	/* (non-Javadoc)
-	 * @see pso.decision_engine.service.impl.EngineService#runRuleSet(java.lang.String, java.util.HashMap, boolean)
-	 */
-	@Override
-	public DecisionResult runRuleSet(String ruleSetId, HashMap<String, Object> parameters, boolean debugMode) {
-		return null;
-	}
-	
-	
-
 }

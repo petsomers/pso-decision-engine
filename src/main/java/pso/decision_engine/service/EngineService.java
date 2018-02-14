@@ -23,13 +23,4 @@ public interface EngineService {
 	 */
 	public void switchActiveRuleSet(String ruleSetId);
 
-	/**
-	 * 
-	 * @param ruleSetId
-	 * @param parameter
-	 * @param debugMode: always trace
-	 * @return
-	 */
-	public DecisionResult runRuleSet(String ruleSetId, HashMap<String, Object> parameters, boolean debugMode);
-
 }
