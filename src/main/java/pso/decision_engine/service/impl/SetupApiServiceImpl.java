@@ -80,8 +80,34 @@ public class SetupApiServiceImpl implements SetupApiService {
 		return result;
 	}
 	
-	DateTimeFormatter ldtformatter = DateTimeFormatter.ofPattern("yyMMddHHmmssms");
+	private DateTimeFormatter ldtformatter = DateTimeFormatter.ofPattern("yyMMddHHmmssms");
 	private String createShortUniqueId() {
 		return LocalDateTime.now().format(ldtformatter)+Math.round(Math.random()*100d);
 	}
+	
+	@Override
+	public String saveRuleSet(RuleSet ruleSet) {
+		String id=createShortUniqueId();
+		ruleSet.setId(id);
+		ruleSetDao.saveRuleSet(ruleSet);
+		return id;
+	}
+	@Override
+	public String getActiveRuleSet(String restEndPoint) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void switchActiveRuleSet(String ruleSetId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public RuleSet loadRuleSet(String ruleSetId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
 }
