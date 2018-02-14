@@ -2,6 +2,7 @@ package pso.decision_engine.persistence.impl;
 
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.model.UnitTest;
 import pso.decision_engine.persistence.RuleSetDao;
 import pso.decision_engine.utils.ComparatorHelper;
 
@@ -73,7 +75,22 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		"ruleSetId VARCHAR(20) NOT NULL, "+
 		"listId INTEGER NOT NULL, "+
 		"listValue VARCHAR(100) NOT NULL, "+
-		"PRIMARY KEY (ruleSetId, listId, listValue))"
+		"PRIMARY KEY (ruleSetId, listId, listValue))",
+		
+		"CREATE TABLE IF NOT EXISTS RuleSetUnitTest ("+
+		"ruleSetId VARCHAR(20) NOT NULL, "+
+		"unitTestId INTEGER NOT NULL, "+
+		"unitTestName VARCHAR(100) NOT NULL, "+
+		"expectedResult  VARCHAR(200) NOT NULL, "+
+		"PRIMARY KEY (ruleSetId, unitTestId))",
+		
+		"CREATE TABLE IF NOT EXISTS RuleSetUnitTestParameter ("+
+		"ruleSetId VARCHAR(20) NOT NULL, "+
+		"unitTestId INTEGER NOT NULL, "+
+		"parameterName VARCHAR(40) NOT NULL, "+
+		"parameterValue VARCHAR(100), "+
+		"PRIMARY KEY (ruleSetId, unitTestId, parameterName))"
+		
 	};
     
 	@PostConstruct
@@ -151,6 +168,38 @@ public class RuleSetDaoImpl implements RuleSetDao {
 			saveList(ruleSet.getId(), i, values);
 			i++;
 		}
+		
+		MapSqlParameterSource[] unitTests=new MapSqlParameterSource[ruleSet.getUnitTests().size()];
+		ArrayList<MapSqlParameterSource> unitTestParameters=new ArrayList<>();
+		i=0;
+		for (UnitTest unitTest:ruleSet.getUnitTests()) {
+			unitTests[i]=
+				new MapSqlParameterSource()
+				.addValue("ruleSetId", ruleSet.getId())
+				.addValue("unitTestId", i)
+				.addValue("unitTestName", unitTest.getName())
+				.addValue("expectedResult", unitTest.getExpectedResult());
+			for (String parameterName:unitTest.getParameters().keySet()) {
+				String value=unitTest.getParameters().get(parameterName);
+				if (value!=null && !value.isEmpty()) {
+					unitTestParameters.add(new MapSqlParameterSource()
+					.addValue("ruleSetId", ruleSet.getId())
+					.addValue("unitTestId", i)
+					.addValue("parameterName", parameterName)
+					.addValue("parameterValue", value));
+				}
+			}
+			i++;
+		}
+		jdbcTemplate.batchUpdate(
+			"INSERT INTO RuleSetUnitTest (ruleSetId, unitTestId, unitTestName, expectedResult) "+
+			"values (:ruleSetId, :unitTestId, :unitTestName, :expectedResult)", unitTests);
+		unitTests=null;
+		jdbcTemplate.batchUpdate(
+			"INSERT INTO RuleSetUnitTestParameter (ruleSetId, unitTestId, parameterName, parameterValue) "+
+			"values (:ruleSetId, :unitTestId, :parameterName, :parameterValue)", unitTestParameters.toArray(new MapSqlParameterSource[0]));
+		
+		unitTests=null;
 	}
 	
 	private void saveList(String ruleSetId, int listId, HashSet<String> values) {

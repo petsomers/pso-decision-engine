@@ -225,7 +225,10 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 			unitTest.setName(testName);
 			HashMap<String, String> parameters=new HashMap<>();
 			for (int col=1;col<parameterNames.size()+1;col++) {
-				parameters.put(parameterNames.get(col-1), getCellValueNoNull(row.getCell(col)));
+				String parameterValue=getCellValueNoNull(row.getCell(col));
+				if (!parameterValue.isEmpty()) {
+					parameters.put(parameterNames.get(col-1), parameterValue);	
+				}
 			}
 			unitTest.setParameters(parameters);
 			unitTest.setExpectedResult(getCellValueNoNull(row.getCell(parameterNames.size()+1)));
