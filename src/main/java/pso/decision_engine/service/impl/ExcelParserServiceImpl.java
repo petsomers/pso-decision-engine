@@ -147,7 +147,7 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 				value1=values[0];
 				value2=values[1];
 			}
-			rule.setValue1(value1); // todo: convert to correct type STRING/LONG/DOUBLE
+			rule.setValue1(value1);
 			rule.setValue2(value2);
 			rule.setPositiveResult(getCellValueNoNull(row.getCell(4)));
 			rule.setNegativeResult(getCellValueNoNull(row.getCell(5)));

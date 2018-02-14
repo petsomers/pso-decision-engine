@@ -22,7 +22,8 @@ public class RuleSetProcessorServiceImpl {
 		trace.add(rs.getName()+"(id: "+rs.getId()+")");
 		trace.add("Parameters: "+parameters);
 		trace.add("start "+ dateTimeFormatter.format(LocalDateTime.now()));
-		final HashMap<String, Object> typedParameters=toTypedParameters(rs, parameters);
+		final HashMap<String, Object> typedParameters=toTypedParameters(rs, parameters, trace);
+		if (typedParameters==null) return result;
 		
 		Integer ruleNumber=rs.getRowLabels().get("START");
 		if (ruleNumber==null) ruleNumber=0; 
@@ -30,6 +31,7 @@ public class RuleSetProcessorServiceImpl {
 		while (ruleNumber<ruleCount) {
 			Rule r=rs.getRules().get(ruleNumber);
 			String ruleResult=evaluateRule(rs, r, typedParameters);
+
 		}
 		
 		return result;
@@ -43,27 +45,57 @@ public class RuleSetProcessorServiceImpl {
 				trace.add("No type information for parameter "+parameterName);
 				continue;
 			}
-			
-			
+			String value=parameters.get(parameterName).trim();
+			if (!value.isEmpty()) {
+				switch(type) {
+					case TEXT: typedParameters.put(parameterName, value); break;
+					case INTEGER: {
+						int intValue=0;
+						try {
+							intValue=Integer.parseInt(value);
+						} catch (NumberFormatException nfe) {
+							trace.add("Invalid INTEGER value for parameter "+parameterName+": "+value);
+							return null;
+						}
+						typedParameters.put(parameterName, intValue);
+					}; break;
+					case DECIMAL: {
+						double doubleValue=0d;
+						try {
+							doubleValue=Double.parseDouble(value);
+						} catch (NumberFormatException nfe) {
+							trace.add("Invalid DECIMAL value for parameter "+parameterName+": "+value);
+							return null;
+						}
+						typedParameters.put(parameterName, doubleValue);
+						break;
+					}
+				}
+				
+			}
 		}
-		
 		return typedParameters;
 	}
 	
 	private String evaluateRule(RuleSet rs, Rule r, HashMap<String, Object> parameters) {
-		
-		
-		
-		return null;
+		ParameterType type=rs.getInputParameters().get(r.getParameterName());
+		Object parameterValue=parameters.get(r.getParameterName());
+		boolean evalResult=false;
+		switch(type) {
+			case TEXT: evalResult=compare((String)parameterValue, r.getComparator(), r.getValue1(), r.getValue2());break;
+			case INTEGER: evalResult=compare((Integer)parameterValue, r.getComparator(), r.getValue1(), r.getValue2());break;
+			case DECIMAL: evalResult=compare((Double)parameterValue, r.getComparator(), r.getValue1(), r.getValue2());break;
+		}
+		return evalResult?r.getPositiveResult():r.getNegativeResult();
 	}
 	
 	private boolean compare(String parameterValue, Comparator comparator, String value1, String value2) {
 		return false;
 	}
-	private boolean compare(int parameterValue, Comparator comparator, int value1, int value2) {
+	private boolean compare(int parameterValue, Comparator comparator, String value1, String value2) {
 		return false;
 	}
-	private boolean compare(double parameterValue, Comparator comparator, double value1, double value2) {
+	private boolean compare(double parameterValue, Comparator comparator, String value1, String value2) {
 		return false;
 	}
 }

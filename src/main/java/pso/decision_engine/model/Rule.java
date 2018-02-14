@@ -18,8 +18,8 @@ public class Rule {
 	@JsonSerialize(using=JsonComparatorSerializer.class)
 	@JsonDeserialize(using = JsonComparatorDeSerializer.class)
 	private Comparator comparator;
-	private Object value1;
-	private Object value2;
+	private String value1;
+	private String value2;
 	private String positiveResult;
 	private String negativeResult;
 	private String remark;
