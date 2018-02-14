@@ -146,21 +146,25 @@ public class RuleSetDaoImpl implements RuleSetDao {
 				"INSERT INTO RuleSetList (ruleSetId, listId, listName) "+
 				"values (:ruleSetId, :listId, :listName)", parameters);
 			HashSet<String> values=ruleSet.getLists().get(listName);
-			MapSqlParameterSource[] listValues=new MapSqlParameterSource[values.size()];
-			int j=0;
-			for (String value:values) {
-				listValues[j++]=
-					new MapSqlParameterSource()
-					.addValue("ruleSetId", ruleSet.getId())
-					.addValue("listId", i)
-					.addValue("listValue", value);
-			};
-			jdbcTemplate.batchUpdate(
-				"INSERT INTO RuleSetListValues (ruleSetId, listId, listValue) "+
-				"values (:ruleSetId, :listId, :listValue)", listValues);
-			listValues=null;
+			saveList(ruleSet.getId(), i, values);
 			i++;
 		}
+	}
+	
+	private void saveList(String ruleSetId, int listId, HashSet<String> values) {
+		MapSqlParameterSource[] listValues=new MapSqlParameterSource[values.size()];
+		int j=0;
+		for (String value:values) {
+			listValues[j++]=
+				new MapSqlParameterSource()
+				.addValue("ruleSetId", ruleSetId)
+				.addValue("listId", listId)
+				.addValue("listValue", value);
+		};
+		jdbcTemplate.batchUpdate(
+			"INSERT INTO RuleSetListValues (ruleSetId, listId, listValue) "+
+			"values (:ruleSetId, :listId, :listValue)", listValues);
+		listValues=null;
 	}
 	
 	@Override
