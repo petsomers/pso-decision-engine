@@ -2,6 +2,7 @@ package pso.decision_engine.persistence.impl;
 
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import javax.annotation.PostConstruct;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.persistence.RuleSetDao;
 import pso.decision_engine.utils.ComparatorHelper;
 
 @Component
@@ -184,6 +186,11 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	
 	@Override
 	public String getActiveRuleSetId(String restEndPoint) {
+		return null;
+	}
+	
+	@Override
+	public HashMap<String, HashSet<String>> getRuleSetLists(String ruleSetId) {
 		return null;
 	}
 	

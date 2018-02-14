@@ -1,12 +1,12 @@
 package pso.decision_engine.model;
 
-import java.util.List;
+import java.util.HashMap;
 
 import lombok.Data;
 
 @Data
 public class UnitTest {
 	private String name;
-	private List<InputParameter> parameters;
+	private HashMap<String, String> parameters;
 	private String expectedResult;
 }

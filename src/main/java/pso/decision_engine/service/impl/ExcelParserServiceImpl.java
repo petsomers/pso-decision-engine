@@ -3,6 +3,7 @@ package pso.decision_engine.service.impl;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import pso.decision_engine.model.ExcelParserException;
 import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.model.UnitTest;
 import pso.decision_engine.model.enums.Comparator;
 import pso.decision_engine.model.enums.ParameterType;
 import pso.decision_engine.service.ExcelParserService;
@@ -54,6 +56,8 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 					parseRuleSheet(sheet, rs);
 				} else if (sheetName.startsWith("LISTS")) {
 					parseListsSheet(sheet, rs);
+				} else if (sheetName.startsWith("UNIT TESTS")) {
+					parseUnitTestsSheet(sheet, rs);
 				}
 			}
 		}
@@ -187,6 +191,49 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 		}
 		
 	}
+	
+	private void parseUnitTestsSheet(Sheet sheet, RuleSet rs)  throws ExcelParserException {
+		String sheetName=sheet.getSheetName();
+		int firstRowNum=sheet.getFirstRowNum();
+		int lastRowNum=sheet.getLastRowNum();
+		if (firstRowNum!=0 && lastRowNum < 1) {
+			return;
+		}
+		Row row=sheet.getRow(0);
+		int cellCount=0;
+		ArrayList<String> parameterNames=new ArrayList<>();
+		boolean expectedResultOk=false;
+		for (int col=1;col<=row.getLastCellNum();col++) {
+			String parameterName=getCellValueNoNull(row.getCell(col));
+			if ("Expected Result".equalsIgnoreCase(parameterName)) {
+				expectedResultOk=true;
+				break;
+			} else {
+				parameterNames.add(parameterName);
+			}
+		}
+		if (!expectedResultOk) {
+			throw new ExcelParserException("Sheet "+sheetName+": column Expected Result not found.");
+		}
+		ArrayList<UnitTest> unitTests=new ArrayList<>();
+		for (int r=1;r<=lastRowNum;r++) {
+			row=sheet.getRow(r);
+			if (row==null) continue;
+			String testName=getCellValueNoNull(row.getCell(0));
+			if (testName.isEmpty()) continue;
+			UnitTest unitTest=new UnitTest();
+			unitTest.setName(testName);
+			HashMap<String, String> parameters=new HashMap<>();
+			for (int col=1;col<parameterNames.size()+1;col++) {
+				parameters.put(parameterNames.get(col-1), getCellValueNoNull(row.getCell(col)));
+			}
+			unitTest.setParameters(parameters);
+			unitTest.setExpectedResult(getCellValueNoNull(row.getCell(parameterNames.size()+1)));
+			unitTests.add(unitTest);
+		}
+		rs.setUnitTests(unitTests);
+	}
+	
 	
 	private static String getCellValueNoNull(Cell cell) {
 		String cv=new DataFormatter().formatCellValue(cell).toString();

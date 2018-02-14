@@ -20,7 +20,7 @@ import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.ExcelParseResult;
 import pso.decision_engine.model.ExcelParserException;
 import pso.decision_engine.model.RuleSet;
-import pso.decision_engine.persistence.impl.RuleSetDao;
+import pso.decision_engine.persistence.RuleSetDao;
 import pso.decision_engine.service.ExcelParserService;
 import pso.decision_engine.service.SetupApiService;
 
@@ -62,6 +62,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 		} catch (ExcelParserException epe) {
 			result.setErrorMessage(epe.getMessage());
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.setErrorMessage("General Error");
 		}
 		if (result.isOk()) {

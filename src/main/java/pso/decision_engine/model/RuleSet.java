@@ -34,5 +34,7 @@ public class RuleSet {
 	// List are always strings. (also for INTEGER values)
 	private HashMap<String, HashSet<String>> lists=new HashMap<>();
 	
+	private List<UnitTest> unitTests;
+	
 	private String parseError;
 }
