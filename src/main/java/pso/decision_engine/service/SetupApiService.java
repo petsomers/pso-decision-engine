@@ -24,7 +24,7 @@ public interface SetupApiService {
 	 * @param restEndPoint
 	 * @return ruleSetId or null
 	 */
-	public String getActiveRuleSet(String restEndPoint);
+	public RuleSet getActiveRuleSet(String restEndPoint);
 
 	/**
 	 * Makes this id to be the active (default) ruleSetId for the restEndPoint

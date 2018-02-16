@@ -77,6 +77,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 			moveToFile.toFile().getParentFile().mkdirs();
 			Files.move(outputFile, moveToFile);
 		}
+		
 		return result;
 	}
 	
@@ -93,7 +94,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 		return id;
 	}
 	@Override
-	public String getActiveRuleSet(String restEndPoint) {
+	public RuleSet getActiveRuleSet(String restEndPoint) {
 		// TODO Auto-generated method stub
 		return null;
 	}

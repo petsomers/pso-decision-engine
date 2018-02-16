@@ -91,6 +91,12 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 				} else if ("Created by".equalsIgnoreCase(cv)) {
 					rs.setCreatedBy(getCellValueNoNull(row.getCell(++c)));
 					c=lastCellNum;
+				} else if ("Version".equalsIgnoreCase(cv)) {
+					rs.setVersion(getCellValueNoNull(row.getCell(++c)));
+					c=lastCellNum;
+				} else if ("Remark".equalsIgnoreCase(cv)) {
+					rs.setRemark(getCellValueNoNull(row.getCell(++c)));
+					c=lastCellNum;
 				} else if ("Parameter Names".equalsIgnoreCase(cv)) {
 					for (c=c+1;c<lastCellNum;c++) {
 						parameterNames.add(getCellValueNoNull(row.getCell(c)));

@@ -5,6 +5,8 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
+import org.springframework.stereotype.Service;
+
 import pso.decision_engine.model.DecisionResult;
 import pso.decision_engine.model.DecisionTrace;
 import pso.decision_engine.model.DecisionTraceElement;
@@ -12,11 +14,14 @@ import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.enums.Comparator;
 import pso.decision_engine.model.enums.ParameterType;
+import pso.decision_engine.service.RuleSetProcessorService;
 
-public class RuleSetProcessorServiceImpl {
+@Service
+public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 
-	private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.ms");
+	//private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.ms");
 	
+	@Override
 	public DecisionResult runRuleSetWithParameters(RuleSet rs, HashMap<String, String> parameters) {
 		DecisionResult result=new DecisionResult();
 		DecisionTrace trace=new DecisionTrace();

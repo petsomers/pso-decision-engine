@@ -1,7 +1,9 @@
 package pso.decision_engine.persistence.impl;
 
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +11,8 @@ import java.util.HashSet;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -36,6 +40,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		"restEndPoint VARCHAR(50) NOT NULL, "+
 		"createdBy VARCHAR(50), "+
 		"version VARCHAR(20), "+
+		"remark VARCHAR(500), "+
 		"uploadDate TIMESTAMP NOT NULL, "+
 		"PRIMARY KEY (ruleSetId))",
 		
@@ -109,11 +114,12 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		.addValue("restEndPoint", ruleSet.getRestEndPoint())
 		.addValue("createdBy", ruleSet.getCreatedBy())
 		.addValue("version", ruleSet.getVersion())
+		.addValue("remark", ruleSet.getRemark())
 		.addValue("uploadDate", Timestamp.valueOf(ruleSet.getUploadDate()));
 		
 		jdbcTemplate.update(
-			"INSERT INTO RuleSet (ruleSetId, restEndPoint, createdBy, version, uploadDate) "+
-			"values (:ruleSetId, :restEndPoint, :createdBy, :version, :uploadDate)", parameters);
+			"INSERT INTO RuleSet (ruleSetId, restEndPoint, createdBy, version, remark, uploadDate) "+
+			"values (:ruleSetId, :restEndPoint, :createdBy, :version, :remark, :uploadDate)", parameters);
 		
 		MapSqlParameterSource[] inputParameters=new MapSqlParameterSource[ruleSet.getInputParameters().size()];
 		int i=0;
@@ -220,12 +226,34 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	
 	@Override
 	public void setActiveRuleSet(String restEndPoint, String ruleSetId) {
-		
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("restEndPoint", restEndPoint)
+		.addValue("ruleSetId", ruleSetId);
+		int i=jdbcTemplate.update("update ActiveRuleSet set restEndPoint=:restEndPoint, ruleSetId=:ruleSetId where ", params);
+		if (i==0) {
+			jdbcTemplate.update("insert into ActiveRuleSet (restEndPoint, ruleSetId) values (:restEndPoint, :ruleSetId)", params);
+		}
 	}
+	
+	private RowMapper<RuleSet> ruleSetRowMapper=(ResultSet rs, int rowNumber) -> {
+		RuleSet ruleSet=new RuleSet();
+		ruleSet.setId(rs.getString("ruleSetId"));
+		ruleSet.setRestEndPoint(rs.getString("restEndPoint"));
+		ruleSet.setCreatedBy(rs.getString("createdBy"));
+		ruleSet.setUploadDate(rs.getTimestamp("uploadDate").toLocalDateTime());
+		return ruleSet;
+	};
 	
 	@Override
 	public RuleSet getRuleSet(String ruleSetId) {
-		return null;
+		try {
+			return jdbcTemplate.queryForObject(
+				"select ruleSetId, restEndPoint, createdBy, version, uploadDate from RuleSet where ruleSetId=:ruleSetId",
+				new MapSqlParameterSource()
+				.addValue("ruleSetId", ruleSetId), ruleSetRowMapper);
+		} catch (EmptyResultDataAccessException eda) {
+			return null;
+		}
 	}
 	
 	@Override

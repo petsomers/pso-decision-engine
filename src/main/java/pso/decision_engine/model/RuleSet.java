@@ -23,6 +23,7 @@ public class RuleSet {
 	private String restEndPoint;
 	private String createdBy;
 	private String version;
+	private String remark;
 
 	@JsonSerialize(using=JsonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JsonLocalDateTimeDeSerializer.class)
