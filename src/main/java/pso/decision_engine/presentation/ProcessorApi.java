@@ -28,11 +28,14 @@ public class ProcessorApi {
 	
 	@RequestMapping(value = "/run/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public DecisionResult run(HttpServletRequest request, @PathVariable String restEndPoint) throws Exception {
+		RuleSet ruleSet=setupService.getActiveRuleSet(restEndPoint);
+		if (ruleSet==null) {
+			
+		}
 		final HashMap<String, String> parameters=new HashMap<>();
 		for (String parameter: Collections.list(request.getParameterNames())) {
 			parameters.put(parameter, request.getParameter(parameter).trim());
 		}
-		RuleSet ruleSet=setupService.getActiveRuleSet(restEndPoint);
 		return ruleSetProcessorService.runRuleSetWithParameters(ruleSet, parameters);
     }
 }
