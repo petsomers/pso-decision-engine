@@ -22,4 +22,6 @@ public class RuleSetSearchResultItem {
 	@JsonSerialize(using=JsonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JsonLocalDateTimeDeSerializer.class)
 	private LocalDateTime uploadDate;
+	
+	private boolean activeRuleSet;
 }

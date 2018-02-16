@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 
@@ -249,8 +250,8 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		try {
 			return jdbcTemplate.queryForObject(
 				"select ruleSetId, restEndPoint, createdBy, version, uploadDate from RuleSet where ruleSetId=:ruleSetId",
-				new MapSqlParameterSource()
-				.addValue("ruleSetId", ruleSetId), ruleSetRowMapper);
+				new MapSqlParameterSource().addValue("ruleSetId", ruleSetId), 
+				ruleSetRowMapper);
 		} catch (EmptyResultDataAccessException eda) {
 			return null;
 		}
@@ -258,7 +259,16 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	
 	@Override
 	public RuleSet getActiveRuleSet(String restEndPoint) {
-		return null;
+		try {
+			return jdbcTemplate.queryForObject(
+				"select ruleSetId, restEndPoint, createdBy, version, uploadDate from ActiveRuleSet as ars "+
+				"left join RuleSet as rs on rs.ruleSetId=ars.ruleSetId "+
+				"where ars.restEndPoint=:restEndPoint",
+				new MapSqlParameterSource().addValue("restEndPoint", restEndPoint), 
+				ruleSetRowMapper);
+		} catch (EmptyResultDataAccessException eda) {
+			return null;
+		}
 	}
 	
 	@Override
@@ -277,6 +287,19 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		if (o instanceof String) return ((String) o).trim();
 		if (o instanceof Double) return df.format((Double) o);
 		return null;
+	}
+
+	@Override
+	public boolean doesRuleSetExist(String restEndPoint, String ruleSetId) {
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("restEndPoint", restEndPoint)
+		.addValue("ruleSetId", ruleSetId);
+		return jdbcTemplate.queryForObject("select count(*) from RuleSet where ruleSetId=:ruleSetId and restEndPoint=:restEndPoint", params, Integer.class)>0;
+	}
+
+	@Override
+	public List<String> getAllEndPoints() {
+		return jdbcTemplate.query("select distinct restEndPoint from RuleSet", new MapSqlParameterSource(), (ResultSet rs, int rowNumber) -> rs.getString(1));
 	}
 
 }

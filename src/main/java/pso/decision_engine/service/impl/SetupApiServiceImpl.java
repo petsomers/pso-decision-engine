@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,8 +96,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 	}
 	@Override
 	public RuleSet getActiveRuleSet(String restEndPoint) {
-		// TODO Auto-generated method stub
-		return null;
+		return ruleSetDao.getActiveRuleSet(restEndPoint);
 	}
 	@Override
 	public void switchActiveRuleSet(String ruleSetId) {
@@ -109,6 +109,20 @@ public class SetupApiServiceImpl implements SetupApiService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
+	@Override
+	public void setActiveRuleSet(String restEndPoint, String ruleSetId) {
+		ruleSetDao.setActiveRuleSet(restEndPoint, ruleSetId);
+	}
+
+	@Override
+	public boolean doesRuleSetExist(String restEndPoint, String ruleSetId) {
+		return ruleSetDao.doesRuleSetExist(restEndPoint, ruleSetId);
+	}
+
+	@Override
+	public List<String> getAllEndPoints() {
+		return ruleSetDao.getAllEndPoints();
+	}
 	
 }

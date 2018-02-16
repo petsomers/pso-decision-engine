@@ -6,15 +6,18 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import pso.decision_engine.model.ExcelParseResult;
 import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.model.RuleSetSearchResultItem;
 import pso.decision_engine.service.SetupApiService;
 
 @RestController
+@RequestMapping("/setup")
 public class SetupApi {
 	
 	@Autowired
@@ -33,22 +36,33 @@ public class SetupApi {
 		return setupService.addExcelFile(req.getInputStream());
 	}
 	
+	@RequestMapping(value = "/setactive/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public String setActiveRuleSet(@PathVariable String restEndPoint,@PathVariable String ruleSetId) {
+		if (!setupService.doesRuleSetExist(restEndPoint, ruleSetId)) {
+			return "RULESET NOT FOUND";
+		} else {
+			setupService.setActiveRuleSet(restEndPoint, ruleSetId);
+			return "OK";
+		}
+	}
+	
+	@RequestMapping(value = "/endpoints",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public List<String> getAllEndPoints() {
+		return setupService.getAllEndPoints();
+	}
+	
 	@RequestMapping(value = "/source/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	public RuleSet getActiveRuleSet(String restEndPoint) {
 		return null;
 	}
 	
 	@RequestMapping(value = "/source/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public RuleSet getActiveRuleSet(String restEndPoint, String ruleSetId) {
+	public RuleSet getRuleSet(String restEndPoint, String ruleSetId) {
 		return null;
 	}
-	
-	public static class RuleSetVersions {
-		List<String> ruleSetIds;
-		String activeRuleSetId;
-	}
+
 	@RequestMapping(value = "/versions/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public RuleSetVersions getRuleSetVersions(String restEndPoint) {
+	public RuleSetSearchResultItem getRuleSetVersions(String restEndPoint) {
 		return null;
 	}
 	
