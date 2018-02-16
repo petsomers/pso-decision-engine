@@ -2,10 +2,10 @@ package pso.decision_engine.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import pso.decision_engine.model.DecisionResult;
+import pso.decision_engine.model.DecisionTrace;
 import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.enums.Comparator;
@@ -17,11 +17,13 @@ public class RuleSetProcessorServiceImpl {
 	
 	public DecisionResult runRuleSetWithParameters(RuleSet rs, HashMap<String, String> parameters) {
 		DecisionResult result=new DecisionResult();
-		final ArrayList<String> trace=new ArrayList<>();
+		DecisionTrace trace=new DecisionTrace();
 		result.setTrace(trace);
-		trace.add(rs.getName()+"(id: "+rs.getId()+")");
-		trace.add("Parameters: "+parameters);
-		trace.add("start "+ dateTimeFormatter.format(LocalDateTime.now()));
+		trace.setRequestTimestamp(LocalDateTime.now());
+		trace.setInputParameters(parameters);
+		trace.setRuleId(rs.getId());
+		trace.setRestEndPoint(rs.getRestEndPoint());
+
 		final HashMap<String, Object> typedParameters=toTypedParameters(rs, parameters, trace);
 		if (typedParameters==null) return result;
 		
@@ -33,16 +35,16 @@ public class RuleSetProcessorServiceImpl {
 			String ruleResult=evaluateRule(rs, r, typedParameters);
 
 		}
-		
+		trace.setResponseTimestamp(LocalDateTime.now());
 		return result;
 	}
 	
-	private HashMap<String, Object> toTypedParameters(RuleSet rs, HashMap<String, String> parameters, final ArrayList<String> trace) {
+	private HashMap<String, Object> toTypedParameters(RuleSet rs, HashMap<String, String> parameters, DecisionTrace trace) {
 		final HashMap<String, Object> typedParameters=new HashMap<>();
 		for (String parameterName:parameters.keySet()) {
 			ParameterType type=rs.getInputParameters().get(parameterName);
 			if (type==null) {
-				trace.add("No type information for parameter "+parameterName);
+				trace.getMessages().add("INFO: No type information for parameter "+parameterName);
 				continue;
 			}
 			String value=parameters.get(parameterName).trim();
@@ -54,7 +56,7 @@ public class RuleSetProcessorServiceImpl {
 						try {
 							intValue=Integer.parseInt(value);
 						} catch (NumberFormatException nfe) {
-							trace.add("Invalid INTEGER value for parameter "+parameterName+": "+value);
+							trace.getMessages().add("ERROR: Invalid INTEGER value for parameter "+parameterName+": "+value);
 							return null;
 						}
 						typedParameters.put(parameterName, intValue);
@@ -64,7 +66,7 @@ public class RuleSetProcessorServiceImpl {
 						try {
 							doubleValue=Double.parseDouble(value);
 						} catch (NumberFormatException nfe) {
-							trace.add("Invalid DECIMAL value for parameter "+parameterName+": "+value);
+							trace.getMessages().add("ERROR: Invalid DECIMAL value for parameter "+parameterName+": "+value);
 							return null;
 						}
 						typedParameters.put(parameterName, doubleValue);
