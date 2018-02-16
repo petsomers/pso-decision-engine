@@ -25,22 +25,9 @@ import pso.decision_engine.utils.ComparatorHelper;
 
 @Service
 public class ExcelParserServiceImpl implements ExcelParserService {
-
-	/* (non-Javadoc)
-	 * @see pso.decision_engine.service.impl.ExcelParserService#parseExcel(java.lang.String, java.io.File)
-	 */
-	@Override
-	public RuleSet parseExcel(String id, File f) throws Exception {
-		try {
-			return doParseExcel(id, f);
-		} catch (ExcelParserException epe) {
-			RuleSet rs=new RuleSet();
-			rs.setParseError(epe.getMessage());
-			return rs;
-		}
-	}
 	
-	private RuleSet doParseExcel(String id, File f) throws ExcelParserException, Exception {
+	@Override
+	public RuleSet parseExcel(String id, File f) throws ExcelParserException, Exception {
 		RuleSet rs=new RuleSet();
 		rs.setId(id);
 		rs.setUploadDate(LocalDateTime.now());

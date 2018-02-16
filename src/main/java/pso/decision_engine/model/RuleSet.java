@@ -37,5 +37,4 @@ public class RuleSet {
 	
 	private List<UnitTest> unitTests;
 	
-	private String parseError;
 }

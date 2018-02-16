@@ -3,7 +3,6 @@ package pso.decision_engine.persistence.impl;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,6 +38,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		"CREATE TABLE IF NOT EXISTS RuleSet ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
 		"restEndPoint VARCHAR(50) NOT NULL, "+
+		"name VARCHAR(150), "+
 		"createdBy VARCHAR(50), "+
 		"version VARCHAR(20), "+
 		"remark VARCHAR(500), "+
@@ -113,14 +113,15 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		MapSqlParameterSource parameters=new MapSqlParameterSource()
 		.addValue("ruleSetId", ruleSet.getId())
 		.addValue("restEndPoint", ruleSet.getRestEndPoint())
+		.addValue("name", ruleSet.getName())
 		.addValue("createdBy", ruleSet.getCreatedBy())
 		.addValue("version", ruleSet.getVersion())
 		.addValue("remark", ruleSet.getRemark())
 		.addValue("uploadDate", Timestamp.valueOf(ruleSet.getUploadDate()));
 		
 		jdbcTemplate.update(
-			"INSERT INTO RuleSet (ruleSetId, restEndPoint, createdBy, version, remark, uploadDate) "+
-			"values (:ruleSetId, :restEndPoint, :createdBy, :version, :remark, :uploadDate)", parameters);
+			"INSERT INTO RuleSet (ruleSetId, restEndPoint, name, createdBy, version, remark, uploadDate) "+
+			"values (:ruleSetId, :restEndPoint, :name, :createdBy, :version, :remark, :uploadDate)", parameters);
 		
 		MapSqlParameterSource[] inputParameters=new MapSqlParameterSource[ruleSet.getInputParameters().size()];
 		int i=0;
@@ -230,7 +231,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		MapSqlParameterSource params=new MapSqlParameterSource()
 		.addValue("restEndPoint", restEndPoint)
 		.addValue("ruleSetId", ruleSetId);
-		int i=jdbcTemplate.update("update ActiveRuleSet set restEndPoint=:restEndPoint, ruleSetId=:ruleSetId where ", params);
+		int i=jdbcTemplate.update("update ActiveRuleSet set ruleSetId=:ruleSetId where restEndPoint=:restEndPoint", params);
 		if (i==0) {
 			jdbcTemplate.update("insert into ActiveRuleSet (restEndPoint, ruleSetId) values (:restEndPoint, :ruleSetId)", params);
 		}
@@ -239,8 +240,10 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	private RowMapper<RuleSet> ruleSetRowMapper=(ResultSet rs, int rowNumber) -> {
 		RuleSet ruleSet=new RuleSet();
 		ruleSet.setId(rs.getString("ruleSetId"));
+		ruleSet.setName(rs.getString("name"));
 		ruleSet.setRestEndPoint(rs.getString("restEndPoint"));
 		ruleSet.setCreatedBy(rs.getString("createdBy"));
+		ruleSet.setRemark(rs.getString("remark"));
 		ruleSet.setUploadDate(rs.getTimestamp("uploadDate").toLocalDateTime());
 		return ruleSet;
 	};
@@ -249,7 +252,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	public RuleSet getRuleSet(String ruleSetId) {
 		try {
 			return jdbcTemplate.queryForObject(
-				"select ruleSetId, restEndPoint, createdBy, version, uploadDate from RuleSet where ruleSetId=:ruleSetId",
+				"select ruleSetId, restEndPoint, name, createdBy, version, remark, uploadDate from RuleSet where ruleSetId=:ruleSetId",
 				new MapSqlParameterSource().addValue("ruleSetId", ruleSetId), 
 				ruleSetRowMapper);
 		} catch (EmptyResultDataAccessException eda) {
@@ -261,7 +264,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	public RuleSet getActiveRuleSet(String restEndPoint) {
 		try {
 			return jdbcTemplate.queryForObject(
-				"select ruleSetId, restEndPoint, createdBy, version, uploadDate from ActiveRuleSet as ars "+
+				"select ruleSetId, restEndPoint, name, createdBy, version, remark, uploadDate from ActiveRuleSet as ars "+
 				"left join RuleSet as rs on rs.ruleSetId=ars.ruleSetId "+
 				"where ars.restEndPoint=:restEndPoint",
 				new MapSqlParameterSource().addValue("restEndPoint", restEndPoint), 

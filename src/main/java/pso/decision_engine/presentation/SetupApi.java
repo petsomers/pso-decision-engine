@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import pso.decision_engine.model.ExcelParseResult;
+import pso.decision_engine.model.ExcelParserException;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.RuleSetSearchResultItem;
 import pso.decision_engine.service.SetupApiService;
@@ -33,7 +34,7 @@ public class SetupApi {
 	
 	@RequestMapping(value = "/upload_excel",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public ExcelParseResult uploadExcel(HttpServletRequest req) throws Exception {
-		return setupService.addExcelFile(req.getInputStream());
+		return setupService.addExcelFile(req.getInputStream());	
 	}
 	
 	@RequestMapping(value = "/setactive/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
@@ -52,8 +53,8 @@ public class SetupApi {
 	}
 	
 	@RequestMapping(value = "/source/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public RuleSet getActiveRuleSet(String restEndPoint) {
-		return null;
+	public RuleSet getActiveRuleSet(@PathVariable String restEndPoint) {
+		return setupService.getActiveRuleSet(restEndPoint);
 	}
 	
 	@RequestMapping(value = "/source/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
