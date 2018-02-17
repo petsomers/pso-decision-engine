@@ -125,6 +125,9 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 	private DecimalFormat df=new DecimalFormat("#.###");
 	private Boolean evaluateRule(RuleSet rs, Rule r, HashMap<String, Object> parameters) {
 		ParameterType type=rs.getInputParameters().get(r.getParameterName());
+		if (type==null) {
+			return null;
+		}
 		Object parameterValue=parameters.get(r.getParameterName());
 		Boolean evalResult=null;
 		if (r.getComparator()==Comparator.IN_LIST) {

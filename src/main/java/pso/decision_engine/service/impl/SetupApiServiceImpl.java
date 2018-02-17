@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.ExcelParseResult;
 import pso.decision_engine.model.ExcelParserException;
+import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.RuleSetInfo;
 import pso.decision_engine.persistence.RuleSetDao;
@@ -101,10 +102,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 	public RuleSet getActiveRuleSetByEndPoint(String restEndPoint, boolean loadAllLists) {
 		String ruleSetId=ruleSetDao.getActiveRuleSetId(restEndPoint);
 		if (ruleSetId==null) return null;
-		RuleSet rs=ruleSetDao.getRuleSet(ruleSetId);
-		if (rs==null) return null;
-		rs.setLists(ruleSetDao.getRuleSetLists(rs.getId(), loadAllLists));
-		return rs;
+		return getRuleSet(restEndPoint, ruleSetId, loadAllLists);
 	}
 	
 	@Override
@@ -114,6 +112,13 @@ public class SetupApiServiceImpl implements SetupApiService {
 		if (rs==null) return null;
 		if (!restEndPoint.equals(rs.getRestEndPoint())) return null;
 		rs.setLists(ruleSetDao.getRuleSetLists(rs.getId(), loadAllLists));
+		int i=0;
+		for (Rule r:rs.getRules()) {
+			if (r.getLabel()!=null && !r.getLabel().isEmpty()) {
+				rs.getRowLabels().put(r.getLabel(), i);
+			}
+			i++;
+		}
 		return rs;
 	}
 	
