@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -169,14 +167,39 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	
 	@Override
 	public RuleSet getRuleSet(String ruleSetId) {
+		RuleSet ruleSet=null;
 		try {
-			return jdbcTemplate.queryForObject(
+			ruleSet=jdbcTemplate.queryForObject(
 				"select ruleSetId, restEndPoint, name, createdBy, version, remark, uploadDate from RuleSet where ruleSetId=:ruleSetId",
 				new MapSqlParameterSource().addValue("ruleSetId", ruleSetId), 
 				ruleSetRowMapper);
 		} catch (EmptyResultDataAccessException eda) {
 			return null;
 		}
+		ruleSet.setRules(getRules(ruleSet.getId()));
+		return ruleSet;
+	}
+	
+	private List<Rule> getRules(String ruleSetId) {
+		return jdbcTemplate.query(
+			"select ruleNumber, sheetName, rowNumber, rowLabel, parameterName, "+
+			"comparator, value1, value2, positiveResult, negativeResult, remark "+
+			"from Rule where ruleSetId=:ruleSetId order by ruleNumber", 
+			new MapSqlParameterSource().addValue("ruleSetId", ruleSetId),
+			(ResultSet rs, int RowNumber) -> {
+				Rule rule=new Rule();
+				rule.setSheetName(rs.getString("sheetName"));
+				rule.setRowNumber(rs.getInt("rowNumber"));
+				rule.setLabel(rs.getString("rowLabel"));
+				rule.setParameterName(rs.getString("parameterName"));
+				rule.setComparator(ComparatorHelper.shortStringToComparator(rs.getString("comparator")));
+				rule.setValue1(rs.getString("value1"));
+				rule.setValue2(rs.getString("value2"));
+				rule.setPositiveResult(rs.getString("positiveResult"));
+				rule.setNegativeResult(rs.getString("negativeResult"));
+				rule.setRemark(rs.getString("remark"));
+				return rule;
+			});
 	}
 	
 	@Override
