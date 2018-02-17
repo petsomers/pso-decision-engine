@@ -34,7 +34,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 		result.setTrace(trace);
 		trace.setRequestTimestamp(LocalDateTime.now());
 		trace.setInputParameters(parameters);
-		trace.setRuleId(rs.getId());
+		trace.setRuleSetId(rs.getId());
 		trace.setRestEndPoint(rs.getRestEndPoint());
 
 		final HashMap<String, Object> typedParameters=toTypedParameters(rs, parameters, trace);
@@ -59,7 +59,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			}
 			executedRules.add(ruleNumber);
 			Boolean ruleResult=evaluateRule(rs, r, typedParameters);
-			dte.setResult(ruleResult);
+			dte.setResult(ruleResult?"POSITIVE":"NEGATIVE");
 			if (ruleResult==null) {
 				trace.getMessages().add("ERROR: evaluating rule conditions");
 				result.setError(true);
@@ -68,9 +68,11 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			
 			String action=ruleResult?r.getPositiveResult():r.getNegativeResult();
 			if (action==null || action.isEmpty()) {
+				dte.setResult("NONE");
 				ruleNumber++;
 				continue;
 			}
+			dte.setResult(action);
 			if (action.startsWith("goto ") && action.length()>5) {
 				String label=action.substring(5);
 				Integer toRuleNumber=rs.getRowLabels().get(label);
@@ -109,6 +111,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 							intValue=Integer.parseInt(value);
 						} catch (NumberFormatException nfe) {
 							trace.getMessages().add("ERROR: Invalid INTEGER value for parameter "+parameterName+": "+value);
+							trace.setError(true);
 							return null;
 						}
 						typedParameters.put(parameterName, intValue);
@@ -119,6 +122,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 							doubleValue=Double.parseDouble(value);
 						} catch (NumberFormatException nfe) {
 							trace.getMessages().add("ERROR: Invalid DECIMAL value for parameter "+parameterName+": "+value);
+							trace.setError(true);
 							return null;
 						}
 						typedParameters.put(parameterName, doubleValue);

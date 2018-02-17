@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class DecisionTraceElement {
 	private Rule rule;
-	private Boolean result;
+	private String result;
 }

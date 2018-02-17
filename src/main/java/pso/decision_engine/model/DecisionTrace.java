@@ -19,7 +19,7 @@ public class DecisionTrace {
 	private long durationInMilliSeconds;
 	private HashMap<String, String> inputParameters;
 	private String restEndPoint;
-	private String ruleId;
+	private String ruleSetId;
 	private ArrayList<DecisionTraceElement> trace=new ArrayList<>();
 	private boolean error;
 	private ArrayList<String> messages=new ArrayList<>();
