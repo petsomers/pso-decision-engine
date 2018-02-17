@@ -24,11 +24,8 @@ public interface SetupApiService {
 	
 	public void setActiveRuleSet(String restEndPoint, String ruleSetId);
 	
-	/**
-	 * 
-	 * @param restEndPoint
-	 * @return ruleSetId or null
-	 */
-	public RuleSet getActiveRuleSet(String restEndPoint);
+	public RuleSet getActiveRuleSetByEndPoint(String restEndPoint, boolean loadAllLists);
+
+	public RuleSet getRuleSet(String restEndPoint, String ruleSetId, boolean loadAllLists);
 
 }

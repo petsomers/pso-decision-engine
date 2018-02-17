@@ -1,6 +1,5 @@
 package pso.decision_engine.presentation;
 
-import java.io.FileInputStream;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -28,7 +27,7 @@ public class ProcessorApi {
 	
 	@RequestMapping(value = "/run/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public DecisionResult run(HttpServletRequest request, @PathVariable String restEndPoint) throws Exception {
-		RuleSet ruleSet=setupService.getActiveRuleSet(restEndPoint);
+		RuleSet ruleSet=setupService.getActiveRuleSetByEndPoint(restEndPoint, false);
 		if (ruleSet==null) {
 			
 		}

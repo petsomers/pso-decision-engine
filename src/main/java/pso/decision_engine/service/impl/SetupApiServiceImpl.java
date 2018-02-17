@@ -94,11 +94,24 @@ public class SetupApiServiceImpl implements SetupApiService {
 		ruleSetDao.saveRuleSet(ruleSet);
 		return id;
 	}
+	
 	@Override
-	public RuleSet getActiveRuleSet(String restEndPoint) {
+	public RuleSet getActiveRuleSetByEndPoint(String restEndPoint, boolean loadAllLists) {
 		String ruleSetId=ruleSetDao.getActiveRuleSetId(restEndPoint);
 		if (ruleSetId==null) return null;
-		return ruleSetDao.getRuleSet(ruleSetId);
+		RuleSet rs=ruleSetDao.getRuleSet(ruleSetId);
+		if (rs==null) return null;
+		rs.setLists(ruleSetDao.getRuleSetLists(rs.getId(), loadAllLists));
+		return rs;
+	}
+	
+	@Override
+	public RuleSet getRuleSet(String restEndPoint, String ruleSetId, boolean loadAllLists) {
+		if (ruleSetId==null || ruleSetId.isEmpty()) return null;
+		RuleSet rs=ruleSetDao.getRuleSet(ruleSetId);
+		if (rs==null) return null;
+		rs.setLists(ruleSetDao.getRuleSetLists(rs.getId(), loadAllLists));
+		return rs;
 	}
 	
 	@Override

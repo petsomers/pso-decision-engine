@@ -284,22 +284,22 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		final HashMap<String, HashSet<String>> result=new HashMap<>();
 		jdbcTemplate.query(
 			loadAll?
-			"select listName, listValue RuleSetLists as rsl "+
+			"select listName, listValue from RuleSetLists as rsl "+
 			"left join RuleSetListValues as rslv "+
 			"on rslv.ruleSetId=rsl.ruleSetId "+
 			"and rslv.listId=rsl.listId "+
 			"where rsl.ruleSetId=:ruleSetId "+
 			"order by listName, listValue"
 			:
-			"select listName, listValue RuleSetLists as rsl "+
+			"select listName, listValue from RuleSetLists as rsl "+
 			"left join RuleSetListValues as rslv "+
 			"on rslv.ruleSetId=rsl.ruleSetId "+
 			"and rslv.listId=rsl.listId "+
+			"where rsl.ruleSetId=:ruleSetId "+
 			"and ("+
 			  "select count(*) from RuleSetListValues as rslv2 "+
 			  "where rslv2.ruleSetId=rsl.ruleSetId and rslv2.ruleSetId=rsl.ruleSetId "+
-			") < :maxInMemoryListSize "+
-			"where rsl.ruleSetId=:ruleSetId "+
+			") > :maxInMemoryListSize "+
 			"order by listName, listValue",
 			new MapSqlParameterSource().addValue("ruleSetId", ruleSetId).addValue("maxInMemoryListSize", appConfig.getMaxInMemoryListSize()), 
 			(ResultSet rs) -> {

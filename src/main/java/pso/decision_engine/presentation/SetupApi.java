@@ -54,7 +54,7 @@ public class SetupApi {
 	
 	@RequestMapping(value = "/source/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	public RuleSet getActiveRuleSet(@PathVariable String restEndPoint) {
-		return setupService.getActiveRuleSet(restEndPoint);
+		return setupService.getActiveRuleSetByEndPoint(restEndPoint, false);
 	}
 	
 	@RequestMapping(value = "/source/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
