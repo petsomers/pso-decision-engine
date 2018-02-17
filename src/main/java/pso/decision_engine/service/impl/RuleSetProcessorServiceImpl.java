@@ -40,6 +40,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 		final HashMap<String, Object> typedParameters=toTypedParameters(rs, parameters, trace);
 		if (typedParameters==null) {
 			result.setError(true);
+			result.setErrorMessage(trace.getMessages().get(trace.getMessages().size()-1));
 			return result;
 		}
 		
@@ -55,6 +56,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			if (executedRules.contains(ruleNumber)) {
 				trace.getMessages().add("ERROR: rule has already been executed.");
 				result.setError(true);
+				result.setErrorMessage("ERROR: rule has already been executed.");
 				return result;
 			}
 			executedRules.add(ruleNumber);
@@ -63,6 +65,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			if (ruleResult==null) {
 				trace.getMessages().add("ERROR: evaluating rule conditions");
 				result.setError(true);
+				result.setErrorMessage("ERROR: evaluating rule conditions");
 				return result;
 			}
 			
@@ -79,6 +82,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 				if (toRuleNumber==null) {
 					trace.getMessages().add("ERROR: Label not found: "+label);
 					result.setError(true);
+					result.setErrorMessage("ERROR: evaluating rule conditions");
 					return result;
 				}
 				ruleNumber=toRuleNumber;
