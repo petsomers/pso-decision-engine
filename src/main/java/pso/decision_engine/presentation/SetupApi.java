@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import pso.decision_engine.model.ExcelParseResult;
-import pso.decision_engine.model.ExcelParserException;
 import pso.decision_engine.model.RuleSet;
-import pso.decision_engine.model.RuleSetSearchResultItem;
+import pso.decision_engine.model.RuleSetInfo;
 import pso.decision_engine.service.SetupApiService;
 
 @RestController
@@ -58,22 +57,22 @@ public class SetupApi {
 	}
 	
 	@RequestMapping(value = "/source/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public RuleSet getRuleSet(String restEndPoint, String ruleSetId) {
+	public RuleSet getRuleSet(@PathVariable String restEndPoint, @PathVariable String ruleSetId) {
 		return setupService.getRuleSet(restEndPoint, ruleSetId, true);
 	}
 
 	@RequestMapping(value = "/versions/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public RuleSetSearchResultItem getRuleSetVersions(String restEndPoint) {
-		return null;
+	public List<RuleSetInfo> getRuleSetVersions(@PathVariable String restEndPoint) {
+		return setupService.getRuleSetVersionsForEndPoint(restEndPoint);
 	}
 	
 	@RequestMapping(value = "/delete_inactive/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public void deleteInactiveVersion(String restEndPoint, String ruleSetId) {
+	public void deleteInactiveVersion(@PathVariable String restEndPoint, @PathVariable String ruleSetId) {
 
 	}
 	
 	@RequestMapping(value = "/delete/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public void delete(String restEndPoint) {
+	public void delete(@PathVariable String restEndPoint) {
 		
 	}
 	

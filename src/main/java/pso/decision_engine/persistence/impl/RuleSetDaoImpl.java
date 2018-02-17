@@ -12,7 +12,6 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Component;
 import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.model.RuleSetInfo;
 import pso.decision_engine.model.UnitTest;
 import pso.decision_engine.persistence.RuleSetDao;
 import pso.decision_engine.utils.ComparatorHelper;
@@ -50,10 +50,16 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		"uploadDate TIMESTAMP NOT NULL, "+
 		"PRIMARY KEY (ruleSetId))",
 		
+		"CREATE INDEX IF NOT EXISTS ruleset_restEndPoint "+
+		"on RuleSet (restEndPoint)",
+		
 		"CREATE TABLE IF NOT EXISTS ActiveRuleSet ("+
 		"restEndPoint VARCHAR(50) NOT NULL, "+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
 		"PRIMARY KEY (restEndPoint))",
+		
+		"CREATE UNIQUE INDEX IF NOT EXISTS activeRuleSet_ruleSetId "+
+		"on ActiveRuleSet (ruleSetId)",
 		
 		"CREATE TABLE IF NOT EXISTS RuleSetParameters ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
@@ -245,17 +251,6 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		}
 	}
 	
-	private RowMapper<RuleSet> ruleSetRowMapper=(ResultSet rs, int rowNumber) -> {
-		RuleSet ruleSet=new RuleSet();
-		ruleSet.setId(rs.getString("ruleSetId"));
-		ruleSet.setName(rs.getString("name"));
-		ruleSet.setRestEndPoint(rs.getString("restEndPoint"));
-		ruleSet.setCreatedBy(rs.getString("createdBy"));
-		ruleSet.setRemark(rs.getString("remark"));
-		ruleSet.setUploadDate(rs.getTimestamp("uploadDate").toLocalDateTime());
-		return ruleSet;
-	};
-	
 	@Override
 	public RuleSet getRuleSet(String ruleSetId) {
 		try {
@@ -334,6 +329,16 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	public List<String> getAllEndPoints() {
 		return jdbcTemplate.query("select distinct restEndPoint from RuleSet", new MapSqlParameterSource(), (ResultSet rs, int rowNumber) -> rs.getString(1));
 	}
+	
+	@Override
+	public List<RuleSetInfo> getRuleSetVersionsForEndPoint(String restEndPoint) {
+		return jdbcTemplate.query(
+			"select ruleSetId, restEndPoint, name, createdBy, version, remark, uploadDate, ars.ruleSetId as active from RuleSet as rs "+
+			"left join ActiveRuleSet as ars on ars.ruleSetId=rs.ruleSetId "+
+			"where restEndPoint=:restEndPoint order by ruleSetId desc",
+			new MapSqlParameterSource().addValue("restEndPoint", restEndPoint),
+			ruleSetInfoRowMapper);
+	}
 
 	@Override
 	public boolean isInList(String ruleSetId, String listName, String value) {
@@ -343,5 +348,33 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		.addValue("value", value);
 		return jdbcTemplate.queryForObject("select count(*) from RuleSet where ruleSetId=:ruleSetId and restEndPoint=:restEndPoint", params, Integer.class)>0;
 	}
+	
+	
+	
+	private RowMapper<RuleSet> ruleSetRowMapper=(ResultSet rs, int rowNumber) -> {
+		RuleSet ruleSet=new RuleSet();
+		ruleSet.setId(rs.getString("ruleSetId"));
+		ruleSet.setName(rs.getString("name"));
+		ruleSet.setRestEndPoint(rs.getString("restEndPoint"));
+		ruleSet.setCreatedBy(rs.getString("createdBy"));
+		ruleSet.setVersion(rs.getString("version"));
+		ruleSet.setRemark(rs.getString("remark"));
+		ruleSet.setUploadDate(rs.getTimestamp("uploadDate").toLocalDateTime());
+		return ruleSet;
+	};
+	
+	private RowMapper<RuleSetInfo> ruleSetInfoRowMapper=(ResultSet rs, int rowNumber) -> {
+		RuleSetInfo ruleSet=new RuleSetInfo();
+		ruleSet.setId(rs.getString("ruleSetId"));
+		ruleSet.setName(rs.getString("name"));
+		ruleSet.setRestEndPoint(rs.getString("restEndPoint"));
+		ruleSet.setCreatedBy(rs.getString("createdBy"));
+		ruleSet.setVersion(rs.getString("version"));
+		ruleSet.setRemark(rs.getString("remark"));
+		ruleSet.setUploadDate(rs.getTimestamp("uploadDate").toLocalDateTime());
+		ruleSet.setActive(rs.getString("active")!=null);
+		return ruleSet;
+	};
+
 
 }

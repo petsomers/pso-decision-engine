@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.model.RuleSetInfo;
 
 public interface RuleSetDao {
 
@@ -29,5 +30,7 @@ public interface RuleSetDao {
 	public List<String> getAllEndPoints();
 	
 	public boolean isInList(String ruleSetId, String listName, String value);
+
+	public List<RuleSetInfo> getRuleSetVersionsForEndPoint(String restEndPoint);
 
 }

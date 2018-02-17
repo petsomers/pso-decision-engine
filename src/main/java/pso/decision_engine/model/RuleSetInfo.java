@@ -10,11 +10,12 @@ import pso.decision_engine.utils.JsonSerializerUtils.JsonLocalDateTimeDeSerializ
 import pso.decision_engine.utils.JsonSerializerUtils.JsonLocalDateTimeSerializer;
 
 @Data
-public class RuleSetSearchResultItem {
-	private String ruleSetid;
-	private String name;
+public class RuleSetInfo {
+
 	private String id;
 	private String restEndPoint;
+	private boolean active;
+	private String name;
 	private String createdBy;
 	private String version;
 	private String remark;
@@ -22,6 +23,4 @@ public class RuleSetSearchResultItem {
 	@JsonSerialize(using=JsonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JsonLocalDateTimeDeSerializer.class)
 	private LocalDateTime uploadDate;
-	
-	private boolean activeRuleSet;
 }

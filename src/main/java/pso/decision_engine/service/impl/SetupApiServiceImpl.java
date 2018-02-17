@@ -21,6 +21,7 @@ import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.ExcelParseResult;
 import pso.decision_engine.model.ExcelParserException;
 import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.model.RuleSetInfo;
 import pso.decision_engine.persistence.RuleSetDao;
 import pso.decision_engine.service.ExcelParserService;
 import pso.decision_engine.service.SetupApiService;
@@ -128,6 +129,11 @@ public class SetupApiServiceImpl implements SetupApiService {
 	@Override
 	public List<String> getAllEndPoints() {
 		return ruleSetDao.getAllEndPoints();
+	}
+	
+	@Override
+	public List<RuleSetInfo> getRuleSetVersionsForEndPoint(String restEndPoint) {
+		return ruleSetDao.getRuleSetVersionsForEndPoint(restEndPoint);
 	}
 	
 }

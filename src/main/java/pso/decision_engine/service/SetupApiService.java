@@ -6,6 +6,7 @@ import java.util.List;
 
 import pso.decision_engine.model.ExcelParseResult;
 import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.model.RuleSetInfo;
 
 public interface SetupApiService {
 
@@ -27,5 +28,7 @@ public interface SetupApiService {
 	public RuleSet getActiveRuleSetByEndPoint(String restEndPoint, boolean loadAllLists);
 
 	public RuleSet getRuleSet(String restEndPoint, String ruleSetId, boolean loadAllLists);
+
+	public List<RuleSetInfo> getRuleSetVersionsForEndPoint(String restEndPoint);
 
 }
