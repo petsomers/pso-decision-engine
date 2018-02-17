@@ -31,4 +31,6 @@ public interface SetupApiService {
 
 	public List<RuleSetInfo> getRuleSetVersionsForEndPoint(String restEndPoint);
 
+	public boolean isInList(RuleSet ruleSet, String listName, String value);
+
 }

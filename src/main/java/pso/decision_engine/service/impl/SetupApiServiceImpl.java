@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,6 +135,15 @@ public class SetupApiServiceImpl implements SetupApiService {
 	@Override
 	public List<RuleSetInfo> getRuleSetVersionsForEndPoint(String restEndPoint) {
 		return ruleSetDao.getRuleSetVersionsForEndPoint(restEndPoint);
+	}
+	
+	@Override
+	public boolean isInList(RuleSet ruleSet, String listName, String value) {
+		HashSet<String> memoryList=ruleSet.getLists().get(listName);
+		if (memoryList!=null) {
+			return memoryList.contains(value);
+		}
+		return ruleSetDao.isInList(ruleSet.getId(), listName, value);
 	}
 	
 }

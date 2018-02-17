@@ -2,9 +2,9 @@ package pso.decision_engine.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pso.decision_engine.model.DecisionResult;
@@ -15,11 +15,15 @@ import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.enums.Comparator;
 import pso.decision_engine.model.enums.ParameterType;
 import pso.decision_engine.service.RuleSetProcessorService;
+import pso.decision_engine.service.SetupApiService;
 
 @Service
 public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 
 	//private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.ms");
+	
+	@Autowired
+	private SetupApiService setupApiService;
 	
 	@Override
 	public DecisionResult runRuleSetWithParameters(RuleSet rs, HashMap<String, String> parameters) {
@@ -117,20 +121,41 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 		Object parameterValue=parameters.get(r.getParameterName());
 		boolean evalResult=false;
 		switch(type) {
-			case TEXT: evalResult=compare((String)parameterValue, r.getComparator(), r.getValue1(), r.getValue2());break;
-			case INTEGER: evalResult=compare((Integer)parameterValue, r.getComparator(), r.getValue1(), r.getValue2());break;
-			case DECIMAL: evalResult=compare((Double)parameterValue, r.getComparator(), r.getValue1(), r.getValue2());break;
+			case TEXT: evalResult=compare(rs, (String)parameterValue, r.getComparator(), r.getValue1(), r.getValue2());break;
+			case INTEGER: evalResult=compare(rs, (Integer)parameterValue, r.getComparator(), r.getValue1(), r.getValue2());break;
+			case DECIMAL: evalResult=compare(rs, (Double)parameterValue, r.getComparator(), r.getValue1(), r.getValue2());break;
 		}
 		return evalResult;
 	}
 	
-	private boolean compare(String parameterValue, Comparator comparator, String value1, String value2) {
+	private boolean compare(RuleSet rs, String parameterValue, Comparator comparator, String value1, String value2) {
+		switch (comparator) {
+			case EQUAL_TO: return parameterValue.equals(value1);
+			case CONTAINS: return value1.contains(parameterValue);
+			case ENDS_WITH: return value1.endsWith(parameterValue);
+			case STARTS_WITH: return value1.startsWith(parameterValue);
+			case NOT_EQUAL_TO: return !parameterValue.equals(value1);
+			case IN_LIST: return setupApiService.isInList(rs, value1, parameterValue);
+			case NOT_IN_LIST: return !setupApiService.isInList(rs, value1, parameterValue);
+		case BETWEEN:
+			break;
+		case GREATER_OR_EQUAL_TO:
+			break;
+		case GREATER_THAN:
+			break;
+		case SMALLER_OR_EQUAL_TO:
+			break;
+		case SMALLER_THAN:
+			break;
+		default:
+			break;
+		}
 		return false;
 	}
-	private boolean compare(int parameterValue, Comparator comparator, String value1, String value2) {
+	private boolean compare(RuleSet rs, int parameterValue, Comparator comparator, String value1, String value2) {
 		return false;
 	}
-	private boolean compare(double parameterValue, Comparator comparator, String value1, String value2) {
+	private boolean compare(RuleSet rs, double parameterValue, Comparator comparator, String value1, String value2) {
 		return false;
 	}
 }
