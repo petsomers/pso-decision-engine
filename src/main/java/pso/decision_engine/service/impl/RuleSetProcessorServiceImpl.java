@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,15 +43,22 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			return result;
 		}
 		
+		HashSet<Integer> executedRules=new HashSet<>();
 		Integer ruleNumber=rs.getRowLabels().get("START");
 		if (ruleNumber==null) ruleNumber=0; 
 		final int ruleCount=rs.getRules().size();
 		while (ruleNumber<ruleCount) {
 			Rule r=rs.getRules().get(ruleNumber);
-			Boolean ruleResult=evaluateRule(rs, r, typedParameters);
 			DecisionTraceElement dte=new DecisionTraceElement();
 			trace.getTrace().add(dte);
 			dte.setRule(r);
+			if (executedRules.contains(ruleNumber)) {
+				trace.getMessages().add("ERROR: rule has already been executed.");
+				result.setError(true);
+				return result;
+			}
+			executedRules.add(ruleNumber);
+			Boolean ruleResult=evaluateRule(rs, r, typedParameters);
 			dte.setResult(ruleResult);
 			if (ruleResult==null) {
 				trace.getMessages().add("ERROR: evaluating rule conditions");
@@ -65,7 +73,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			}
 			if (action.startsWith("goto ") && action.length()>5) {
 				String label=action.substring(5);
-				Integer toRuleNumber=rs.getRowLabels().get("START");
+				Integer toRuleNumber=rs.getRowLabels().get(label);
 				if (toRuleNumber==null) {
 					trace.getMessages().add("ERROR: Label not found: "+label);
 					result.setError(true);

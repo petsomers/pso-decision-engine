@@ -112,6 +112,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 		if (rs==null) return null;
 		if (!restEndPoint.equals(rs.getRestEndPoint())) return null;
 		rs.setLists(ruleSetDao.getRuleSetLists(rs.getId(), loadAllLists));
+		rs.setInputParameters(ruleSetDao.getRuleSetInputParameters(rs.getId()));
 		int i=0;
 		for (Rule r:rs.getRules()) {
 			if (r.getLabel()!=null && !r.getLabel().isEmpty()) {

@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.RuleSetInfo;
 import pso.decision_engine.model.UnitTest;
+import pso.decision_engine.model.enums.ParameterType;
 import pso.decision_engine.persistence.RuleSetDao;
 import pso.decision_engine.utils.ComparatorHelper;
 
@@ -78,7 +80,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 				.addValue("parameterName", rule.getParameterName())
 				.addValue("comparator", ComparatorHelper.comparatorToShortString(rule.getComparator()))
 				.addValue("value1", valueToString(rule.getValue1()))
-				.addValue("value2", valueToString(rule.getValue1()))
+				.addValue("value2", valueToString(rule.getValue2()))
 				.addValue("positiveResult", rule.getPositiveResult())
 				.addValue("negativeResult", rule.getNegativeResult())
 				.addValue("remark", rule.getRemark());
@@ -211,6 +213,18 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		} catch (EmptyResultDataAccessException eda) {
 			return null;
 		}
+	}
+	
+	@Override
+	public Hashtable<String, ParameterType> getRuleSetInputParameters(String ruleSetId) {
+		final Hashtable<String, ParameterType> result=new Hashtable<>();
+		jdbcTemplate.query(
+			"select parameterName, parameterType from RuleSetParameters where ruleSetId=:ruleSetId", 
+			new MapSqlParameterSource().addValue("ruleSetId", ruleSetId),
+			(ResultSet rs) -> {
+				result.put(rs.getString(1), ComparatorHelper.stringToParameterType(rs.getString(2)));
+			});
+		return result;
 	}
 	
 	@Override

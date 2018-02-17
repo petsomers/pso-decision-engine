@@ -89,7 +89,7 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 					}
 				} else if ("Parameter Types".equalsIgnoreCase(cv)) {
 					for (c=c+1;c<lastCellNum;c++) {
-						parameterTypes.add(toParameterType(getCellValueNoNull(row.getCell(c))));
+						parameterTypes.add(ComparatorHelper.stringToParameterType(getCellValueNoNull(row.getCell(c))));
 					}
 				}
 			}
@@ -235,12 +235,4 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 		return cv==null?cv="":cv.trim();
 	}
 	
-	private ParameterType toParameterType(String s) {
-		switch (s.toUpperCase()) {
-			case "TEXT": return ParameterType.TEXT;
-			case "DECIMAL": return ParameterType.DECIMAL;
-			case "INTEGER": return ParameterType.INTEGER;
-			default: return null;
-		}
-	}
 }

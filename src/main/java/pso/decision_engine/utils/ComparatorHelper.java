@@ -1,6 +1,7 @@
 package pso.decision_engine.utils;
 
 import pso.decision_engine.model.enums.Comparator;
+import pso.decision_engine.model.enums.ParameterType;
 
 public class ComparatorHelper {
 	
@@ -39,6 +40,15 @@ public class ComparatorHelper {
 			case STARTS_WITH: return "START WITH";
 			case CONTAINS: return "CONTAINS";
 			case ENDS_WITH: return "ENDS WITH";
+			default: return null;
+		}
+	}
+	
+	static public ParameterType stringToParameterType(String s) {
+		switch (s.toUpperCase()) {
+			case "TEXT": return ParameterType.TEXT;
+			case "DECIMAL": return ParameterType.DECIMAL;
+			case "INTEGER": return ParameterType.INTEGER;
 			default: return null;
 		}
 	}
