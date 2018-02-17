@@ -46,11 +46,17 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 		final int ruleCount=rs.getRules().size();
 		while (ruleNumber<ruleCount) {
 			Rule r=rs.getRules().get(ruleNumber);
-			boolean ruleResult=evaluateRule(rs, r, typedParameters);
+			Boolean ruleResult=evaluateRule(rs, r, typedParameters);
 			DecisionTraceElement dte=new DecisionTraceElement();
 			trace.getTrace().add(dte);
 			dte.setRule(r);
 			dte.setResult(ruleResult);
+			if (ruleResult==null) {
+				trace.getMessages().add("ERROR: evaluating rule conditions");
+				result.setError(true);
+				return result;
+			}
+			
 			String action=ruleResult?r.getPositiveResult():r.getNegativeResult();
 			if (action==null || action.isEmpty()) {
 				ruleNumber++;
@@ -116,46 +122,93 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 		return typedParameters;
 	}
 	
-	private boolean evaluateRule(RuleSet rs, Rule r, HashMap<String, Object> parameters) {
+	private Boolean evaluateRule(RuleSet rs, Rule r, HashMap<String, Object> parameters) {
 		ParameterType type=rs.getInputParameters().get(r.getParameterName());
 		Object parameterValue=parameters.get(r.getParameterName());
-		boolean evalResult=false;
+		Boolean evalResult=null;
+		if (r.getComparator()==Comparator.IN_LIST) {
+			return setupApiService.isInList(rs, String.valueOf(r.getValue1()), String.valueOf(parameterValue));
+		}
+		if (r.getComparator()==Comparator.NOT_IN_LIST) {
+			return !setupApiService.isInList(rs, String.valueOf(r.getValue1()), String.valueOf(parameterValue));
+		}
 		switch(type) {
 			case TEXT: evalResult=compare(rs, (String)parameterValue, r.getComparator(), r.getValue1(), r.getValue2());break;
-			case INTEGER: evalResult=compare(rs, (Integer)parameterValue, r.getComparator(), r.getValue1(), r.getValue2());break;
-			case DECIMAL: evalResult=compare(rs, (Double)parameterValue, r.getComparator(), r.getValue1(), r.getValue2());break;
+			case INTEGER: 
+				Integer ivalue1=null;
+				Integer ivalue2=null;
+				try {
+					ivalue1=Integer.parseInt(r.getValue1());
+					ivalue2=Integer.parseInt(r.getValue2());
+				} catch (NumberFormatException nfe) {};
+				evalResult=compare(rs, (Integer)parameterValue, r.getComparator(), ivalue1, ivalue2);break;
+			case DECIMAL: 
+				Double dvalue1=null;
+				Double dvalue2=null;
+				try {
+					dvalue1=Double.parseDouble(r.getValue1());
+					dvalue2=Double.parseDouble(r.getValue2());
+				} catch (NumberFormatException nfe) {};
+				evalResult=compare(rs, (Double)parameterValue, r.getComparator(), dvalue1, dvalue2);break;
 		}
 		return evalResult;
 	}
 	
-	private boolean compare(RuleSet rs, String parameterValue, Comparator comparator, String value1, String value2) {
+	private Boolean compare(RuleSet rs, String parameterValue, Comparator comparator, String value1, String value2) {
 		switch (comparator) {
-			case EQUAL_TO: return parameterValue.equals(value1);
-			case CONTAINS: return value1.contains(parameterValue);
-			case ENDS_WITH: return value1.endsWith(parameterValue);
-			case STARTS_WITH: return value1.startsWith(parameterValue);
-			case NOT_EQUAL_TO: return !parameterValue.equals(value1);
-			case IN_LIST: return setupApiService.isInList(rs, value1, parameterValue);
-			case NOT_IN_LIST: return !setupApiService.isInList(rs, value1, parameterValue);
-		case BETWEEN:
-			break;
-		case GREATER_OR_EQUAL_TO:
-			break;
-		case GREATER_THAN:
-			break;
-		case SMALLER_OR_EQUAL_TO:
-			break;
-		case SMALLER_THAN:
-			break;
-		default:
-			break;
+		case EQUAL_TO: return parameterValue.equals(value1);
+		case CONTAINS: return value1.contains(parameterValue);
+		case ENDS_WITH: return value1.endsWith(parameterValue);
+		case STARTS_WITH: return value1.startsWith(parameterValue);
+		case NOT_EQUAL_TO: return !parameterValue.equals(value1);
+		case BETWEEN: return parameterValue.compareToIgnoreCase(value1)>=0 && parameterValue.compareToIgnoreCase(value2)<=0; 
+		case GREATER_OR_EQUAL_TO: return parameterValue.compareToIgnoreCase(value1)>=0;
+		case GREATER_THAN: return parameterValue.compareToIgnoreCase(value1)>0;
+		case SMALLER_OR_EQUAL_TO: return parameterValue.compareToIgnoreCase(value1)<=0;
+		case SMALLER_THAN: return parameterValue.compareToIgnoreCase(value1)<0;
 		}
-		return false;
+		return null;
 	}
-	private boolean compare(RuleSet rs, int parameterValue, Comparator comparator, String value1, String value2) {
-		return false;
+	
+	private Boolean compare(RuleSet rs, int parameterValue, Comparator comparator, Integer value1, Integer value2) {
+		if (value1==null) return null;
+		switch (comparator) {
+		case EQUAL_TO: return parameterValue==value1;
+		case NOT_EQUAL_TO: return parameterValue!=value1;
+		case GREATER_OR_EQUAL_TO: return parameterValue>=value1;
+		case GREATER_THAN: return parameterValue>value1;
+		case SMALLER_OR_EQUAL_TO: return parameterValue<=value1;
+		case SMALLER_THAN: return parameterValue<value1;
+		
+		case BETWEEN: 
+			if (value2==null) return null;
+			return parameterValue>=value1 && parameterValue<=value2;
+			
+		case CONTAINS:
+		case ENDS_WITH:
+		case STARTS_WITH:
+		default: return null;
+		}
 	}
-	private boolean compare(RuleSet rs, double parameterValue, Comparator comparator, String value1, String value2) {
-		return false;
+	
+	private Boolean compare(RuleSet rs, double parameterValue, Comparator comparator, Double value1, Double value2) {
+		if (value1==null) return null;
+		switch (comparator) {
+		case EQUAL_TO: return parameterValue==value1;
+		case NOT_EQUAL_TO: return parameterValue!=value1;
+		case GREATER_OR_EQUAL_TO: return parameterValue>=value1;
+		case GREATER_THAN: return parameterValue>value1;
+		case SMALLER_OR_EQUAL_TO: return parameterValue<=value1;
+		case SMALLER_THAN: return parameterValue<value1;
+		
+		case BETWEEN: 
+			if (value2==null) return null;
+			return parameterValue>=value1 && parameterValue<=value2;
+			
+		case CONTAINS:
+		case ENDS_WITH:
+		case STARTS_WITH:
+		default: return null;
+		}
 	}
 }
