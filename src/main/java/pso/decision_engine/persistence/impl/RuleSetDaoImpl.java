@@ -298,8 +298,8 @@ public class RuleSetDaoImpl implements RuleSetDao {
 			"where rsl.ruleSetId=:ruleSetId "+
 			"and ("+
 			  "select count(*) from RuleSetListValues as rslv2 "+
-			  "where rslv2.ruleSetId=rsl.ruleSetId and rslv2.ruleSetId=rsl.ruleSetId "+
-			") > :maxInMemoryListSize "+
+			  "where rslv2.ruleSetId=rsl.ruleSetId and rslv2.listId=rsl.listId "+
+			") < :maxInMemoryListSize "+
 			"order by listName, listValue",
 			new MapSqlParameterSource().addValue("ruleSetId", ruleSetId).addValue("maxInMemoryListSize", appConfig.getMaxInMemoryListSize()), 
 			(ResultSet rs) -> {
