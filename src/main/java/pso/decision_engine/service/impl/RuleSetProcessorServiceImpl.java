@@ -1,5 +1,6 @@
 package pso.decision_engine.service.impl;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -116,21 +117,31 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 						break;
 					}
 				}
-				
 			}
 		}
 		return typedParameters;
 	}
 	
+	private DecimalFormat df=new DecimalFormat("#.###");
 	private Boolean evaluateRule(RuleSet rs, Rule r, HashMap<String, Object> parameters) {
 		ParameterType type=rs.getInputParameters().get(r.getParameterName());
 		Object parameterValue=parameters.get(r.getParameterName());
 		Boolean evalResult=null;
 		if (r.getComparator()==Comparator.IN_LIST) {
-			return setupApiService.isInList(rs, String.valueOf(r.getValue1()), String.valueOf(parameterValue));
+			String strparameterValue=
+				type==ParameterType.TEXT?(String)parameterValue:
+					type==ParameterType.INTEGER?
+						String.valueOf(parameterValue):
+							df.format((Double)parameterValue);
+			return setupApiService.isInList(rs, r.getValue1(), strparameterValue);
 		}
 		if (r.getComparator()==Comparator.NOT_IN_LIST) {
-			return !setupApiService.isInList(rs, String.valueOf(r.getValue1()), String.valueOf(parameterValue));
+			String strparameterValue=
+					type==ParameterType.TEXT?(String)parameterValue:
+						type==ParameterType.INTEGER?
+							String.valueOf(parameterValue):
+								df.format((Double)parameterValue);
+			return !setupApiService.isInList(rs, r.getValue1(), strparameterValue);
 		}
 		switch(type) {
 			case TEXT: evalResult=compare(rs, (String)parameterValue, r.getComparator(), r.getValue1(), r.getValue2());break;
@@ -166,8 +177,8 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 		case GREATER_THAN: return parameterValue.compareToIgnoreCase(value1)>0;
 		case SMALLER_OR_EQUAL_TO: return parameterValue.compareToIgnoreCase(value1)<=0;
 		case SMALLER_THAN: return parameterValue.compareToIgnoreCase(value1)<0;
+		default: return null;
 		}
-		return null;
 	}
 	
 	private Boolean compare(RuleSet rs, int parameterValue, Comparator comparator, Integer value1, Integer value2) {
