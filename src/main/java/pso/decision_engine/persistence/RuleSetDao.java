@@ -16,12 +16,18 @@ public interface RuleSetDao {
 
 	public RuleSet getRuleSet(String ruleSetId);
 
-	public RuleSet getActiveRuleSet(String restEndPoint);
-
 	public String getActiveRuleSetId(String restEndPoint);
 
-	public HashMap<String, HashSet<String>> getRuleSetLists(String ruleSetId);
+	/**
+	 * 
+	 * @param ruleSetId
+	 * @param loadAll: don't use the maxInMemoryListSize into account
+	 * @return
+	 */
+	public HashMap<String, HashSet<String>> getRuleSetLists(String ruleSetId, boolean loadAll);
 
 	public List<String> getAllEndPoints();
+	
+	public boolean isInList(String ruleSetId, String listName, String value);
 
 }

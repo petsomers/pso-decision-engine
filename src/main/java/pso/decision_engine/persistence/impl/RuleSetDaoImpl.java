@@ -12,11 +12,13 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.UnitTest;
@@ -27,6 +29,9 @@ import pso.decision_engine.utils.ComparatorHelper;
 public class RuleSetDaoImpl implements RuleSetDao {
 	
 	private NamedParameterJdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	private AppConfig appConfig;
 
     @Autowired
     public void setJdbcTemplate (NamedParameterJdbcTemplate jdbcTemplate) {
@@ -71,11 +76,14 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		"remark VARCHAR(500), "+
 		"PRIMARY KEY (ruleSetId, ruleNumber))",
 		
-		"CREATE TABLE IF NOT EXISTS RuleSetList ("+
+		"CREATE TABLE IF NOT EXISTS RuleSetLists ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
 		"listId INTEGER NOT NULL, "+
 		"listName VARCHAR(100), "+
 		"PRIMARY KEY (ruleSetId, listId))",
+		
+		"CREATE UNIQUE INDEX IF NOT EXISTS list_name "+
+		"on RuleSetLists (ruleSetId, listName)",
 		
 		"CREATE TABLE IF NOT EXISTS RuleSetListValues ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
@@ -170,7 +178,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 					.addValue("listId", i)
 					.addValue("listName", listName);
 			jdbcTemplate.update(
-				"INSERT INTO RuleSetList (ruleSetId, listId, listName) "+
+				"INSERT INTO RuleSetLists (ruleSetId, listId, listName) "+
 				"values (:ruleSetId, :listId, :listName)", parameters);
 			HashSet<String> values=ruleSet.getLists().get(listName);
 			saveList(ruleSet.getId(), i, values);
@@ -261,27 +269,49 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	}
 	
 	@Override
-	public RuleSet getActiveRuleSet(String restEndPoint) {
+	public String getActiveRuleSetId(String restEndPoint) {
 		try {
 			return jdbcTemplate.queryForObject(
-				"select ruleSetId, restEndPoint, name, createdBy, version, remark, uploadDate from ActiveRuleSet as ars "+
-				"left join RuleSet as rs on rs.ruleSetId=ars.ruleSetId "+
-				"where ars.restEndPoint=:restEndPoint",
-				new MapSqlParameterSource().addValue("restEndPoint", restEndPoint), 
-				ruleSetRowMapper);
+				"select ruleSetId from ActiveRuleSet where restEndPoint=:restEndPoint", 
+				new MapSqlParameterSource().addValue("restEndPoint", restEndPoint), String.class);
 		} catch (EmptyResultDataAccessException eda) {
 			return null;
 		}
 	}
 	
 	@Override
-	public String getActiveRuleSetId(String restEndPoint) {
-		return null;
-	}
-	
-	@Override
-	public HashMap<String, HashSet<String>> getRuleSetLists(String ruleSetId) {
-		return null;
+	public HashMap<String, HashSet<String>> getRuleSetLists(String ruleSetId, boolean loadAll) {
+		final HashMap<String, HashSet<String>> result=new HashMap<>();
+		jdbcTemplate.query(
+			loadAll?
+			"select listName, listValue RuleSetLists as rsl "+
+			"left join RuleSetListValues as rslv "+
+			"on rslv.ruleSetId=rsl.ruleSetId "+
+			"and rslv.listId=rsl.listId "+
+			"where rsl.ruleSetId=:ruleSetId "+
+			"order by listName, listValue"
+			:
+			"select listName, listValue RuleSetLists as rsl "+
+			"left join RuleSetListValues as rslv "+
+			"on rslv.ruleSetId=rsl.ruleSetId "+
+			"and rslv.listId=rsl.listId "+
+			"and ("+
+			  "select count(*) from RuleSetListValues as rslv2 "+
+			  "where rslv2.ruleSetId=rsl.ruleSetId and rslv2.ruleSetId=rsl.ruleSetId "+
+			") < :maxInMemoryListSize "+
+			"where rsl.ruleSetId=:ruleSetId "+
+			"order by listName, listValue",
+			new MapSqlParameterSource().addValue("ruleSetId", ruleSetId).addValue("maxInMemoryListSize", appConfig.getMaxInMemoryListSize()), 
+			(ResultSet rs) -> {
+				String listName=rs.getString("listName");
+				HashSet<String> values=result.get(listName);
+				if (values==null) {
+					values=new HashSet<>();
+					result.put(listName, values);
+				}
+				values.add(rs.getString("listValue"));
+			});
+		return result;
 	}
 	
 	private DecimalFormat df=new DecimalFormat("#.###");
@@ -303,6 +333,15 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	@Override
 	public List<String> getAllEndPoints() {
 		return jdbcTemplate.query("select distinct restEndPoint from RuleSet", new MapSqlParameterSource(), (ResultSet rs, int rowNumber) -> rs.getString(1));
+	}
+
+	@Override
+	public boolean isInList(String ruleSetId, String listName, String value) {
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("ruleSetId", ruleSetId)
+		.addValue("listName", listName)
+		.addValue("value", value);
+		return jdbcTemplate.queryForObject("select count(*) from RuleSet where ruleSetId=:ruleSetId and restEndPoint=:restEndPoint", params, Integer.class)>0;
 	}
 
 }

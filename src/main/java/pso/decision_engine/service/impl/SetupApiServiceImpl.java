@@ -96,20 +96,11 @@ public class SetupApiServiceImpl implements SetupApiService {
 	}
 	@Override
 	public RuleSet getActiveRuleSet(String restEndPoint) {
-		return ruleSetDao.getActiveRuleSet(restEndPoint);
+		String ruleSetId=ruleSetDao.getActiveRuleSetId(restEndPoint);
+		if (ruleSetId==null) return null;
+		return ruleSetDao.getRuleSet(ruleSetId);
 	}
-	@Override
-	public void switchActiveRuleSet(String ruleSetId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public RuleSet loadRuleSet(String ruleSetId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public void setActiveRuleSet(String restEndPoint, String ruleSetId) {
 		ruleSetDao.setActiveRuleSet(restEndPoint, ruleSetId);
