@@ -16,7 +16,7 @@ public class DecisionTrace {
 	@JsonSerialize(using=JsonLocalDateTimeSerializer.class)
 	private LocalDateTime responseTimestamp;
 	
-	private long durationInMilliSeconds;
+	private double durationInMilliSeconds;
 	private HashMap<String, String> inputParameters;
 	private String restEndPoint;
 	private String ruleSetId;

@@ -2,7 +2,6 @@ package pso.decision_engine.service.impl;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -29,6 +28,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 	
 	@Override
 	public DecisionResult runRuleSetWithParameters(RuleSet rs, HashMap<String, String> parameters) {
+		long startnano=System.nanoTime();
 		DecisionResult result=new DecisionResult();
 		DecisionTrace trace=new DecisionTrace();
 		result.setTrace(trace);
@@ -92,8 +92,8 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			break;
 		}
 		trace.setResponseTimestamp(LocalDateTime.now());
-		trace.setDurationInMilliSeconds(trace.getResponseTimestamp().toEpochSecond(ZoneOffset.UTC) 
-				- trace.getRequestTimestamp().toEpochSecond(ZoneOffset.UTC));
+		long stopnano=System.nanoTime();
+		trace.setDurationInMilliSeconds((stopnano - startnano)/1000000d);
 		return result;
 	}
 	
