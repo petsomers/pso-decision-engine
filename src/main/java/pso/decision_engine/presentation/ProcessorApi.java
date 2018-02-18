@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pso.decision_engine.model.DecisionResult;
 import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.model.UnitTestRunnerResult;
 import pso.decision_engine.service.RuleSetProcessorService;
 import pso.decision_engine.service.SetupApiService;
 
@@ -57,4 +58,19 @@ public class ProcessorApi {
 		}
 		return ruleSetProcessorService.runRuleSetWithParameters(ruleSet, parameters);
     }
+	
+	@RequestMapping(value = "/run_unittests/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public UnitTestRunnerResult runUnitTests(
+    		HttpServletRequest request, 
+    		@PathVariable String restEndPoint,
+    		@PathVariable String ruleSetId) throws Exception {
+		RuleSet ruleSet=setupService.getRuleSet(restEndPoint, ruleSetId, false, true);
+		if (ruleSet==null) {
+			UnitTestRunnerResult result=new UnitTestRunnerResult();
+			result.setErrorMessage("RuleSet not found.");
+		}
+		return ruleSetProcessorService.runUnitTests(ruleSet);
+    }
+	
+	
 }

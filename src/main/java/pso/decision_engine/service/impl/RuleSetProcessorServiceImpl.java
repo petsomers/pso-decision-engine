@@ -2,6 +2,7 @@ package pso.decision_engine.service.impl;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -13,6 +14,8 @@ import pso.decision_engine.model.DecisionTrace;
 import pso.decision_engine.model.DecisionTraceElement;
 import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.model.UnitTestResult;
+import pso.decision_engine.model.UnitTestRunnerResult;
 import pso.decision_engine.model.enums.Comparator;
 import pso.decision_engine.model.enums.ParameterType;
 import pso.decision_engine.service.RuleSetProcessorService;
@@ -240,5 +243,31 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 		case STARTS_WITH:
 		default: return null;
 		}
+	}
+
+	@Override
+	public UnitTestRunnerResult runUnitTests(RuleSet rs) {
+		final UnitTestRunnerResult result=new UnitTestRunnerResult();
+		result.setAllTestsPassed(true);
+		result.setUnitTestResults(new ArrayList<>());
+		rs.getUnitTests().forEach(unitTest -> {
+			DecisionResult dr=runRuleSetWithParameters(rs, unitTest.getParameters());
+			UnitTestResult utr=new UnitTestResult();
+			utr.setName(unitTest.getName());
+			utr.setExpectedResult(unitTest.getExpectedResult());
+			utr.setRun(dr.getTrace());
+			if (dr.isError()) {
+				result.setAllTestsPassed(false);
+				utr.setPassed(false);
+				result.setErrorMessage("Error(s) occurred.");
+			} else if (!unitTest.getExpectedResult().equals(dr.getDecision())) {
+				result.setAllTestsPassed(false);
+				utr.setPassed(false);
+			} else {
+				utr.setPassed(true);
+			}
+			result.getUnitTestResults().add(utr);
+		});
+		return result;
 	}
 }

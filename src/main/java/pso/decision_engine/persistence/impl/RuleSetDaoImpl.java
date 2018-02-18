@@ -323,8 +323,12 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		MapSqlParameterSource params=new MapSqlParameterSource()
 		.addValue("ruleSetId", ruleSetId)
 		.addValue("listName", listName)
-		.addValue("value", value);
-		return jdbcTemplate.queryForObject("select count(*) from RuleSet where ruleSetId=:ruleSetId and restEndPoint=:restEndPoint", params, Integer.class)>0;
+		.addValue("listValue", value);
+		return jdbcTemplate.queryForObject(
+			"select count(*) from RuleSetLists as rsl "+
+			"left join RuleSetListValues as rslv on rsl.ruleSetId=rslv.ruleSetId and rsl.listId=rslv.listId "+
+			"where rsl.ruleSetId=:ruleSetId and rsl.listName=:listName and rslv.listValue=:listValue", 
+			params, Integer.class)>0;
 	}
 	
 	
