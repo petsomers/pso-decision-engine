@@ -99,14 +99,14 @@ public class SetupApiServiceImpl implements SetupApiService {
 	}
 	
 	@Override
-	public RuleSet getActiveRuleSetByEndPoint(String restEndPoint, boolean loadAllLists) {
+	public RuleSet getActiveRuleSetByEndPoint(String restEndPoint, boolean loadAllLists, boolean loadUnitTests) {
 		String ruleSetId=ruleSetDao.getActiveRuleSetId(restEndPoint);
 		if (ruleSetId==null) return null;
-		return getRuleSet(restEndPoint, ruleSetId, loadAllLists);
+		return getRuleSet(restEndPoint, ruleSetId, loadAllLists, loadUnitTests);
 	}
 	
 	@Override
-	public RuleSet getRuleSet(String restEndPoint, String ruleSetId, boolean loadAllLists) {
+	public RuleSet getRuleSet(String restEndPoint, String ruleSetId, boolean loadAllLists, boolean loadUnitTests) {
 		if (ruleSetId==null || ruleSetId.isEmpty()) return null;
 		RuleSet rs=ruleSetDao.getRuleSet(ruleSetId);
 		if (rs==null) return null;
@@ -120,11 +120,15 @@ public class SetupApiServiceImpl implements SetupApiService {
 			}
 			i++;
 		}
+		if (loadUnitTests) {
+			rs.setUnitTests(ruleSetDao.getRuleSetUnitTests(rs.getId()));
+		}
 		return rs;
 	}
 	
 	@Override
 	public void setActiveRuleSet(String restEndPoint, String ruleSetId) {
+		// TODO: first run UNIT TEST!!!
 		ruleSetDao.setActiveRuleSet(restEndPoint, ruleSetId);
 	}
 

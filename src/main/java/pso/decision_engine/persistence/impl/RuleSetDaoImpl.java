@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.hsqldb.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -130,11 +131,11 @@ public class RuleSetDaoImpl implements RuleSetDao {
 			i++;
 		}
 		jdbcTemplate.batchUpdate(
-			"INSERT INTO RuleSetUnitTest (ruleSetId, unitTestId, unitTestName, expectedResult) "+
+			"INSERT INTO RuleSetUnitTests (ruleSetId, unitTestId, unitTestName, expectedResult) "+
 			"values (:ruleSetId, :unitTestId, :unitTestName, :expectedResult)", unitTests);
 		unitTests=null;
 		jdbcTemplate.batchUpdate(
-			"INSERT INTO RuleSetUnitTestParameter (ruleSetId, unitTestId, parameterName, parameterValue) "+
+			"INSERT INTO RuleSetUnitTestParameters (ruleSetId, unitTestId, parameterName, parameterValue) "+
 			"values (:ruleSetId, :unitTestId, :parameterName, :parameterValue)", unitTestParameters.toArray(new MapSqlParameterSource[0]));
 		
 		unitTests=null;
@@ -262,6 +263,30 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		return result;
 	}
 	
+	@Override
+	public List<UnitTest> getRuleSetUnitTests(String ruleSetId) {
+		final int[] currentUnitTestId=new int[] {-1};
+		final ArrayList<UnitTest> result=new ArrayList<>();
+		jdbcTemplate.query(
+			"select unitTestId, unitTestName, expectedResult, parameterName, parameterValue from RuleSetUnitTests as ut "+
+			"left join RuleSetUnitTestParameters as utp on ut.ruleSetId=utp.ruleSetId "+
+			"where ruleSetId=:ruleSetId order by unitTestId",
+			new MapSqlParameterSource().addValue("ruleSetId", ruleSetId),
+			(ResultSet rs) -> {
+				int unitTestId=rs.getInt("unitTestId");
+				if (currentUnitTestId[0]!=unitTestId) {
+					currentUnitTestId[0]=unitTestId;
+					UnitTest unitTest=new UnitTest();
+					unitTest.setName(rs.getString("unitTestName"));
+					unitTest.setExpectedResult(rs.getString("expectedResult"));
+					unitTest.setParameters(new HashMap<>());
+					result.add(unitTest);
+				}
+				result.get(result.size()-1).getParameters().put(rs.getString("parameterName"), rs.getString("parameterValue"));
+			});
+		return result;
+	}
+	
 	private DecimalFormat df=new DecimalFormat("#.###");
 	private String valueToString(Object o) {
 		if (o==null) return null;
@@ -327,6 +352,5 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		ruleSet.setActive(rs.getString("active")!=null);
 		return ruleSet;
 	};
-
 
 }

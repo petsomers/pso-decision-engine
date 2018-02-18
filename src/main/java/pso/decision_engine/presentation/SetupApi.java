@@ -41,6 +41,7 @@ public class SetupApi {
 		if (!setupService.doesRuleSetExist(restEndPoint, ruleSetId)) {
 			return "RULESET NOT FOUND";
 		} else {
+			// todo: first run all unit tests before making a ruleset active
 			setupService.setActiveRuleSet(restEndPoint, ruleSetId);
 			return "OK";
 		}
@@ -53,12 +54,12 @@ public class SetupApi {
 	
 	@RequestMapping(value = "/source/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	public RuleSet getActiveRuleSet(@PathVariable String restEndPoint) {
-		return setupService.getActiveRuleSetByEndPoint(restEndPoint, true);
+		return setupService.getActiveRuleSetByEndPoint(restEndPoint, true, true);
 	}
 	
 	@RequestMapping(value = "/source/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	public RuleSet getRuleSet(@PathVariable String restEndPoint, @PathVariable String ruleSetId) {
-		return setupService.getRuleSet(restEndPoint, ruleSetId, true);
+		return setupService.getRuleSet(restEndPoint, ruleSetId, true, true);
 	}
 
 	@RequestMapping(value = "/versions/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")

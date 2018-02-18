@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -16,6 +17,7 @@ import pso.decision_engine.utils.JsonSerializerUtils.JsonLocalDateTimeDeSerializ
 import pso.decision_engine.utils.JsonSerializerUtils.JsonLocalDateTimeSerializer;
 
 @Data
+@JsonIgnoreProperties(value = { "rowLabels" })
 public class RuleSet {
 
 	private String name;
@@ -30,6 +32,7 @@ public class RuleSet {
 	private LocalDateTime uploadDate;
 	private Hashtable<String, ParameterType> inputParameters=new Hashtable<>();
 	private List<Rule> rules=new ArrayList<>();
+	
 	private Hashtable<String, Integer> rowLabels=new Hashtable<>();
 	
 	// List are always strings. (also for INTEGER values)

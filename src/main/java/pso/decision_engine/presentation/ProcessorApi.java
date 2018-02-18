@@ -27,9 +27,29 @@ public class ProcessorApi {
 	
 	@RequestMapping(value = "/run/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public DecisionResult run(HttpServletRequest request, @PathVariable String restEndPoint) throws Exception {
-		RuleSet ruleSet=setupService.getActiveRuleSetByEndPoint(restEndPoint, false);
+		RuleSet ruleSet=setupService.getActiveRuleSetByEndPoint(restEndPoint, false, false);
 		if (ruleSet==null) {
-			
+			DecisionResult result=new DecisionResult();
+			result.setError(true);
+			result.setErrorMessage("RuleSet not found.");
+		}
+		final HashMap<String, String> parameters=new HashMap<>();
+		for (String parameter: Collections.list(request.getParameterNames())) {
+			parameters.put(parameter, request.getParameter(parameter).trim());
+		}
+		return ruleSetProcessorService.runRuleSetWithParameters(ruleSet, parameters);
+    }
+	
+	@RequestMapping(value = "/run/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public DecisionResult run(
+    		HttpServletRequest request, 
+    		@PathVariable String restEndPoint,
+    		@PathVariable String ruleSetId) throws Exception {
+		RuleSet ruleSet=setupService.getRuleSet(restEndPoint, ruleSetId, false, false);
+		if (ruleSet==null) {
+			DecisionResult result=new DecisionResult();
+			result.setError(true);
+			result.setErrorMessage("RuleSet not found.");
 		}
 		final HashMap<String, String> parameters=new HashMap<>();
 		for (String parameter: Collections.list(request.getParameterNames())) {

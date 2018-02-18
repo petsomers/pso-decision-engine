@@ -7,15 +7,10 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import pso.decision_engine.model.AppConfig;
-
 @Component
 public class CreateTables {
 
 	private NamedParameterJdbcTemplate jdbcTemplate;
-	
-	@Autowired
-	private AppConfig appConfig;
 
     @Autowired
     public void setJdbcTemplate (NamedParameterJdbcTemplate jdbcTemplate) {
@@ -81,14 +76,14 @@ public class CreateTables {
 		"listValue VARCHAR(100) NOT NULL, "+
 		"PRIMARY KEY (ruleSetId, listId, listValue))",
 		
-		"CREATE TABLE IF NOT EXISTS RuleSetUnitTest ("+
+		"CREATE TABLE IF NOT EXISTS RuleSetUnitTests ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
 		"unitTestId INTEGER NOT NULL, "+
 		"unitTestName VARCHAR(100) NOT NULL, "+
 		"expectedResult  VARCHAR(200) NOT NULL, "+
 		"PRIMARY KEY (ruleSetId, unitTestId))",
 		
-		"CREATE TABLE IF NOT EXISTS RuleSetUnitTestParameter ("+
+		"CREATE TABLE IF NOT EXISTS RuleSetUnitTestParameters ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
 		"unitTestId INTEGER NOT NULL, "+
 		"parameterName VARCHAR(40) NOT NULL, "+
