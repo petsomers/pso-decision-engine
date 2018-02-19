@@ -93,6 +93,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			result.setDecision(action);
 			break;
 		}
+		trace.setResult(result.getDecision());
 		trace.setResponseTimestamp(LocalDateTime.now());
 		long stopnano=System.nanoTime();
 		trace.setDurationInMilliSeconds((stopnano - startnano)/1000000d);

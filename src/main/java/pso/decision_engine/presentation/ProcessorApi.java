@@ -19,6 +19,7 @@ import pso.decision_engine.model.DecisionTraceElement;
 import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.UnitTestRunnerResult;
+import pso.decision_engine.presentation.utils.JsonToTextOutput;
 import pso.decision_engine.service.RuleSetProcessorService;
 import pso.decision_engine.service.SetupApiService;
 import pso.decision_engine.utils.ComparatorHelper;
@@ -58,8 +59,6 @@ public class ProcessorApi {
     }
 	
 	
-	static private DateTimeFormatter dateTimeFormatter=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-	
 	@RequestMapping(value = "/run/{restEndPoint}",method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
     public void runPlainText(HttpServletRequest request, PrintWriter pw, @PathVariable String restEndPoint) throws Exception {
 		DecisionResult r=runJson(request, restEndPoint);
@@ -71,46 +70,8 @@ public class ProcessorApi {
 		}
 		if (trace) {
 			pw.println();pw.println();
-			pw.println("Trace:");
-			DecisionTrace t=r.getTrace();
-			if (t==null) {
-				pw.println("No trace information available.");
-				return;
-			}
-			pw.println("Rest Endpoint: "+t.getRestEndPoint());
-			pw.println("Ruleset Id: "+t.getRuleSetId());
-			pw.println("Input Paramteters: "+t.getInputParameters());
-			pw.println("Request Timestamp: "+dateTimeFormatter.format(t.getRequestTimestamp()));
-			pw.println("Duration in ms: "+t.getDurationInMilliSeconds());
-			pw.println();
-			pw.println("Rules:");
-			for (DecisionTraceElement te:t.getTrace()) {
-				pw.println();
-				Rule rule=te.getRule();
-				pw.print("Sheet "+rule.getSheetName()+", row: "+rule.getRowNumber());
-				if (rule.getLabel()!=null && !rule.getLabel().isEmpty()) {
-					pw.println(", label: "+rule.getLabel());
-				} else {
-					pw.println();
-				}
-				if (rule.getRemark()!=null && !rule.getRemark().isEmpty()) {
-					pw.println("Remark: "+rule.getRemark());
-				}
-				pw.print("Condition: "+rule.getParameterName()+" ("+t.getInputParameters().get(rule.getParameterName()) +") "+ComparatorHelper.comparatorToShortString(rule.getComparator())+" "+rule.getValue1());
-				if (rule.getValue2()!=null && !rule.getValue2().isEmpty()) {
-					pw.println(";"+rule.getValue2());	
-				} else {
-					pw.println();
-				} 
-				pw.println("Positive Result: "+rule.getPositiveResult());
-				pw.println("Negative Result: "+rule.getNegativeResult());
-				pw.println("Result: "+te.getResult());
-			}
-			
-			
-			
+			JsonToTextOutput.renderDecisionResult(pw, r);
 		}
-		
 	}
 	
 	@RequestMapping(value = "/run_unittests/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
