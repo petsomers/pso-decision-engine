@@ -82,6 +82,8 @@ public class ProcessorApi {
 			pw.println("Input Paramteters: "+t.getInputParameters());
 			pw.println("Request Timestamp: "+dateTimeFormatter.format(t.getRequestTimestamp()));
 			pw.println("Duration in ms: "+t.getDurationInMilliSeconds());
+			pw.println();
+			pw.println("Rules:");
 			for (DecisionTraceElement te:t.getTrace()) {
 				pw.println();
 				Rule rule=te.getRule();
