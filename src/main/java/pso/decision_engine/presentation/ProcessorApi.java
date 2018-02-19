@@ -1,7 +1,6 @@
 package pso.decision_engine.presentation;
 
 import java.io.PrintWriter;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -14,15 +13,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import pso.decision_engine.model.DecisionResult;
-import pso.decision_engine.model.DecisionTrace;
-import pso.decision_engine.model.DecisionTraceElement;
-import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.UnitTestRunnerResult;
 import pso.decision_engine.presentation.utils.JsonToTextOutput;
 import pso.decision_engine.service.RuleSetProcessorService;
 import pso.decision_engine.service.SetupApiService;
-import pso.decision_engine.utils.ComparatorHelper;
 
 @RestController
 public class ProcessorApi {
@@ -49,6 +44,7 @@ public class ProcessorApi {
 			DecisionResult result=new DecisionResult();
 			result.setError(true);
 			result.setErrorMessage("RuleSet not found.");
+			return result;
 		}
 		final HashMap<String, String> parameters=new HashMap<>();
 		for (String parameter: Collections.list(request.getParameterNames())) {
@@ -83,6 +79,7 @@ public class ProcessorApi {
 		if (ruleSet==null) {
 			UnitTestRunnerResult result=new UnitTestRunnerResult();
 			result.setErrorMessage("RuleSet not found.");
+			return result;
 		}
 		return ruleSetProcessorService.runUnitTests(ruleSet);
     }

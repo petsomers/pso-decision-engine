@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import lombok.Data;
-import pso.decision_engine.model.enums.ParameterType;
 import pso.decision_engine.utils.JsonSerializerUtils.JsonLocalDateTimeDeSerializer;
 import pso.decision_engine.utils.JsonSerializerUtils.JsonLocalDateTimeSerializer;
 
@@ -30,7 +29,7 @@ public class RuleSet {
 	@JsonSerialize(using=JsonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JsonLocalDateTimeDeSerializer.class)
 	private LocalDateTime uploadDate;
-	private Hashtable<String, ParameterType> inputParameters=new Hashtable<>();
+	private Hashtable<String, InputParameterInfo> inputParameters=new Hashtable<>();
 	private List<Rule> rules=new ArrayList<>();
 	
 	private Hashtable<String, Integer> rowLabels=new Hashtable<>();

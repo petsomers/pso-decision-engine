@@ -44,6 +44,7 @@ public class CreateTables {
 		"ruleSetId VARCHAR(20) NOT NULL, "+
 		"parameterName VARCHAR(40) NOT NULL, "+
 		"parameterType VARCHAR(10) NOT NULL, "+
+		"defaultValue VARCHAR(100), "+
 		"PRIMARY KEY (ruleSetId, parameterName))",
 		
 		"CREATE TABLE IF NOT EXISTS Rule ("+

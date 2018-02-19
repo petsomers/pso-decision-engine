@@ -5,10 +5,10 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
+import pso.decision_engine.model.InputParameterInfo;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.RuleSetInfo;
 import pso.decision_engine.model.UnitTest;
-import pso.decision_engine.model.enums.ParameterType;
 
 public interface RuleSetDao {
 
@@ -36,7 +36,7 @@ public interface RuleSetDao {
 
 	public List<RuleSetInfo> getRuleSetVersionsForEndPoint(String restEndPoint);
 
-	public Hashtable<String, ParameterType> getRuleSetInputParameters(String ruleSetId);
+	public Hashtable<String, InputParameterInfo> getRuleSetInputParameters(String ruleSetId);
 	
 	public List<UnitTest> getRuleSetUnitTests(String ruleSetId);
 

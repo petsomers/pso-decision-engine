@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import pso.decision_engine.model.DecisionResult;
 import pso.decision_engine.model.DecisionTrace;
 import pso.decision_engine.model.DecisionTraceElement;
+import pso.decision_engine.model.InputParameterInfo;
 import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.UnitTestResult;
@@ -102,15 +103,14 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 	
 	private HashMap<String, Object> toTypedParameters(RuleSet rs, HashMap<String, String> parameters, DecisionTrace trace) {
 		final HashMap<String, Object> typedParameters=new HashMap<>();
-		for (String parameterName:parameters.keySet()) {
-			ParameterType type=rs.getInputParameters().get(parameterName);
-			if (type==null) {
-				trace.getMessages().add("INFO: No type information for parameter "+parameterName);
-				continue;
+		for (String parameterName:rs.getInputParameters().keySet()) {
+			InputParameterInfo pInfo=rs.getInputParameters().get(parameterName);
+			String value=parameters.get(parameterName);
+			if (value==null || value.trim().isEmpty()) {
+				value=pInfo.getDefaultValue();
 			}
-			String value=parameters.get(parameterName).trim();
-			if (!value.isEmpty()) {
-				switch(type) {
+			if (value!=null && value.trim().isEmpty()) {
+				switch(pInfo.getType()) {
 					case TEXT: typedParameters.put(parameterName, value); break;
 					case INTEGER: {
 						int intValue=0;
@@ -143,7 +143,10 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 	
 	private DecimalFormat df=new DecimalFormat("#.###");
 	private Boolean evaluateRule(RuleSet rs, Rule r, HashMap<String, Object> parameters) {
-		ParameterType type=rs.getInputParameters().get(r.getParameterName());
+		InputParameterInfo inputParameterInfo=rs.getInputParameters().get(r.getParameterName());
+		if (inputParameterInfo==null)
+			return null;
+		ParameterType type=inputParameterInfo.getType();
 		if (type==null) {
 			return null;
 		}

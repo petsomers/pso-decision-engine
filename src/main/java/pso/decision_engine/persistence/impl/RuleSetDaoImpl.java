@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.hsqldb.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,11 +17,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import pso.decision_engine.model.AppConfig;
+import pso.decision_engine.model.InputParameterInfo;
 import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.RuleSetInfo;
 import pso.decision_engine.model.UnitTest;
-import pso.decision_engine.model.enums.ParameterType;
 import pso.decision_engine.persistence.RuleSetDao;
 import pso.decision_engine.utils.ComparatorHelper;
 
@@ -57,15 +56,17 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		MapSqlParameterSource[] inputParameters=new MapSqlParameterSource[ruleSet.getInputParameters().size()];
 		int i=0;
 		for (String parameterName:ruleSet.getInputParameters().keySet()) {
+			InputParameterInfo ipi=ruleSet.getInputParameters().get(parameterName);
 			inputParameters[i++]=
 				new MapSqlParameterSource()
 				.addValue("ruleSetId", ruleSet.getId())
 				.addValue("parameterName", parameterName)
-				.addValue("parameterType", ruleSet.getInputParameters().get(parameterName).toString());
+				.addValue("parameterType", ipi.getType().toString())
+				.addValue("defaultValue", ipi.getDefaultValue());
 		};
 		jdbcTemplate.batchUpdate(
-			"INSERT INTO RuleSetParameters (ruleSetId, parameterName, parameterType) "+
-			"values (:ruleSetId, :parameterName, :parameterType)", inputParameters);
+			"INSERT INTO RuleSetParameters (ruleSetId, parameterName, parameterType, defaultValue) "+
+			"values (:ruleSetId, :parameterName, :parameterType, :defaultValue)", inputParameters);
 		inputParameters=null;
 		
 		MapSqlParameterSource[] rules=new MapSqlParameterSource[ruleSet.getRules().size()];
@@ -217,13 +218,16 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	}
 	
 	@Override
-	public Hashtable<String, ParameterType> getRuleSetInputParameters(String ruleSetId) {
-		final Hashtable<String, ParameterType> result=new Hashtable<>();
+	public Hashtable<String, InputParameterInfo> getRuleSetInputParameters(String ruleSetId) {
+		final Hashtable<String, InputParameterInfo> result=new Hashtable<>();
 		jdbcTemplate.query(
-			"select parameterName, parameterType from RuleSetParameters where ruleSetId=:ruleSetId", 
+			"select parameterName, parameterType, defaultValue from RuleSetParameters where ruleSetId=:ruleSetId", 
 			new MapSqlParameterSource().addValue("ruleSetId", ruleSetId),
 			(ResultSet rs) -> {
-				result.put(rs.getString(1), ComparatorHelper.stringToParameterType(rs.getString(2)));
+				InputParameterInfo ipi=new InputParameterInfo();
+				ipi.setType(ComparatorHelper.stringToParameterType(rs.getString("parameterType")));
+				ipi.setDefaultValue(rs.getString("defaultValue"));
+				result.put(rs.getString(1), ipi);
 			});
 		return result;
 	}

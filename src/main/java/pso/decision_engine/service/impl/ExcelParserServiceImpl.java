@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import pso.decision_engine.model.ExcelParserException;
+import pso.decision_engine.model.InputParameterInfo;
 import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.UnitTest;
@@ -98,7 +99,9 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 			for (int i=0;i<parameterNames.size();i++) {
 				ParameterType pt=parameterTypes.get(i);
 				if (pt!=null) {
-					rs.getInputParameters().put(parameterNames.get(i), pt);	
+					InputParameterInfo ipi=new InputParameterInfo();
+					ipi.setType(pt);
+					rs.getInputParameters().put(parameterNames.get(i), ipi);	
 				}
 			}
 		}
