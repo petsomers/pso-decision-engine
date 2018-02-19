@@ -59,19 +59,18 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			if (executedRules.contains(ruleNumber)) {
 				trace.getMessages().add("ERROR: rule has already been executed.");
 				result.setError(true);
-				result.setErrorMessage("ERROR: rule has already been executed.");
+				result.setErrorMessage("Rule has already been executed.");
 				return result;
 			}
 			executedRules.add(ruleNumber);
 			Boolean ruleResult=evaluateRule(rs, r, typedParameters);
-			dte.setResult(ruleResult?"POSITIVE":"NEGATIVE");
 			if (ruleResult==null) {
 				trace.getMessages().add("ERROR: evaluating rule conditions");
 				result.setError(true);
-				result.setErrorMessage("ERROR: evaluating rule conditions");
+				result.setErrorMessage("Evaluating rule conditions");
 				return result;
 			}
-			
+			dte.setResult(ruleResult?"POSITIVE":"NEGATIVE");
 			String action=ruleResult?r.getPositiveResult():r.getNegativeResult();
 			if (action==null || action.isEmpty()) {
 				dte.setResult("NONE");
@@ -85,7 +84,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 				if (toRuleNumber==null) {
 					trace.getMessages().add("ERROR: Label not found: "+label);
 					result.setError(true);
-					result.setErrorMessage("ERROR: evaluating rule conditions");
+					result.setErrorMessage("Label not found: "+label);
 					return result;
 				}
 				ruleNumber=toRuleNumber;
@@ -188,6 +187,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 	}
 	
 	private Boolean compare(RuleSet rs, String parameterValue, Comparator comparator, String value1, String value2) {
+		if (parameterValue==null) parameterValue="";
 		switch (comparator) {
 		case EQUAL_TO: return parameterValue.equals(value1);
 		case CONTAINS: return value1.contains(parameterValue);

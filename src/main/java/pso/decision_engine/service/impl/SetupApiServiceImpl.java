@@ -99,6 +99,11 @@ public class SetupApiServiceImpl implements SetupApiService {
 	}
 	
 	@Override
+	public String getActiveRuleSetId(String restEndPoint) {
+		return ruleSetDao.getActiveRuleSetId(restEndPoint);
+	}
+ 	
+	
 	public RuleSet getActiveRuleSetByEndPoint(String restEndPoint, boolean loadAllLists, boolean loadUnitTests) {
 		String ruleSetId=ruleSetDao.getActiveRuleSetId(restEndPoint);
 		if (ruleSetId==null) return null;
