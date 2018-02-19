@@ -22,7 +22,7 @@ public class JsonToTextOutput {
 		}
 		pw.println("Rest Endpoint: "+t.getRestEndPoint());
 		pw.println("Ruleset Id: "+t.getRuleSetId());
-		pw.println("Input Paramteters: "+t.getInputParameters());
+		pw.println("Input Parameters: "+t.getInputParameters());
 		pw.println("Request Timestamp: "+dateTimeFormatter.format(t.getRequestTimestamp()));
 		pw.println("Duration in ms: "+t.getDurationInMilliSeconds());
 		pw.println();
