@@ -39,7 +39,7 @@ public class JsonToTextOutput {
 			if (rule.getRemark()!=null && !rule.getRemark().isEmpty()) {
 				pw.println("Remark: "+rule.getRemark());
 			}
-			pw.print("Condition: "+rule.getParameterName()+" ("+t.getInputParameters().get(rule.getParameterName()) +") "+ComparatorHelper.comparatorToShortString(rule.getComparator())+" "+rule.getValue1());
+			pw.print("Condition: "+rule.getParameterName()+" ("+te.getParameterValue() +") "+ComparatorHelper.comparatorToShortString(rule.getComparator())+" "+rule.getValue1());
 			if (rule.getValue2()!=null && !rule.getValue2().isEmpty()) {
 				pw.println(";"+rule.getValue2());	
 			} else {

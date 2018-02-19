@@ -64,7 +64,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 				return result;
 			}
 			executedRules.add(ruleNumber);
-			Boolean ruleResult=evaluateRule(rs, r, typedParameters);
+			Boolean ruleResult=evaluateRule(rs, r, typedParameters, dte);
 			if (ruleResult==null) {
 				trace.getMessages().add("ERROR: evaluating rule conditions");
 				result.setError(true);
@@ -109,7 +109,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			if (value==null || value.trim().isEmpty()) {
 				value=pInfo.getDefaultValue();
 			}
-			if (value!=null && value.trim().isEmpty()) {
+			if (value!=null && !value.trim().isEmpty()) {
 				switch(pInfo.getType()) {
 					case TEXT: typedParameters.put(parameterName, value); break;
 					case INTEGER: {
@@ -142,7 +142,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 	}
 	
 	private DecimalFormat df=new DecimalFormat("#.###");
-	private Boolean evaluateRule(RuleSet rs, Rule r, HashMap<String, Object> parameters) {
+	private Boolean evaluateRule(RuleSet rs, Rule r, HashMap<String, Object> parameters, DecisionTraceElement dte) {
 		InputParameterInfo inputParameterInfo=rs.getInputParameters().get(r.getParameterName());
 		if (inputParameterInfo==null)
 			return null;
@@ -151,6 +151,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			return null;
 		}
 		Object parameterValue=parameters.get(r.getParameterName());
+		dte.setParameterValue(String.valueOf(parameterValue));
 		Boolean evalResult=null;
 		if (r.getComparator()==Comparator.IN_LIST) {
 			String strparameterValue=

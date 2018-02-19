@@ -52,11 +52,12 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 		return rs;
 	}
 	
-	private void parseInfoSheet(Sheet sheet, RuleSet rs) {
+	private void parseInfoSheet(Sheet sheet, RuleSet rs) throws ExcelParserException {
 		int firstRowNum=sheet.getFirstRowNum();
 		int lastRowNum=sheet.getLastRowNum();
 		ArrayList<String> parameterNames=new ArrayList<>();
 		ArrayList<ParameterType> parameterTypes=new ArrayList<>();
+		ArrayList<String> defaultValues=new ArrayList<>();
 		for (int r=firstRowNum;r<=lastRowNum;r++) {
 			Row row=sheet.getRow(r);
 			if (row==null) continue;
@@ -86,25 +87,46 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 					c=lastCellNum;
 				} else if ("Parameter Names".equalsIgnoreCase(cv)) {
 					for (c=c+1;c<lastCellNum;c++) {
-						parameterNames.add(getCellValueNoNull(row.getCell(c)));
+						String parameterName=getCellValueNoNull(row.getCell(c));
+						if (parameterName.isEmpty()) {
+							c=lastCellNum;
+						} else {
+							parameterNames.add(parameterName);	
+						}
 					}
 				} else if ("Parameter Types".equalsIgnoreCase(cv)) {
 					for (c=c+1;c<lastCellNum;c++) {
-						parameterTypes.add(ComparatorHelper.stringToParameterType(getCellValueNoNull(row.getCell(c))));
+						String parameterType=getCellValueNoNull(row.getCell(c));
+						if (parameterType.isEmpty()) {
+							c=lastCellNum;
+						} else {
+							ParameterType pt=ComparatorHelper.stringToParameterType(parameterType);
+							if (pt==null) {
+								throw new ExcelParserException("Invalid type value: "+parameterType);
+							}
+							parameterTypes.add(pt);	
+						}
 					}
+				} else if ("Default Values".equalsIgnoreCase(cv)) {
+					for (int j=c+1;j<c+1+parameterNames.size();j++) {
+						defaultValues.add(getCellValueNoNull(row.getCell(j)));
+					}
+					c=lastCellNum;
 				}
 			}
 		}
-		if (parameterNames.size()>0 && parameterNames.size()<=parameterTypes.size()) {
-			for (int i=0;i<parameterNames.size();i++) {
-				ParameterType pt=parameterTypes.get(i);
-				if (pt!=null) {
-					InputParameterInfo ipi=new InputParameterInfo();
-					ipi.setType(pt);
-					rs.getInputParameters().put(parameterNames.get(i), ipi);	
-				}
-			}
+		if (parameterNames.size()<parameterTypes.size()) {
+			throw new ExcelParserException("More parameter names than type definitions.");
 		}
+		for (int i=0;i<parameterNames.size();i++) {
+			ParameterType pt=parameterTypes.get(i);
+			String defaultValue=defaultValues.get(i);
+			InputParameterInfo ipi=new InputParameterInfo();
+			ipi.setType(pt);
+			ipi.setDefaultValue(defaultValue);
+			rs.getInputParameters().put(parameterNames.get(i), ipi);	
+		}
+		
 	}
 	
 	private void parseRuleSheet(Sheet sheet, RuleSet rs) throws ExcelParserException {
