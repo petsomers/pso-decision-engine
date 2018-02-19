@@ -72,5 +72,7 @@ public class ProcessorApi {
 		return ruleSetProcessorService.runUnitTests(ruleSet);
     }
 	
+	// TODO: add plain text responses as well, with our without tracing (debug=YES)
+	
 	
 }
