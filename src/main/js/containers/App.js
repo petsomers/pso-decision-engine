@@ -22,7 +22,10 @@ class App extends React.Component {
 				onResize={this.handleResize}>
 				<div>
 					<NavigationBar />
-					<RuleSetSelection restEndPoints={this.props.restEndPoints} versions={this.props.versions} />
+					<RuleSetSelection
+						restEndPoints={this.props.restEndPoints}
+						versions={this.props.versions}
+						layout={this.props.layout}  />
 							Hallo
 					</div>
 				</ResizeAware>
@@ -34,7 +37,8 @@ const mapStateToProps = (state) => {
   return {
 		layout: state.appReducer.layout,
 		restEndPoints: state.appReducer.restEndPoints,
-		versions: state.appReducer.versions
+		versions: state.appReducer.versions,
+		layout: state.appReducer.layout
   };
 };
 
