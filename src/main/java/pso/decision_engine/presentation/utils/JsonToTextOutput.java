@@ -30,7 +30,7 @@ public class JsonToTextOutput {
 		for (DecisionTraceElement te:t.getTrace()) {
 			pw.println();
 			Rule rule=te.getRule();
-			pw.print("Sheet "+rule.getSheetName()+", row: "+rule.getRowNumber());
+			pw.print("Sheet: "+rule.getSheetName()+", row: "+rule.getRowNumber());
 			if (rule.getLabel()!=null && !rule.getLabel().isEmpty()) {
 				pw.println(", label: "+rule.getLabel());
 			} else {

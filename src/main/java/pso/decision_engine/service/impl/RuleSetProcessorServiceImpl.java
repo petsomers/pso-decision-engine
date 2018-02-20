@@ -66,15 +66,16 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			executedRules.add(ruleNumber);
 			Boolean ruleResult=evaluateRule(rs, r, typedParameters, dte);
 			if (ruleResult==null) {
-				trace.getMessages().add("ERROR: evaluating rule conditions");
+				String error="Error Evaluating Rule (sheet: "+r.getSheetName()+", row: "+r.getRowNumber()+")";
+				trace.getMessages().add("ERROR: "+error);
 				result.setError(true);
-				result.setErrorMessage("Evaluating rule conditions");
+				result.setErrorMessage(error);
 				return result;
 			}
 			dte.setResult(ruleResult?"POSITIVE":"NEGATIVE");
 			String action=ruleResult?r.getPositiveResult():r.getNegativeResult();
 			if (action==null || action.isEmpty()) {
-				dte.setResult("NONE");
+				dte.setResult("NEXT");
 				ruleNumber++;
 				continue;
 			}
@@ -117,7 +118,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 						try {
 							intValue=Integer.parseInt(value);
 						} catch (NumberFormatException nfe) {
-							trace.getMessages().add("ERROR: Invalid INTEGER value for parameter "+parameterName+": "+value);
+							trace.getMessages().add("Invalid INTEGER value for parameter "+parameterName+": "+value);
 							trace.setError(true);
 							return null;
 						}
@@ -128,7 +129,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 						try {
 							doubleValue=Double.parseDouble(value);
 						} catch (NumberFormatException nfe) {
-							trace.getMessages().add("ERROR: Invalid DECIMAL value for parameter "+parameterName+": "+value);
+							trace.getMessages().add("Invalid DECIMAL value for parameter "+parameterName+": "+value);
 							trace.setError(true);
 							return null;
 						}
@@ -144,10 +145,13 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 	private DecimalFormat df=new DecimalFormat("#.###");
 	private Boolean evaluateRule(RuleSet rs, Rule r, HashMap<String, Object> parameters, DecisionTraceElement dte) {
 		InputParameterInfo inputParameterInfo=rs.getInputParameters().get(r.getParameterName());
-		if (inputParameterInfo==null)
+		if (inputParameterInfo==null) {
+			dte.setParameterValue("ERROR: NOT FOUND");
 			return null;
+		}
 		ParameterType type=inputParameterInfo.getType();
 		if (type==null) {
+			dte.setParameterValue("ERROR: NOT FOUND");
 			return null;
 		}
 		Object parameterValue=parameters.get(r.getParameterName());

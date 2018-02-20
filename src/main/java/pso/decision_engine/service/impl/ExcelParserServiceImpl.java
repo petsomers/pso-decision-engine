@@ -75,6 +75,7 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 					c=lastCellNum;
 				} else if ("Rest Endpoint".equalsIgnoreCase(cv)) {
 					rs.setRestEndPoint(getCellValueNoNull(row.getCell(++c)));
+					validateRestEndPoint(rs.getRestEndPoint());
 					c=lastCellNum;
 				} else if ("Created by".equalsIgnoreCase(cv)) {
 					rs.setCreatedBy(getCellValueNoNull(row.getCell(++c)));
@@ -126,7 +127,6 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 			ipi.setDefaultValue(defaultValue);
 			rs.getInputParameters().put(parameterNames.get(i), ipi);	
 		}
-		
 	}
 	
 	private void parseRuleSheet(Sheet sheet, RuleSet rs) throws ExcelParserException {
@@ -258,6 +258,22 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 	private static String getCellValueNoNull(Cell cell) {
 		String cv=new DataFormatter().formatCellValue(cell).toString();
 		return cv==null?cv="":cv.trim();
+	}
+	
+	private void validateRestEndPoint(String rep) throws ExcelParserException {
+		if (rep==null || rep.isEmpty()) {
+			throw new ExcelParserException("Rest Endpoint is empty.");
+		}
+		for (int i=0;i<rep.length();i++) {
+			char c=rep.charAt(i);
+			if (!((c>='a' && c<='z') 
+				|| (c>='A' && c<='Z')
+				|| (c>='0' && c<='9')
+				|| c=='_' || c=='-')) {
+				throw new ExcelParserException("Invalid Rest Endpoint: only use letter, numbers, _ and - characters.");	
+			}
+		}
+		
 	}
 	
 }
