@@ -273,7 +273,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		final ArrayList<UnitTest> result=new ArrayList<>();
 		jdbcTemplate.query(
 			"select unitTestId, unitTestName, expectedResult, parameterName, parameterValue from RuleSetUnitTests as ut "+
-			"left join RuleSetUnitTestParameters as utp on ut.ruleSetId=utp.ruleSetId "+
+			"left join RuleSetUnitTestParameters as utp on ut.ruleSetId=utp.ruleSetId and ut.unitTestId=utp.unitTestId "+
 			"where ruleSetId=:ruleSetId order by unitTestId",
 			new MapSqlParameterSource().addValue("ruleSetId", ruleSetId),
 			(ResultSet rs) -> {

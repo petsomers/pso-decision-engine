@@ -230,7 +230,7 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 			}
 		}
 		if (!expectedResultOk) {
-			throw new ExcelParserException("Sheet "+sheetName+": column Expected Result not found.");
+			throw new ExcelParserException("Sheet "+sheetName+": column 'Expected Result' not found.");
 		}
 		ArrayList<UnitTest> unitTests=new ArrayList<>();
 		for (int r=1;r<=lastRowNum;r++) {
