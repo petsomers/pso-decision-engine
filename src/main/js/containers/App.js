@@ -1,7 +1,7 @@
 import React from "react";
 import {connect} from "react-redux";
 import { Route } from 'react-router-dom';
-
+import { NavigationBar } from '../components/NavigationBar'
 
 class App extends React.Component {
 
@@ -12,9 +12,10 @@ class App extends React.Component {
 	}
 
 	render() {
-        return (
+    return (
 			<div>
-				Hello
+				<NavigationBar />
+				Hallo
 			</div>
 	);
   }
