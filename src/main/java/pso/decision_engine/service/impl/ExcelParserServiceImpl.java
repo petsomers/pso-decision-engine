@@ -121,7 +121,7 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 		}
 		for (int i=0;i<parameterNames.size();i++) {
 			ParameterType pt=parameterTypes.get(i);
-			String defaultValue=defaultValues.get(i);
+			String defaultValue=i<defaultValues.size()?defaultValues.get(i):null;
 			InputParameterInfo ipi=new InputParameterInfo();
 			ipi.setType(pt);
 			ipi.setDefaultValue(defaultValue);

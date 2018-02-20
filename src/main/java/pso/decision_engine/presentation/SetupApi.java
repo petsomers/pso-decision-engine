@@ -31,7 +31,7 @@ public class SetupApi {
 		}
     }
 	
-	@RequestMapping(value = "/upload_excel",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/upload_excel",method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ExcelParseResult uploadExcel(HttpServletRequest req) throws Exception {
 		return setupService.addExcelFile(req.getInputStream());	
 	}
