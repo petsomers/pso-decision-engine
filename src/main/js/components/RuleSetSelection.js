@@ -26,25 +26,25 @@ export const RuleSetSelection = ({restEndpoints, versions, layout, openFileUploa
 		backgroundColor: "#FFFFFF"
 	};
   return (
-    		<div>
-					<div style={restEndpointsStyle}>
-						<b>Rest Endpoints</b>
-						{restEndpoints.map((endpoint, index) => (
-							<div key={endpoint} className='slds-table slds-table--bordered'>{endpoint}</div>
-						))}
-					</div>
-					<div style={versionsStyle}>
-						Versions
-					</div>
-					<div style={versionsStyle}>
-						Versions
-					</div>
-					<div style={globalListStyle}>
-						Global Lists (all endpoints and versions)
-					</div>
-					<div style={uploadStyle}>
-						<Button type="neutral" onClick={() => openFileUpload()} icon="new" iconAlign="left" label="Upload Excel" />
-					</div>
-    		</div>
+  		<div>
+				<div style={restEndpointsStyle}>
+					<b>Rest Endpoints</b>
+					{restEndpoints.map((endpoint, index) => (
+						<div key={endpoint} className='slds-table slds-table--bordered'>{endpoint}</div>
+					))}
+				</div>
+				<div style={versionsStyle}>
+					Versions
+				</div>
+				<div style={versionsStyle}>
+					Versions
+				</div>
+				<div style={globalListStyle}>
+					Global Lists (all endpoints and versions)
+				</div>
+				<div style={uploadStyle}>
+					<Button type="neutral" onClick={() => openFileUpload()} icon="new" iconAlign="left" label="Upload Excel" />
+				</div>
+  		</div>
    );
 }
