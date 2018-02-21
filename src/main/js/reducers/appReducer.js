@@ -5,7 +5,9 @@ const appReducer = (state = {
   },
   mainScreen: "welcome",
   restEndPoints: [],
-  versions: []
+  versions: [],
+  selectedEndPoint: "",
+  selectedVersion: ""
 }, action) => {
 switch (action.type) {
   case "GOTO_UPLOAD":
@@ -13,6 +15,18 @@ switch (action.type) {
       mainScreen: "upload",
 		};
 		break;
+  case "SET_SELECTED_ENDPOINT":
+    state = {
+      ...state, selectedEndPoint: action.payload
+    }
+  break;
+  case "SET_SELECTED_VERSION":
+    state = {
+      ...state,
+      selectedEndPoint: action.payload.endpoint,
+      selectedVersion: action.payload.version
+    }
+  break;
   case "WINDOW_RESIZE":
     if (action.payload.height!=state.layout.windowHeight
       || action.payload.width!=state.layout.windowWidth) {

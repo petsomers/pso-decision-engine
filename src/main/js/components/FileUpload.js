@@ -36,13 +36,20 @@ export class FileUpload  extends React.Component {
 	        	console.log("File upload response", result)
 						if (!result.data.ok) {
 							this.setState({
-		    			...this.state,
-		    			errorMessage:result.data.errorMessage,
-		    			message: "?",
-		    			inProgress:false
-		    		});
+			    			...this.state,
+			    			errorMessage:result.data.errorMessage,
+			    			message: "?",
+			    			inProgress:false
+		    			});
+						} else {
+							this.setState({
+								...this.state,
+								errorMessage:"",
+								message: "Rest Endpoint: "+result.data.restEndPoint,
+								inProgress:false
+							});
+							this.props.setSelectedVersion(result.data.restEndPoint, result.data.ruleSetId);
 						}
-
 	        })
 	        .catch(error =>  {
 	        	console.log("File upload error response: "+error.message,error)
@@ -55,14 +62,19 @@ export class FileUpload  extends React.Component {
 			<h1>Excel File Upload</h1>
 			<i className="fa fa-file-excel-o" aria-hidden="true"></i> <b>Upload Excel File</b><br /><br />
 			File: <input type="file" id="fileinput" onChange={(event) => this.selectUploadFile(event)}/>
+			<br />
 			{this.state.selectedUploadFile!=null &&
 				<Button type="neutral" onClick={() => this.doUpload()} icon="new" iconAlign="left" label="Upload File" />
 			}
 			{this.state.inProgress &&
 				<Spinner />
 			}
+			<br /><br />
 			{this.state.errorMessage!="" &&
 				<div style={{color: "red"}}>{this.state.errorMessage}</div>
+			}
+			{this.state.message!="" &&
+				<div style={{color: "green"}}>{this.state.message}</div>
 			}
 
 		</div>

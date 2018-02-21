@@ -67,7 +67,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 			result.setErrorMessage(epe.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			result.setErrorMessage("General Error");
+			result.setErrorMessage(e.getMessage());
 		}
 		if (result.isOk()) {
 			Path moveToFile=Paths.get(appConfig.getDataDirectory(), result.getRestEndPoint(), id+".xlsx");

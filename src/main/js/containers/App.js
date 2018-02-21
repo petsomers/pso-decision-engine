@@ -16,11 +16,6 @@ class App extends React.Component {
 
 	handleResize = ({ width, height }) => this.props.onWindowResize(width, height);
 
-	openFileUpload=() => this.props.openFileUpload();
-
-	
-
-
 	render() {
 		const mainScreen={position:"fixed", top:"55px", left:"310px"};
     return (
@@ -33,12 +28,15 @@ class App extends React.Component {
 						restEndPoints={this.props.restEndPoints}
 						versions={this.props.versions}
 						layout={this.props.layout}
-						openFileUpload={() => this.openFileUpload()}/>
+						openFileUpload={() => this.props.openFileUpload()}
+						/>
 							Hallo
 					</div>
 					<div style={mainScreen}>
 					{this.props.mainScreen=="upload" &&
-						<FileUpload />
+						<FileUpload
+							setSelectedVersion={(endPoint, version) => this.props.setSelectedVersion(endPoint, version)}
+						/>
 					}
 					</div>
 				</ResizeAware>
@@ -68,6 +66,18 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({
 				type: "GOTO_UPLOAD",
 				payload: {width, height}
+			});
+		},
+		setSelectedEndPoint: (endPoint) => {
+			dispatch({
+				type: "SET_SELECTED_ENDPOINT",
+				payload: endPoint
+			});
+		},
+		setSelectedVersion: (endpoint, version) => {
+			dispatch({
+				type: "SET_SELECTED_VERSION",
+				payload: {endpoint,version}
 			});
 		}
 	};
