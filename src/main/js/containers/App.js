@@ -15,7 +15,10 @@ class App extends React.Component {
 
 	handleResize = ({ width, height }) => this.props.onWindowResize(width, height);
 
+	openFileUpload=() => this.props.openFileUpload();
+
 	render() {
+		const mainScreen={position:"fixed", top:"55px", left:"310px"};
     return (
 			<ResizeAware
     		style={{ position: 'absolute',top:"0px", left:"0px", height:"100%", width:"100%" }}
@@ -25,8 +28,14 @@ class App extends React.Component {
 					<RuleSetSelection
 						restEndPoints={this.props.restEndPoints}
 						versions={this.props.versions}
-						layout={this.props.layout}  />
+						layout={this.props.layout}
+						openFileUpload={() => this.openFileUpload()}/>
 							Hallo
+					</div>
+					<div style={mainScreen}>
+					{this.props.mainScreen=="upload" &&
+						<div>FILE UPLOAD</div>
+					}
 					</div>
 				</ResizeAware>
 	);
@@ -38,7 +47,8 @@ const mapStateToProps = (state) => {
 		layout: state.appReducer.layout,
 		restEndPoints: state.appReducer.restEndPoints,
 		versions: state.appReducer.versions,
-		layout: state.appReducer.layout
+		layout: state.appReducer.layout,
+		mainScreen: state.appReducer.mainScreen
   };
 };
 
