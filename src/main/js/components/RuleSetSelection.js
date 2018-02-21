@@ -13,22 +13,25 @@ export const RuleSetSelection = ({restEndpoints, versions, layout, openFileUploa
 		position:"fixed",
 		top:"60px",
 		height:restEndpointsHeight+"px",
-		left:"0px",
+		left:"5px",
 		width: "300px",
-		backgroundColor: "#CCCCCC"
+		backgroundColor: "#FFFFFF"
 	};
 	const versionsStyle={
 		position:"fixed",
 		top:(65+restEndpointsHeight)+"px",
 		height:versionsHeight+"px",
-		left:"0px",
+		left:"5px",
 		width: "300px",
-		backgroundColor: "#CCCCCC"
+		backgroundColor: "#FFFFFF"
 	};
   return (
     		<div>
 					<div style={restEndpointsStyle}>
-						Rest Endpoints
+						<b>Rest Endpoints</b>
+						{restEndpoints.map((endpoint, index) => (
+							<div key={endpoint} className='slds-table slds-table--bordered'>{endpoint}</div>
+						))}
 					</div>
 					<div style={versionsStyle}>
 						Versions
