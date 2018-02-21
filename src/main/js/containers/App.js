@@ -49,6 +49,12 @@ const mapDispatchToProps = (dispatch) => {
 				type: "WINDOW_RESIZE",
 				payload: {width, height}
 			});
+		},
+		openFileUpload: (width, height) => {
+			dispatch({
+				type: "GOTO_UPLOAD",
+				payload: {width, height}
+			});
 		}
 	};
 };

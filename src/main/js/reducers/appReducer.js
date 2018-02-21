@@ -3,12 +3,14 @@ const appReducer = (state = {
     windowHeight: 0,
     windowWidth: 0
   },
+  mainScreen: "welcome",
   restEndPoints: [],
   versions: []
 }, action) => {
 switch (action.type) {
-  case "PREPARE_COUNTRY_DATA":
+  case "GOTO_UPLOAD":
 		state = {...state,
+      mainScreen: "upload",
 		};
 		break;
   case "WINDOW_RESIZE":
