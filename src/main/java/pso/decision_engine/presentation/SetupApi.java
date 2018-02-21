@@ -4,15 +4,19 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
 import jodd.servlet.ServletUtil;
 import jodd.servlet.upload.MultipartRequestWrapper;
@@ -48,49 +52,21 @@ public class SetupApi {
 		return setupService.addExcelFile(req.getInputStream());	
 	}
 	
-	@RequestMapping(value = "/form_upload_excel",method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public ExcelParseResult formUploadExcel(HttpServletRequest req) throws Exception {
+	@RequestMapping(method = RequestMethod.POST, path = "/form_upload_excel", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE },
+            produces = "application/json;charset=UTF-8")
+    public ExcelParseResult formUploadExcel(HttpServletRequest request) throws Exception {
 		ExcelParseResult result=new ExcelParseResult();
 		try {
-			boolean multipartRequest = ServletUtil.isMultipartRequest(req);
-			if (!multipartRequest) {
+			Collection<Part> parts = request.getParts();
+			if (parts.isEmpty()) {
 				result.setErrorMessage("Invalid Request.");
 				return result;
-			}
+	        }
 			
-			/*
-			DiskFileUploadFactory dfuf=new DiskFileUploadFactory(
-				Paths.get(appConfig.getDataDirectory(), "temp").toString(),
-				10*1024*1024);
-			MultipartRequestWrapper mrw = new MultipartRequestWrapper(
-				req, 
-				dfuf);
-			*/
-			MultipartRequestWrapper mrw = new MultipartRequestWrapper(
-				req, 
-				new MemoryFileUploadFactory().setMaxFileSize(1024*1024));
-			String fileParameterName=null;
-			if (mrw.getFileParameterNames().hasMoreElements()) {
-				fileParameterName=mrw.getFileParameterNames().nextElement();
-			}
-			if (fileParameterName==null) {
-				result.setErrorMessage("No file in request.");
-				return result;
-			}
-			
-			FileUpload fileUpload=mrw.getFile(fileParameterName);
-			System.out.println("FILE: "+fileParameterName);
-			if (fileUpload.isFileTooBig()) {
-				result.setErrorMessage("The file is too big. (max 1MB)");
-				return result;
-			}
-			if (!fileUpload.isValid()) {
-				result.setErrorMessage("The file is invalid.");
-				return result;
-			}
-			try (InputStream fi =fileUpload.getFileInputStream()) {
-				return setupService.addExcelFile(fi);
-			}
+			 Part part = parts.iterator().next();
+			 try (InputStream in = part.getInputStream()) {
+				 return setupService.addExcelFile(in);
+			 }
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.setErrorMessage(e.getMessage());
