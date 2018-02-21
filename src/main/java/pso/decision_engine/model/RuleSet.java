@@ -21,7 +21,7 @@ public class RuleSet {
 
 	private String name;
 	private String id;
-	private String restEndPoint;
+	private String restEndpoint;
 	private String createdBy;
 	private String version;
 	private String remark;

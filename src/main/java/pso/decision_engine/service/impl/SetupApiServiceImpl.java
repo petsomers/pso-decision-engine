@@ -62,7 +62,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 		try {
 			rs=excelParserService.parseExcel(id, outputFile.toFile());
 			result.setOk(true);
-			result.setRestEndPoint(rs.getRestEndPoint());
+			result.setRestEndpoint(rs.getRestEndpoint());
 		} catch (ExcelParserException epe) {
 			result.setErrorMessage(epe.getMessage());
 		} catch (Exception e) {
@@ -70,10 +70,10 @@ public class SetupApiServiceImpl implements SetupApiService {
 			result.setErrorMessage(e.getMessage());
 		}
 		if (result.isOk()) {
-			Path moveToFile=Paths.get(appConfig.getDataDirectory(), result.getRestEndPoint(), id+".xlsx");
+			Path moveToFile=Paths.get(appConfig.getDataDirectory(), result.getRestEndpoint(), id+".xlsx");
 			moveToFile.toFile().getParentFile().mkdirs();
 			Files.move(outputFile, moveToFile);
-			Path jsonFile=Paths.get(appConfig.getDataDirectory(), result.getRestEndPoint(), id+".json");
+			Path jsonFile=Paths.get(appConfig.getDataDirectory(), result.getRestEndpoint(), id+".json");
 			mapper.writeValue(jsonFile.toFile(), rs);
 			ruleSetDao.saveRuleSet(rs);
 		} else {
@@ -115,7 +115,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 		if (ruleSetId==null || ruleSetId.isEmpty()) return null;
 		RuleSet rs=ruleSetDao.getRuleSet(ruleSetId);
 		if (rs==null) return null;
-		if (!restEndPoint.equals(rs.getRestEndPoint())) return null;
+		if (!restEndPoint.equals(rs.getRestEndpoint())) return null;
 		rs.setLists(ruleSetDao.getRuleSetLists(rs.getId(), loadAllLists));
 		rs.setInputParameters(ruleSetDao.getRuleSetInputParameters(rs.getId()));
 		int i=0;

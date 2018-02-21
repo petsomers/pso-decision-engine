@@ -74,8 +74,8 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 					rs.setName(getCellValueNoNull(row.getCell(++c)));
 					c=lastCellNum;
 				} else if ("Rest Endpoint".equalsIgnoreCase(cv)) {
-					rs.setRestEndPoint(getCellValueNoNull(row.getCell(++c)));
-					validateRestEndPoint(rs.getRestEndPoint());
+					rs.setRestEndpoint(getCellValueNoNull(row.getCell(++c)));
+					validateRestEndPoint(rs.getRestEndpoint());
 					c=lastCellNum;
 				} else if ("Created by".equalsIgnoreCase(cv)) {
 					rs.setCreatedBy(getCellValueNoNull(row.getCell(++c)));

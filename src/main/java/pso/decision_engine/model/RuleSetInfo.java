@@ -13,7 +13,7 @@ import pso.decision_engine.utils.JsonSerializerUtils.JsonLocalDateTimeSerializer
 public class RuleSetInfo {
 
 	private String id;
-	private String restEndPoint;
+	private String restEndpoint;
 	private boolean active;
 	private String name;
 	private String createdBy;

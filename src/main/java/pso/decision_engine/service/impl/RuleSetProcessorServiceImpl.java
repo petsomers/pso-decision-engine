@@ -39,7 +39,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 		trace.setRequestTimestamp(LocalDateTime.now());
 		trace.setInputParameters(parameters);
 		trace.setRuleSetId(rs.getId());
-		trace.setRestEndPoint(rs.getRestEndPoint());
+		trace.setRestEndPoint(rs.getRestEndpoint());
 
 		final HashMap<String, Object> typedParameters=toTypedParameters(rs, parameters, trace);
 		if (typedParameters==null) {

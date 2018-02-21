@@ -42,7 +42,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	public void saveRuleSet(RuleSet ruleSet) {
 		MapSqlParameterSource parameters=new MapSqlParameterSource()
 		.addValue("ruleSetId", ruleSet.getId())
-		.addValue("restEndPoint", ruleSet.getRestEndPoint())
+		.addValue("restEndpoint", ruleSet.getRestEndpoint())
 		.addValue("name", ruleSet.getName())
 		.addValue("createdBy", ruleSet.getCreatedBy())
 		.addValue("version", ruleSet.getVersion())
@@ -50,8 +50,8 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		.addValue("uploadDate", Timestamp.valueOf(ruleSet.getUploadDate()));
 		
 		jdbcTemplate.update(
-			"INSERT INTO RuleSet (ruleSetId, restEndPoint, name, createdBy, version, remark, uploadDate) "+
-			"values (:ruleSetId, :restEndPoint, :name, :createdBy, :version, :remark, :uploadDate)", parameters);
+			"INSERT INTO RuleSet (ruleSetId, restEndpoint, name, createdBy, version, remark, uploadDate) "+
+			"values (:ruleSetId, :restEndpoint, :name, :createdBy, :version, :remark, :uploadDate)", parameters);
 		
 		MapSqlParameterSource[] inputParameters=new MapSqlParameterSource[ruleSet.getInputParameters().size()];
 		int i=0;
@@ -159,13 +159,13 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	}
 	
 	@Override
-	public void setActiveRuleSet(String restEndPoint, String ruleSetId) {
+	public void setActiveRuleSet(String restEndpoint, String ruleSetId) {
 		MapSqlParameterSource params=new MapSqlParameterSource()
-		.addValue("restEndPoint", restEndPoint)
+		.addValue("restEndpoint", restEndpoint)
 		.addValue("ruleSetId", ruleSetId);
-		int i=jdbcTemplate.update("update ActiveRuleSet set ruleSetId=:ruleSetId where restEndPoint=:restEndPoint", params);
+		int i=jdbcTemplate.update("update ActiveRuleSet set ruleSetId=:ruleSetId where restEndpoint=:restEndpoint", params);
 		if (i==0) {
-			jdbcTemplate.update("insert into ActiveRuleSet (restEndPoint, ruleSetId) values (:restEndPoint, :ruleSetId)", params);
+			jdbcTemplate.update("insert into ActiveRuleSet (restEndpoint, ruleSetId) values (:restEndpoint, :ruleSetId)", params);
 		}
 	}
 	
@@ -174,7 +174,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		RuleSet ruleSet=null;
 		try {
 			ruleSet=jdbcTemplate.queryForObject(
-				"select ruleSetId, restEndPoint, name, createdBy, version, remark, uploadDate from RuleSet where ruleSetId=:ruleSetId",
+				"select ruleSetId, restEndpoint, name, createdBy, version, remark, uploadDate from RuleSet where ruleSetId=:ruleSetId",
 				new MapSqlParameterSource().addValue("ruleSetId", ruleSetId), 
 				ruleSetRowMapper);
 		} catch (EmptyResultDataAccessException eda) {
@@ -207,11 +207,11 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	}
 	
 	@Override
-	public String getActiveRuleSetId(String restEndPoint) {
+	public String getActiveRuleSetId(String restEndpoint) {
 		try {
 			return jdbcTemplate.queryForObject(
-				"select ruleSetId from ActiveRuleSet where restEndPoint=:restEndPoint", 
-				new MapSqlParameterSource().addValue("restEndPoint", restEndPoint), String.class);
+				"select ruleSetId from ActiveRuleSet where restEndpoint=:restEndpoint", 
+				new MapSqlParameterSource().addValue("restEndpoint", restEndpoint), String.class);
 		} catch (EmptyResultDataAccessException eda) {
 			return null;
 		}
@@ -300,25 +300,25 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	}
 
 	@Override
-	public boolean doesRuleSetExist(String restEndPoint, String ruleSetId) {
+	public boolean doesRuleSetExist(String restEndpoint, String ruleSetId) {
 		MapSqlParameterSource params=new MapSqlParameterSource()
-		.addValue("restEndPoint", restEndPoint)
+		.addValue("restEndpoint", restEndpoint)
 		.addValue("ruleSetId", ruleSetId);
-		return jdbcTemplate.queryForObject("select count(*) from RuleSet where ruleSetId=:ruleSetId and restEndPoint=:restEndPoint", params, Integer.class)>0;
+		return jdbcTemplate.queryForObject("select count(*) from RuleSet where ruleSetId=:ruleSetId and restEndpoint=:restEndpoint", params, Integer.class)>0;
 	}
 
 	@Override
 	public List<String> getAllEndPoints() {
-		return jdbcTemplate.query("select distinct restEndPoint from RuleSet", new MapSqlParameterSource(), (ResultSet rs, int rowNumber) -> rs.getString(1));
+		return jdbcTemplate.query("select distinct restEndpoint from RuleSet", new MapSqlParameterSource(), (ResultSet rs, int rowNumber) -> rs.getString(1));
 	}
 	
 	@Override
-	public List<RuleSetInfo> getRuleSetVersionsForEndPoint(String restEndPoint) {
+	public List<RuleSetInfo> getRuleSetVersionsForEndPoint(String restEndpoint) {
 		return jdbcTemplate.query(
-			"select ruleSetId, restEndPoint, name, createdBy, version, remark, uploadDate, ars.ruleSetId as active from RuleSet as rs "+
+			"select ruleSetId, restEndpoint, name, createdBy, version, remark, uploadDate, ars.ruleSetId as active from RuleSet as rs "+
 			"left join ActiveRuleSet as ars on ars.ruleSetId=rs.ruleSetId "+
-			"where restEndPoint=:restEndPoint order by ruleSetId desc",
-			new MapSqlParameterSource().addValue("restEndPoint", restEndPoint),
+			"where restEndpoint=:restEndpoint order by ruleSetId desc",
+			new MapSqlParameterSource().addValue("restEndpoint", restEndpoint),
 			ruleSetInfoRowMapper);
 	}
 
@@ -340,7 +340,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		RuleSet ruleSet=new RuleSet();
 		ruleSet.setId(rs.getString("ruleSetId"));
 		ruleSet.setName(rs.getString("name"));
-		ruleSet.setRestEndPoint(rs.getString("restEndPoint"));
+		ruleSet.setRestEndpoint(rs.getString("restEndpoint"));
 		ruleSet.setCreatedBy(rs.getString("createdBy"));
 		ruleSet.setVersion(rs.getString("version"));
 		ruleSet.setRemark(rs.getString("remark"));
@@ -352,7 +352,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		RuleSetInfo ruleSet=new RuleSetInfo();
 		ruleSet.setId(rs.getString("ruleSetId"));
 		ruleSet.setName(rs.getString("name"));
-		ruleSet.setRestEndPoint(rs.getString("restEndPoint"));
+		ruleSet.setRestEndpoint(rs.getString("restEndpoint"));
 		ruleSet.setCreatedBy(rs.getString("createdBy"));
 		ruleSet.setVersion(rs.getString("version"));
 		ruleSet.setRemark(rs.getString("remark"));

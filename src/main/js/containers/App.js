@@ -5,6 +5,7 @@ import ResizeAware from 'react-resize-aware';
 import { NavigationBar } from '../components/NavigationBar'
 import { RuleSetSelection } from '../components/RuleSetSelection'
 import { FileUpload }from '../components/FileUpload'
+import axios from "axios"
 
 class App extends React.Component {
 
@@ -12,6 +13,10 @@ class App extends React.Component {
 		super();
 		this.state={
 		}
+	}
+
+	componentDidMount() {
+		this.props.loadEndpoints();
 	}
 
 	handleResize = ({ width, height }) => this.props.onWindowResize(width, height);
@@ -25,7 +30,7 @@ class App extends React.Component {
 				<div>
 					<NavigationBar />
 					<RuleSetSelection
-						restEndPoints={this.props.restEndPoints}
+						restEndpoints={this.props.restEndpoints}
 						versions={this.props.versions}
 						layout={this.props.layout}
 						openFileUpload={() => this.props.openFileUpload()}
@@ -35,7 +40,7 @@ class App extends React.Component {
 					<div style={mainScreen}>
 					{this.props.mainScreen=="upload" &&
 						<FileUpload
-							setSelectedVersion={(endPoint, version) => this.props.setSelectedVersion(endPoint, version)}
+							setSelectedVersion={(endpoint, version) => this.props.setSelectedVersion(endpoint, version)}
 						/>
 					}
 					</div>
@@ -47,7 +52,7 @@ class App extends React.Component {
 const mapStateToProps = (state) => {
   return {
 		layout: state.appReducer.layout,
-		restEndPoints: state.appReducer.restEndPoints,
+		restEndpoints: state.appReducer.restEndpoints,
 		versions: state.appReducer.versions,
 		layout: state.appReducer.layout,
 		mainScreen: state.appReducer.mainScreen
@@ -68,16 +73,23 @@ const mapDispatchToProps = (dispatch) => {
 				payload: {width, height}
 			});
 		},
-		setSelectedEndPoint: (endPoint) => {
+		setSelectedEndpoint: (endpoint) => {
 			dispatch({
-				type: "SET_SELECTED_ENDPOINT",
-				payload: endPoint
+				type: "SET_SELECTED_endpoint",
+				payload: endpoint
 			});
 		},
 		setSelectedVersion: (endpoint, version) => {
 			dispatch({
 				type: "SET_SELECTED_VERSION",
 				payload: {endpoint,version}
+			});
+		},
+		loadEndpoints: () => {
+			console.log("LOAD ENDPOINTS.....");
+			dispatch({
+  			type: "GET_ENDPOINTS",
+  			payload: axios.get("setup/endpoints")
 			});
 		}
 	};

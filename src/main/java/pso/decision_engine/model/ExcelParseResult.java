@@ -7,5 +7,5 @@ public class ExcelParseResult {
 	private boolean ok;
 	private String errorMessage;
 	private String ruleSetId;
-	private String restEndPoint;
+	private String restEndpoint;
 }

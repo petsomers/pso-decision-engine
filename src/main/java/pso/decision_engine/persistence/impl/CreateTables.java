@@ -21,7 +21,7 @@ public class CreateTables {
 	{
 		"CREATE TABLE IF NOT EXISTS RuleSet ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
-		"restEndPoint VARCHAR(50) NOT NULL, "+
+		"restEndpoint VARCHAR(50) NOT NULL, "+
 		"name VARCHAR(150), "+
 		"createdBy VARCHAR(50), "+
 		"version VARCHAR(20), "+
@@ -29,13 +29,13 @@ public class CreateTables {
 		"uploadDate TIMESTAMP NOT NULL, "+
 		"PRIMARY KEY (ruleSetId))",
 		
-		"CREATE INDEX IF NOT EXISTS ruleset_restEndPoint "+
-		"on RuleSet (restEndPoint)",
+		"CREATE INDEX IF NOT EXISTS ruleset_restEndpoint "+
+		"on RuleSet (restEndpoint)",
 		
 		"CREATE TABLE IF NOT EXISTS ActiveRuleSet ("+
-		"restEndPoint VARCHAR(50) NOT NULL, "+
+		"restEndpoint VARCHAR(50) NOT NULL, "+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
-		"PRIMARY KEY (restEndPoint))",
+		"PRIMARY KEY (restEndpoint))",
 		
 		"CREATE UNIQUE INDEX IF NOT EXISTS activeRuleSet_ruleSetId "+
 		"on ActiveRuleSet (ruleSetId)",

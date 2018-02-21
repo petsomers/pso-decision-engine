@@ -4,9 +4,9 @@ const appReducer = (state = {
     windowWidth: 0
   },
   mainScreen: "welcome",
-  restEndPoints: [],
+  restEndpoints: [],
   versions: [],
-  selectedEndPoint: "",
+  selectedEndpoint: "",
   selectedVersion: ""
 }, action) => {
 switch (action.type) {
@@ -17,14 +17,26 @@ switch (action.type) {
 		break;
   case "SET_SELECTED_ENDPOINT":
     state = {
-      ...state, selectedEndPoint: action.payload
+      ...state, selectedEndpoint: action.payload
     }
   break;
   case "SET_SELECTED_VERSION":
     state = {
       ...state,
-      selectedEndPoint: action.payload.endpoint,
+      selectedEndpoint: action.payload.endpoint,
       selectedVersion: action.payload.version
+    }
+  break;
+  case "GET_ENDPOINTS_FULFILLED":
+    let selectedEndpoint=state.selectedEndpoint;
+    let endpoints=action.payload.data;
+    if (selectedEndpoint=="" && endpoints.length>0) {
+      selectedEndpoint=endpoints[0];
+    }
+    state = {
+      ...state,
+      selectedEndpoint:selectedEndpoint,
+      restEndpoints:endpoints
     }
   break;
   case "WINDOW_RESIZE":
