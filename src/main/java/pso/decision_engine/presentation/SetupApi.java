@@ -58,13 +58,17 @@ public class SetupApi {
 				return result;
 			}
 			
-			
+			/*
 			DiskFileUploadFactory dfuf=new DiskFileUploadFactory(
 				Paths.get(appConfig.getDataDirectory(), "temp").toString(),
 				10*1024*1024);
 			MultipartRequestWrapper mrw = new MultipartRequestWrapper(
 				req, 
 				dfuf);
+			*/
+			MultipartRequestWrapper mrw = new MultipartRequestWrapper(
+				req, 
+				new MemoryFileUploadFactory().setMaxFileSize(1024*1024));
 			String fileParameterName=null;
 			if (mrw.getFileParameterNames().hasMoreElements()) {
 				fileParameterName=mrw.getFileParameterNames().nextElement();
@@ -75,6 +79,7 @@ public class SetupApi {
 			}
 			
 			FileUpload fileUpload=mrw.getFile(fileParameterName);
+			System.out.println("FILE: "+fileParameterName);
 			if (fileUpload.isFileTooBig()) {
 				result.setErrorMessage("The file is too big. (max 1MB)");
 				return result;
@@ -87,6 +92,7 @@ public class SetupApi {
 				return setupService.addExcelFile(fi);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.setErrorMessage(e.getMessage());
 			return result;
 		}

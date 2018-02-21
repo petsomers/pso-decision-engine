@@ -46,8 +46,8 @@ export class FileUpload  extends React.Component {
 	        })
 	        .catch(error =>  {
 	        	console.log("File upload error response: "+error.message,error)
-		    	this.setState({...this.state, inProgress:false, errorMessage: error.message});
-	          });
+		    		this.setState({...this.state, inProgress:false, errorMessage: error.message});
+	         });
 		}
 	render() {
   	return (
