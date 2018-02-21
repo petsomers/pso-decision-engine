@@ -4,6 +4,7 @@ import { Route } from 'react-router-dom';
 import ResizeAware from 'react-resize-aware';
 import { NavigationBar } from '../components/NavigationBar'
 import { RuleSetSelection } from '../components/RuleSetSelection'
+import { FileUpload }from '../components/FileUpload'
 
 class App extends React.Component {
 
@@ -16,6 +17,9 @@ class App extends React.Component {
 	handleResize = ({ width, height }) => this.props.onWindowResize(width, height);
 
 	openFileUpload=() => this.props.openFileUpload();
+
+	
+
 
 	render() {
 		const mainScreen={position:"fixed", top:"55px", left:"310px"};
@@ -34,7 +38,7 @@ class App extends React.Component {
 					</div>
 					<div style={mainScreen}>
 					{this.props.mainScreen=="upload" &&
-						<div>FILE UPLOAD</div>
+						<FileUpload />
 					}
 					</div>
 				</ResizeAware>
