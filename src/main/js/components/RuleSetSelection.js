@@ -27,21 +27,24 @@ export const RuleSetSelection = ({restEndpoints, versions, layout, openFileUploa
 		position:"fixed", top:(restEndpointTitlePosition+20)+"px",
 		height:restEndpointsHeight+"px",
 		left:"5px",	width: "300px",
-		overflowX: "hidden",overflowY: "scroll"
+		overflowX: "hidden",overflowY: "scroll",
+		borderBottom: 'solid',borderBottomWidth: '1px',borderBottomColor:'#CCCCCC'
 	};
 	const versionsStyle={
 		position:"fixed",
 		top:(versionTitlePosition+20)+"px",
 		height:versionsHeight+"px",
 		left:"5px",	width: "300px",
-		overflowX: "hidden",overflowY: "scroll"
+		overflowX: "hidden",overflowY: "scroll",
+		borderBottom: 'solid',borderBottomWidth: '1px',borderBottomColor:'#CCCCCC'
 	};
 	const globalListStyle={
 		position:"fixed",
 		top:(globalListTitlePosition+20)+"px",
 		height:globalListsHeight+"px",
 		left:"5px",	width: "300px",
-		overflowX: "hidden",overflowY: "scroll"
+		overflowX: "hidden",overflowY: "scroll",
+		borderBottom: 'solid',borderBottomWidth: '1px',borderBottomColor:'#CCCCCC'
 	};
 
 	const cardStyle= {
@@ -60,7 +63,7 @@ export const RuleSetSelection = ({restEndpoints, versions, layout, openFileUploa
 						</div>
 					))}
 				</div>
-				<div style={versionTitleStyle}><b>Versions</b></div>
+				<div style={versionTitleStyle}><b>Versions</b> (move to main screen, after selection)</div>
 				<div style={versionsStyle}>
 					{versions.map((version, index) => (
 						<div key={version.id} className='slds-table slds-table--bordered' style={cardStyle}>
