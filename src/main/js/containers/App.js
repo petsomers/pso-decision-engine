@@ -2,6 +2,7 @@ import React from "react";
 import {connect} from "react-redux";
 import { Route } from 'react-router-dom';
 import ResizeAware from 'react-resize-aware';
+import { Spinner, Notification } from "react-lightning-design-system";
 import { NavigationBar } from '../components/NavigationBar'
 import { RuleSetSelection } from '../components/RuleSetSelection'
 import { FileUpload } from '../components/FileUpload'
@@ -51,6 +52,20 @@ class App extends React.Component {
 							selectVersion={(endpoint, versionId) => this.props.selectVersion(endpoint, versionId)}
 						/>
 					}
+					{this.props.inprogress &&
+						<Spinner />
+					}
+					{(this.props.errorMessage!=null && this.props.errorMessage!="") &&
+  				<div style={{position: "fixed", zIndex:"100", right:"50px", bottom:"50px", width:"50%" }}>
+    				<Notification
+    				  type="alert"
+    				  level="error"
+    				  alertTexture
+    				  onClose={()=>this.props.doClearErrorMessage()}>
+    					{this.props.errorMessage}
+    				 </Notification>
+  				 </div>
+  				}
 					</div>
 				</ResizeAware>
 	);
@@ -64,7 +79,8 @@ const mapStateToProps = (state) => {
 		versions: state.appReducer.versions,
 		selectedEndpoint: state.appReducer.selectedEndpoint,
 		layout: state.appReducer.layout,
-		mainScreen: state.appReducer.mainScreen
+		mainScreen: state.appReducer.mainScreen,
+		errorMessage: state.appReducer.errorMessage
   };
 };
 
@@ -75,6 +91,9 @@ const mapDispatchToProps = (dispatch) => {
 				type: "WINDOW_RESIZE",
 				payload: {width, height}
 			});
+		},
+		doClearErrorMessage() {
+			dispatch({type: "CLEAR_ERROR_MESSAGE"});
 		},
 		openFileUpload: (width, height) => {
 			dispatch({
@@ -90,6 +109,7 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		loadEndpoints: () => {
 			console.log("LOAD ENDPOINTS.....");
+			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "GET_ENDPOINTS",
   			payload: axios.get("setup/endpoints")
@@ -101,6 +121,7 @@ const mapDispatchToProps = (dispatch) => {
 				type: "SET_SELECTED_ENDPOINT",
 				payload: endpoint
 			});
+			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "GET_VERSIONS",
   			payload: axios.get("setup/versions/"+endpoint)
@@ -108,6 +129,11 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		selectVersion: (endpoint, versionId) => {
 			console.log("LOAD VERSIONS for "+endpoint+"/"+versionId);
+			dispatch({type: "SET_INPROGRESS"});
+			dispatch({
+  			type: "GET_RULESET",
+  			payload: axios.get("setup/source/"+endpoint+"/"+versionId)
+			});
 		}
 	}
 };

@@ -6,12 +6,17 @@ export const RuleSetVersionSelection = ({layout, selectedEndpoint, versions, sel
 		padding: "10px",
 		whiteSpace: "nowrap"
 	}
+	const liveCardStyle={
+		padding: "10px",
+		whiteSpace: "nowrap",
+		backgroundColor: '#AAFFAA'
+	}
   return (
   		<div>
 				Rest Endpoint: {selectedEndpoint}<br />
 
 				{versions.map((version, index) => (
-					<div key={version.id} style={cardStyle} className='slds-table slds-table--bordered'>
+					<div key={version.id} style={version.active?liveCardStyle:cardStyle} className='slds-table slds-table--bordered'>
 						{version.active &&
 							<b>Live Version: </b>
 						}
