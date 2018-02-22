@@ -20,6 +20,7 @@ export class  RuleSetDetails extends React.Component {
 	render() {
 		let d=this.props.ruleSetDetails;
 		let activeTab=this.state.activeTab;
+		const tableRowStyle={borderBottom: 'solid',borderBottomWidth: '1px',borderBottomColor:'#CCCCCC'}
 		return (
 		<div>
 			<div style={{display: "inline-block", width: "350px"}}>
@@ -31,6 +32,7 @@ export class  RuleSetDetails extends React.Component {
 			</div>
 			<div style={{display: "inline-block"}}>
 				<b>Upload Date:</b> {d.uploadDate}<br />
+				<b># of Input Parameters:</b> {Object.keys(d.inputParameters).length}<br />
 				<b># of Rules:</b> {d.rules.length}<br />
 				<b># of Lists:</b> {Object.keys(d.lists).length}<br />
 				<b># of Unit Tests:</b> {d.unitTests.length}<br />
@@ -44,6 +46,26 @@ export class  RuleSetDetails extends React.Component {
 				<Tab eventKey="lists" title="Lists" />
 				<Tab eventKey="unitTests" title="Unit Tests" />
 			</Tabs>
+			<div style={{backgroundColor: "white"}}>
+				{(activeTab=="inputParameters") &&
+					<table>
+					<tr>
+						<td width="200"><b>Parameter</b></td>
+						<td width="90"><b>Type</b></td>
+						<td width="200"><b>Default Value</b></td>
+						<td>&nbsp;</td>
+					</tr>
+					{Object.keys(d.inputParameters).map((parameterName, index) => (
+						<tr style={tableRowStyle}>
+							<td>{parameterName}</td>
+							<td>{d.inputParameters[parameterName].type}</td>
+							<td>{d.inputParameters[parameterName].defaultValue}</td>
+							<td>&nbsp;</td>
+						</tr>
+					))}
+					</table>
+				}
+			</div>
 		</div>
  )}
 
