@@ -63,6 +63,9 @@ export class  RuleSetDetails extends React.Component {
 				{(activeTab=="lists") &&
 					<Lists lists={d.lists} />
  				}
+				{(activeTab=="unitTests") &&
+					<UnitTests unitTests={d.unitTests} />
+ 				}
 			</div>
 		</div>
 	)
