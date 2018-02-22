@@ -4,7 +4,8 @@ import { Route } from 'react-router-dom';
 import ResizeAware from 'react-resize-aware';
 import { NavigationBar } from '../components/NavigationBar'
 import { RuleSetSelection } from '../components/RuleSetSelection'
-import { FileUpload }from '../components/FileUpload'
+import { FileUpload } from '../components/FileUpload'
+import { RuleSetVersionSelection } from '../components/RuleSetVersionSelection'
 import axios from "axios"
 
 class App extends React.Component {
@@ -31,7 +32,6 @@ class App extends React.Component {
 					<NavigationBar />
 					<RuleSetSelection
 						restEndpoints={this.props.restEndpoints}
-						versions={this.props.versions}
 						layout={this.props.layout}
 						openFileUpload={() => this.props.openFileUpload()}
 						selectEndpoint={(endpoint) => this.props.selectEndpoint(endpoint)}
@@ -41,6 +41,14 @@ class App extends React.Component {
 					{this.props.mainScreen=="upload" &&
 						<FileUpload
 							setSelectedVersion={(endpoint, version) => this.props.setSelectedVersion(endpoint, version)}
+						/>
+					}
+					{this.props.mainScreen=="ruleSetVersionSelection" &&
+						<RuleSetVersionSelection
+							layout={this.props.layout}
+							selectEndpoint={(endpoint) => this.props.selectEndpoint(endpoint)}
+							versions={this.props.versions}
+							selectVersion={(endpoint, versionId) => this.props.selectVersion(endpoint, versionId)}
 						/>
 					}
 					</div>
@@ -73,12 +81,6 @@ const mapDispatchToProps = (dispatch) => {
 				payload: {width, height}
 			});
 		},
-		setSelectedEndpoint: (endpoint) => {
-			dispatch({
-				type: "SET_SELECTED_endpoint",
-				payload: endpoint
-			});
-		},
 		setSelectedVersion: (endpoint, version) => {
 			dispatch({
 				type: "SET_SELECTED_VERSION",
@@ -95,11 +97,18 @@ const mapDispatchToProps = (dispatch) => {
 		selectEndpoint: (endpoint) => {
 			console.log("LOAD VERSIONS for "+endpoint);
 			dispatch({
+				type: "SET_SELECTED_ENDPOINT",
+				payload: endpoint
+			});
+			dispatch({
   			type: "GET_VERSIONS",
   			payload: axios.get("setup/versions/"+endpoint)
 			});
+		},
+		selectVersion: (endpoint, versionId) => {
+			console.log("LOAD VERSIONS for "+endpoint+"/"+versionId);
 		}
-	};
+	}
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

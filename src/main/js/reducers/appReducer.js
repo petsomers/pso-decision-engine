@@ -1,13 +1,15 @@
 const appReducer = (state = {
   layout: {
     windowHeight: 0,
-    windowWidth: 0
+    windowWidth: 0,
+    leftPaneWidth: 300
   },
   mainScreen: "welcome",
   restEndpoints: [],
   versions: [],
   selectedEndpoint: "",
-  selectedVersion: ""
+  selectedVersion: "",
+  ruleSetDetails: null
 }, action) => {
 switch (action.type) {
   case "GOTO_UPLOAD":
@@ -17,7 +19,10 @@ switch (action.type) {
 		break;
   case "SET_SELECTED_ENDPOINT":
     state = {
-      ...state, selectedEndpoint: action.payload
+      ...state,
+      selectedEndpoint: action.payload,
+      mainScreen: "ruleSetVersionSelection"
+
     }
   break;
   case "SET_SELECTED_VERSION":

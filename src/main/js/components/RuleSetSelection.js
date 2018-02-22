@@ -1,14 +1,12 @@
 import React from "react";
 import { Button } from "react-lightning-design-system";
 
-export const RuleSetSelection = ({restEndpoints, versions, layout, openFileUpload, selectEndpoint}) => {
-	const restEndpointsHeight=(layout.windowHeight-120)/3-5;
-	const versionsHeight=restEndpointsHeight;
+export const RuleSetSelection = ({restEndpoints, layout, openFileUpload, selectEndpoint}) => {
+	const restEndpointsHeight=(layout.windowHeight-180)/2;
 	const globalListsHeight=restEndpointsHeight;
 
 	const restEndpointTitlePosition=60;
-	const versionTitlePosition=87+restEndpointsHeight;
-	const globalListTitlePosition=27+versionTitlePosition+versionsHeight;
+	const globalListTitlePosition=restEndpointTitlePosition+restEndpointsHeight+25;
 
 	const uploadStyle={
 		position:"fixed", top:(layout.windowHeight-50)+"px", left:"0px"
@@ -17,24 +15,14 @@ export const RuleSetSelection = ({restEndpoints, versions, layout, openFileUploa
 	const restEndpointsTitleStyle={
 		position:"fixed", top:(restEndpointTitlePosition)+"px",
 	}
-	const versionTitleStyle={
-		position:"fixed", top:(versionTitlePosition)+"px",
-	}
+
 	const globalListTitleStyle={
 		position:"fixed", top:(globalListTitlePosition)+"px",
 	}
 	const restEndpointsStyle={
 		position:"fixed", top:(restEndpointTitlePosition+20)+"px",
 		height:restEndpointsHeight+"px",
-		left:"5px",	width: "300px",
-		overflowX: "hidden",overflowY: "scroll",
-		borderBottom: 'solid',borderBottomWidth: '1px',borderBottomColor:'#CCCCCC'
-	};
-	const versionsStyle={
-		position:"fixed",
-		top:(versionTitlePosition+20)+"px",
-		height:versionsHeight+"px",
-		left:"5px",	width: "300px",
+		left:"5px",	width: layout.leftPaneWidth+"px",
 		overflowX: "hidden",overflowY: "scroll",
 		borderBottom: 'solid',borderBottomWidth: '1px',borderBottomColor:'#CCCCCC'
 	};
@@ -42,7 +30,7 @@ export const RuleSetSelection = ({restEndpoints, versions, layout, openFileUploa
 		position:"fixed",
 		top:(globalListTitlePosition+20)+"px",
 		height:globalListsHeight+"px",
-		left:"5px",	width: "300px",
+		left:"5px",	width: layout.leftPaneWidth+"px",
 		overflowX: "hidden",overflowY: "scroll",
 		borderBottom: 'solid',borderBottomWidth: '1px',borderBottomColor:'#CCCCCC'
 	};
@@ -60,19 +48,6 @@ export const RuleSetSelection = ({restEndpoints, versions, layout, openFileUploa
 							<a onClick={() => selectEndpoint(endpoint)}>
 								{endpoint}
 							</a>
-						</div>
-					))}
-				</div>
-				<div style={versionTitleStyle}><b>Versions</b> (move to main screen, after selection)</div>
-				<div style={versionsStyle}>
-					{versions.map((version, index) => (
-						<div key={version.id} className='slds-table slds-table--bordered' style={cardStyle}>
-							Uploaded: <a onClick={() => selectVersion(version.id)}>{version.uploadDate}</a>
-							<br />
-							{version.active &&
-								<span><b>Active</b><br /></span>
-							}
-							Version: {version.version}<br />
 						</div>
 					))}
 				</div>
