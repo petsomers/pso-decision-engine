@@ -27,15 +27,15 @@ class App extends React.Component {
 			<ResizeAware
     		style={{ position: 'absolute',top:"0px", left:"0px", height:"100%", width:"100%" }}
 				onResize={this.handleResize}>
-				<div>
+					<div>
 					<NavigationBar />
 					<RuleSetSelection
 						restEndpoints={this.props.restEndpoints}
 						versions={this.props.versions}
 						layout={this.props.layout}
 						openFileUpload={() => this.props.openFileUpload()}
+						selectEndpoint={(endpoint) => this.props.selectEndpoint(endpoint)}
 						/>
-							Hallo
 					</div>
 					<div style={mainScreen}>
 					{this.props.mainScreen=="upload" &&
@@ -90,6 +90,13 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({
   			type: "GET_ENDPOINTS",
   			payload: axios.get("setup/endpoints")
+			});
+		},
+		selectEndpoint: (endpoint) => {
+			console.log("LOAD VERSIONS for "+endpoint);
+			dispatch({
+  			type: "GET_VERSIONS",
+  			payload: axios.get("setup/versions/"+endpoint)
 			});
 		}
 	};

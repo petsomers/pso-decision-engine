@@ -39,6 +39,12 @@ switch (action.type) {
       restEndpoints:endpoints
     }
   break;
+  case "GET_VERSIONS_FULFILLED":
+    state = {
+      ...state,
+      versions:action.payload.data
+    }
+  break;
   case "WINDOW_RESIZE":
     if (action.payload.height!=state.layout.windowHeight
       || action.payload.width!=state.layout.windowWidth) {
