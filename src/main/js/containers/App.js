@@ -7,6 +7,7 @@ import { NavigationBar } from '../components/NavigationBar'
 import { RuleSetSelection } from '../components/RuleSetSelection'
 import { FileUpload } from '../components/FileUpload'
 import { RuleSetVersionSelection } from '../components/RuleSetVersionSelection'
+import { RuleSetDetails} from '../components/RuleSetDetails'
 import axios from "axios"
 
 class App extends React.Component {
@@ -24,7 +25,7 @@ class App extends React.Component {
 	handleResize = ({ width, height }) => this.props.onWindowResize(width, height);
 
 	render() {
-		const mainScreen={marginLeft:(this.props.layout.leftPaneWidth+15)+"px", marginTop:"60px"};
+		const mainScreen={marginLeft:(this.props.layout.leftPaneWidth+15)+"px", marginTop:"70px"};
     return (
 			<ResizeAware
     		style={{ position: 'absolute',top:"0px", left:"0px", height:"100%", width:"100%" }}
@@ -50,6 +51,11 @@ class App extends React.Component {
 							selectedEndpoint={this.props.selectedEndpoint}
 							versions={this.props.versions}
 							selectVersion={(endpoint, versionId) => this.props.selectVersion(endpoint, versionId)}
+						/>
+					}
+					{this.props.mainScreen=="ruleSetDetails" &&
+						<RuleSetDetails
+							ruleSetDetails={this.props.ruleSetDetails}
 						/>
 					}
 					{this.props.inprogress &&
@@ -78,6 +84,7 @@ const mapStateToProps = (state) => {
 		restEndpoints: state.appReducer.restEndpoints,
 		versions: state.appReducer.versions,
 		selectedEndpoint: state.appReducer.selectedEndpoint,
+		ruleSetDetails: state.appReducer.ruleSetDetails,
 		layout: state.appReducer.layout,
 		mainScreen: state.appReducer.mainScreen,
 		errorMessage: state.appReducer.errorMessage

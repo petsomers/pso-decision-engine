@@ -75,6 +75,17 @@ const appReducer = (state = {
       versions:action.payload.data
     }
   break;
+  case "GET_RULESET_FULFILLED":
+    let ruleSetResp=action.payload.data
+    state = {
+      ...state,
+      inprogress: false,
+      selectedEndpoint:ruleSetResp.restEndpoint,
+      selectedVersion:ruleSetResp.id,
+      ruleSetDetails:ruleSetResp,
+      mainScreen: "ruleSetDetails"
+    }
+  break;
   case "WINDOW_RESIZE":
     if (action.payload.height!=state.layout.windowHeight
       || action.payload.width!=state.layout.windowWidth) {

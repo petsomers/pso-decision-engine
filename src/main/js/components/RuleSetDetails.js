@@ -1,36 +1,50 @@
 import React from "react";
-import { Button, Spinner } from "react-lightning-design-system";
+import { Button, Spinner, Tabs, Tab } from "react-lightning-design-system";
 import axios from "axios"
 
-export const RuleSetDetails = ({loadRuleSet, clearSelectedVersion, layout, selectedEndpoint, selectedVersion, versions, ruleSetDetails}) => {
-  	return (
-		{selectedVersion=='' &&
-			
-
+export class  RuleSetDetails extends React.Component {
+	constructor(props) {
+		super();
+		this.state = {
+			activeTab: "inputParameters"
 		}
-		{selectedVersion!='' &&
+	}
 
+	setActiveTab(tab) {
+			this.setState({
+				...this.state,
+				activeTab:tab
+			});
 		}
+
+	render() {
+		let d=this.props.ruleSetDetails;
+		let activeTab=this.state.activeTab;
+		return (
 		<div>
-			<h1>Excel File Upload</h1>
-			<i className="fa fa-file-excel-o" aria-hidden="true"></i> <b>Upload Excel File</b><br /><br />
-			File: <input type="file" id="fileinput" onChange={(event) => this.selectUploadFile(event)}/>
-			<br />
-			{this.state.selectedUploadFile!=null &&
-				<Button type="neutral" onClick={() => this.doUpload()} icon="new" iconAlign="left" label="Upload File" />
-			}
-			{this.state.inProgress &&
-				<Spinner />
-			}
-			<br /><br />
-			{this.state.errorMessage!="" &&
-				<div style={{color: "red"}}>{this.state.errorMessage}</div>
-			}
-			{this.state.message!="" &&
-				<div style={{color: "green"}}>{this.state.message}</div>
-			}
-
+			<div style={{display: "inline-block", width: "350px"}}>
+				<b>Ruleset Name:</b> {d.name}<br />
+				<b>Id:</b> {d.id}<br />
+				<b>Rest Endpoint:</b> {d.restEndpoint}<br />
+				<b>Created By:</b> {d.createdBy}<br />
+				<b>Version:</b> {d.version}<br />
+			</div>
+			<div style={{display: "inline-block"}}>
+				<b>Upload Date:</b> {d.uploadDate}<br />
+				<b># of Rules:</b> {d.rules.length}<br />
+				<b># of Lists:</b> {Object.keys(d.lists).length}<br />
+				<b># of Unit Tests:</b> {d.unitTests.length}<br />
+			</div>
+			<div>
+				<b>Remark:</b> {d.remark}<br />
+			</div>
+			<Tabs type="default" defaultActiveKey={activeTab}  onSelect={(tabName) => this.setActiveTab(tabName)}>
+				<Tab eventKey="inputParameters" title="Input Parameters" />
+				<Tab eventKey="rules" title="Rules" />
+				<Tab eventKey="lists" title="Lists" />
+				<Tab eventKey="unitTests" title="Unit Tests" />
+			</Tabs>
 		</div>
-   )
- }
+ )}
+
 }
