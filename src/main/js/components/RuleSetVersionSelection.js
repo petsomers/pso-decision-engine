@@ -3,7 +3,7 @@ import { Button } from "react-lightning-design-system";
 
 export const RuleSetVersionSelection = ({layout, selectedEndpoint, versions, selectVersion}) => {
 	const cardStyle= {
-		padding: "5px",
+		padding: "10px",
 		whiteSpace: "nowrap"
 	}
   return (

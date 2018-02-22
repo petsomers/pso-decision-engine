@@ -23,7 +23,7 @@ class App extends React.Component {
 	handleResize = ({ width, height }) => this.props.onWindowResize(width, height);
 
 	render() {
-		const mainScreen={position:"fixed", top:"55px", left:"310px"};
+		const mainScreen={marginLeft:(this.props.layout.leftPaneWidth+15)+"px", marginTop:"60px"};
     return (
 			<ResizeAware
     		style={{ position: 'absolute',top:"0px", left:"0px", height:"100%", width:"100%" }}
@@ -46,7 +46,7 @@ class App extends React.Component {
 					{this.props.mainScreen=="ruleSetVersionSelection" &&
 						<RuleSetVersionSelection
 							layout={this.props.layout}
-							selectEndpoint={(endpoint) => this.props.selectEndpoint(endpoint)}
+							selectedEndpoint={this.props.selectedEndpoint}
 							versions={this.props.versions}
 							selectVersion={(endpoint, versionId) => this.props.selectVersion(endpoint, versionId)}
 						/>
@@ -62,6 +62,7 @@ const mapStateToProps = (state) => {
 		layout: state.appReducer.layout,
 		restEndpoints: state.appReducer.restEndpoints,
 		versions: state.appReducer.versions,
+		selectedEndpoint: state.appReducer.selectedEndpoint,
 		layout: state.appReducer.layout,
 		mainScreen: state.appReducer.mainScreen
   };
