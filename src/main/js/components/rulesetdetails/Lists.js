@@ -3,6 +3,16 @@ import { List } from 'react-virtualized';
 
 export const Lists = ({lists}) => {
 
+  const liststyle={
+  			zIndex: "7",
+  			overflowX: "hidden",
+  			overflowY: "scroll",
+  			height: "200px",
+  			width: "400px",
+  			padding: "5px"
+  	}
+
+
   return (
     <div>
       {Object.keys(lists).map((listName, index1) => (
@@ -12,21 +22,34 @@ export const Lists = ({lists}) => {
             {lists[listName].length<10 &&
               <div style={{width:"400px"}}>
                 {lists[listName].map((item, index2) => (
-                  <div>
+                  <div key={index1+"-"+index2}>
                   {item}<br />
                   </div>
                 ))}
               </div>
             }
             {lists[listName].length>=10 &&
-              <div style={{height:"200px", width:"400px", overflowY:"scroll"}}>
-              {lists[listName].map((item, index2) => (
-                <div>
-                {item}<br />
-                </div>
-              ))}
-              </div>
-            }
+              <List
+            	width={400}
+            	height={200}
+            	//rowCount={filteredDealers.length}
+            	rowCount={lists[listName].length}
+            	rowHeight={20}
+            	style={liststyle}
+            	rowRenderer={({
+            			  key,         // Unique key within array of rows
+            			  index,       // Index of row within collection
+            			  isScrolling, // The List is currently being scrolled
+            			  isVisible,   // This row is visible within the List (eg it is not an overscanned row)
+            			  style        // Style object to be applied to row (to position it)
+            			}) => {
+                    return (
+                    <div key={key} style={style}>
+                      {lists[listName][index]}
+                    </div>
+                  )
+                  }} />
+              }
           </div>
           <br /><br />
         </div>
