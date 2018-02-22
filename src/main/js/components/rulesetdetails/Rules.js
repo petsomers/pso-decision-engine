@@ -40,11 +40,17 @@ export const Rules = ({rules}) => {
                 {rule.positiveResult.startsWith("goto ") &&
                   <i className="fas fa-forward"></i>
                 }
+                {rule.positiveResult=="" &&
+                  <i class="fas fa-level-down-alt"></i>
+                }
                 {rule.positiveResult}<br />
 
                 <i className="fas fa-times"></i> &nbsp;&nbsp;&nbsp;&nbsp;
                 {rule.negativeResult.startsWith("goto ") &&
                   <i className="fas fa-forward"></i>
+                }
+                {rule.negativeResult=="" &&
+                  <i class="fas fa-level-down-alt"></i>
                 }
                 {rule.negativeResult}<br />
 
