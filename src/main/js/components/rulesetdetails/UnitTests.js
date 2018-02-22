@@ -1,10 +1,19 @@
 import React from "react";
 
-export const UnitTests = ({unitTests}) => {
 
-  return (
+export class UnitTests  extends React.Component {
+	constructor(props) {
+		super();
+		this.state = {
+		}
+	}
+
+  render() {
+    return (
     <div>
-      <i class="fas fa-flag-checkered"></i>
+      <i className="fas fa-flag-checkered"></i>
     </div>
-  );
+    );
+  }
+
 };

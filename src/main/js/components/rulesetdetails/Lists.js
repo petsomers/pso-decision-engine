@@ -17,7 +17,7 @@ export const Lists = ({lists}) => {
     <div>
       {Object.keys(lists).map((listName, index1) => (
         <div>
-          <i class="fas fa-list"></i> <b>{listName}</b> ({lists[listName].length})
+          <i className="fas fa-list"></i> <b>{listName}</b> ({lists[listName].length})
           <div style={{paddingLeft: "20px"}}>
             {lists[listName].length<10 &&
               <div style={{width:"400px"}}>

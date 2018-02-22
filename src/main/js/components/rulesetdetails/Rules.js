@@ -38,7 +38,7 @@ export const Rules = ({rules}) => {
                 <br />
                 <i className="fas fa-check"></i> &nbsp;&nbsp;&nbsp;
                 {rule.positiveResult.startsWith("goto ") &&
-                  <i className="fas fa-forward"></i>
+                  <span><i className="fas fa-forward"></i>&nbsp;&nbsp;</span>
                 }
                 {rule.positiveResult=="" &&
                   <i class="fas fa-level-down-alt"></i>
@@ -47,7 +47,7 @@ export const Rules = ({rules}) => {
 
                 <i className="fas fa-times"></i> &nbsp;&nbsp;&nbsp;&nbsp;
                 {rule.negativeResult.startsWith("goto ") &&
-                  <i className="fas fa-forward"></i>
+                  <span><i className="fas fa-forward"></i>&nbsp;&nbsp;</span>
                 }
                 {rule.negativeResult=="" &&
                   <i class="fas fa-level-down-alt"></i>

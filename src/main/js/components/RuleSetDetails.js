@@ -3,6 +3,8 @@ import { Button, Spinner, Tabs, Tab } from "react-lightning-design-system";
 import { InputParameters } from "./rulesetdetails/InputParameters"
 import { Rules } from "./rulesetdetails/Rules"
 import { Lists } from "./rulesetdetails/Lists"
+import { UnitTests } from "./rulesetdetails/UnitTests"
+
 import axios from "axios"
 
 export class  RuleSetDetails extends React.Component {
