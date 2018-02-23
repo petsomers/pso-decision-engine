@@ -57,6 +57,7 @@ class App extends React.Component {
 						<RuleSetDetails
 							ruleSetDetails={this.props.ruleSetDetails}
 							runUnitTests={(endpoint, versionId) => this.props.runUnitTests(endpoint, versionId)}
+							unitTestsResult={this.props.unitTestsResult}
 						/>
 					}
 					{this.props.inprogress &&
@@ -86,6 +87,7 @@ const mapStateToProps = (state) => {
 		versions: state.appReducer.versions,
 		selectedEndpoint: state.appReducer.selectedEndpoint,
 		ruleSetDetails: state.appReducer.ruleSetDetails,
+		unitTestsResult: state.appReducer.unitTestsResult,
 		layout: state.appReducer.layout,
 		mainScreen: state.appReducer.mainScreen,
 		errorMessage: state.appReducer.errorMessage

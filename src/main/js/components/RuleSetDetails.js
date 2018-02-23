@@ -79,7 +79,10 @@ export class  RuleSetDetails extends React.Component {
 					<Lists lists={d.lists} />
  				}
 				{(activeTab=="unitTests") &&
-					<UnitTests unitTests={d.unitTests} runUnitTests={() => this.runUnitTests()} />
+					<UnitTests
+						unitTests={d.unitTests}
+						unitTestsResult={this.props.unitTestsResult}
+						runUnitTests={() => this.runUnitTests()} />
  				}
 			</div>
 		</div>

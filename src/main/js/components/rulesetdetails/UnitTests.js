@@ -1,21 +1,27 @@
 import React from "react";
 import { Table , TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn, Button } from "react-lightning-design-system";
 
-export class UnitTests  extends React.Component {
-	constructor(props) {
-		super();
-		this.state = {
-		}
-	}
-
-  render() {
-    return (
+export const UnitTests = ({unitTests, runUnitTests, unitTestsResult}) => {
+	let utres=unitTestsResult!=null?unitTestsResult.unitTestResults:null;
+	return (
     <div>
 			<div style={{position: "absolute", right: "30px", top: "135px"}}>
-				<Button type="brand" onClick={() => this.props.runUnitTests()} icon="right" iconAlign="left" label="Run All Tests" />
+				<Button type="brand" onClick={() => runUnitTests()} icon="right" iconAlign="left" label="Run All Tests" />
+				{unitTestsResult!=null && unitTestsResult.allTestsPassed &&
+					<span>
+					<br />
+					<b><font color="green" size="+1"><i class="fas fa-check"></i> All Tests Passed</font></b>
+					</span>
+				}
+				{unitTestsResult!=null && !unitTestsResult.allTestsPassed &&
+					<span>
+					<br />
+					<b><font color="red" size="+1"><i class="fas fa-frown"></i>FAILED</font></b>
+					</span>
+				}
 			</div>
-      {this.props.unitTests.map((unitTest, index1) => (
-      <div key={"ut"+index1} style={{paddingBottom: "30px"}}>
+      {unitTests.map((unitTest, utnr) => (
+      <div key={"ut"+utnr} style={{paddingBottom: "30px"}}>
         <i className="fas fa-flag-checkered"></i>
 				&nbsp;&nbsp;<b>{unitTest.name}</b>
         <div style={{paddingLeft: "40px", width: "70%"}}>
@@ -28,7 +34,7 @@ export class UnitTests  extends React.Component {
             </TableHeader>
             <TableBody>
               {Object.keys(unitTest.parameters).map((parameterName, index2) => (
-                <TableRow key={"key"+index1+"_"+index2}>
+                <TableRow key={"key"+utnr+"_"+index2}>
                   <TableRowColumn>{parameterName}</TableRowColumn>
                   <TableRowColumn>{unitTest.parameters[parameterName]}</TableRowColumn>
                 </TableRow>
@@ -42,7 +48,5 @@ export class UnitTests  extends React.Component {
       </div>
       ))}
     </div>
-    );
-  }
-
+  )
 };
