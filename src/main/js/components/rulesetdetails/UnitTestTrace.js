@@ -2,8 +2,9 @@ import React from "react";
 import { Table , TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn, Button } from "react-lightning-design-system";
 
 export const UnitTestTrace = ({runData}) => {
+  const borderedTextStyle={border: "1px", borderStyle: "solid", borderColor: "#CCCAC9", backgroundColor: "#EEEEEE"};
   return (
-    <div style={{borderLeft: "solid", borderLeftWidth: "1px", borderLeftColor: "#CCCCCC", padding: "15px"}}>
+    <div style={{paddingLeft: "45px"}}>
       <b>Unit Test Duration:</b> {runData.durationInMilliSeconds} ms<br />
       {runData.trace && runData.trace.length>0 &&
         <div>
@@ -16,8 +17,8 @@ export const UnitTestTrace = ({runData}) => {
           </tr>
           <tr style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda"}}>
             <td colSpan="2">
-              {t.rule.parameterName} ({t.parameterValue})
-              {t.rule.comparator}
+              {t.rule.parameterName} ( <span style={borderedTextStyle}>{t.parameterValue}</span> )
+              &nbsp; {t.rule.comparator} &nbsp;
               {t.rule.value1}
               {t.rule.value2!="" &&
                 <span> ; {t.rule.value2}</span>
@@ -25,8 +26,24 @@ export const UnitTestTrace = ({runData}) => {
             </td>
           </tr>
           <tr>
-            <td style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%"}}>{t.rule.positiveResult}</td>
-            <td style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%"}}>{t.rule.negativeResult}</td>
+            {t.result==t.rule.positiveResult?(
+              <td style={{border: "2px", borderStyle: "solid", borderColor: "#dddbda", width:"50%", backgroundColor: "#EEEEEE"}}>
+                {t.rule.positiveResult}
+              </td>
+            ) : (
+              <td style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%"}}>
+                {t.rule.positiveResult}
+              </td>
+            )}
+            {t.result==t.rule.negativeResult?(
+              <td style={{border: "2px", borderStyle: "solid", borderColor: "#dddbda", width:"50%", backgroundColor: "#EEEEEE"}}>
+                {t.rule.negativeResult}
+              </td>
+            ) : (
+              <td style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%"}}>
+                {t.rule.negativeResult}
+              </td>
+            )}
           </tr>
           </tbody>
           </table>
