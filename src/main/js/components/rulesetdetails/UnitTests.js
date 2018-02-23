@@ -31,7 +31,12 @@ export const UnitTests = ({unitTests, runUnitTests, unitTestsResult}) => {
 				&nbsp;&nbsp;<b>{unitTest.name}</b>
 				{utres!=null && utres[utnr].passed &&
 						<span>
-							&nbsp;&nbsp;&nbsp;<b><font color="green"><i class="fas fa-check"></i>PASSED</font></b>
+							&nbsp;&nbsp;&nbsp;<b><font color="green"><i class="fas fa-check"></i>&nbsp;PASSED</font></b>
+						</span>
+				}
+				{utres!=null && !utres[utnr].passed &&
+						<span>
+							&nbsp;&nbsp;&nbsp;<b><font color="red"><i class="fas fa-frown"></i>&nbsp;FAILED</font></b>
 						</span>
 				}
         <div style={{paddingLeft: "40px", width: "70%"}}>
