@@ -22,6 +22,9 @@ export const UnitTests = ({unitTests, runUnitTests, unitTestsResult}) => {
 					</span>
 				}
 			</div>
+			{unitTestsResult!=null && unitTestsResult.errorMessage &&
+				<div style={{padding: "50px"}}><font color="red">{unitTestsResult.errorMessage}</font></div>
+			}
       {unitTests.map((unitTest, utnr) => (
       <div key={"ut"+utnr} style={{paddingBottom: "30px"}}>
         <i className="fas fa-flag-checkered"></i>
@@ -50,11 +53,18 @@ export const UnitTests = ({unitTests, runUnitTests, unitTestsResult}) => {
           </Table>
 					<div style={{paddingTop:"10px"}}>
 						<i className="fas fa-child"></i> <b>Expected Result: <font color="green">{unitTest.expectedResult}</font></b>
+						{utres!=null && utres[utnr].passed &&
+								<span>
+									&nbsp;<b><font color="green"><i class="fas fa-check"></i>&nbsp;</font></b>
+								</span>
+						}
 					</div>
-					{utres!=null && utres[utnr] &&
-						<UnitTestTrace runData={utres[utnr].run} />
-					}
         </div>
+				{utres!=null && utres[utnr] &&
+					<div style={{paddingLeft: "15px"}}>
+						<UnitTestTrace runData={utres[utnr].run} />
+					</div>
+				}
       </div>
       ))}
     </div>

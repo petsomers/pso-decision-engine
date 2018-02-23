@@ -4,21 +4,8 @@ import { Table , TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowCo
 export const UnitTestTrace = ({runData}) => {
 
   return (
-    <div>
-      <b>Duration:</b> {runData.durationInMilliSeconds}<br />
-      {runData.error &&
-        <div>
-        <font color="red">Error</font><br />
-        </div>
-      }
-      {runData.messages && runData.messages.length>0 &&
-        <div>
-        <u>Info:</u>
-        runData.messages.map((message, index) => {
-          <div>{message}<br /></div>
-        });
-        </div>
-      }
+    <div style={{borderLeft: "solid", borderLeftWidth: "1px", borderLeftColor: "#CCCCCC", padding: "15px"}}>
+      <b>Unit Test Duration:</b> {runData.durationInMilliSeconds}<br />
       {runData.trace && runData.trace.length>0 &&
         <Table bordered fixedLayout>
           <TableHeader>
@@ -35,13 +22,34 @@ export const UnitTestTrace = ({runData}) => {
               <TableRow key={tracenr}>
                 <TableRowColumn>{t.rule.sheetName}: {t.rule.rowNumber}</TableRowColumn>
                 <TableRowColumn>{t.rule.label}</TableRowColumn>
-                <TableRowColumn>{t.rule.parameterName} ({t.parameterValue}) {t.rule.condition}</TableRowColumn>
+                <TableRowColumn>
+                  {t.rule.parameterName} ({t.parameterValue})
+                  {t.rule.comparator}
+                  {t.rule.value1}
+                  {t.rule.value2!="" &&
+                    <span> ; {t.rule.value2}</span>
+                  }
+                </TableRowColumn>
+                <TableRowColumn>{t.rule.positiveResult}</TableRowColumn>
+                <TableRowColumn>{t.rule.negativeResult}</TableRowColumn>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       }
-
+      {runData.error &&
+        <div>
+        <font color="red">Error</font><br />
+        </div>
+      }
+      {runData.messages && runData.messages.length>0 &&
+        <div>
+        <u>Info:</u>
+        runData.messages.map((message, index) => {
+          <div>{message}<br /></div>
+        });
+        </div>
+      }
     </div>
   );
 };
