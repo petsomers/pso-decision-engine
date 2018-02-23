@@ -1,5 +1,5 @@
 import React from "react";
-import { Table , TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn } from "react-lightning-design-system";
+import { Table , TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn, Button } from "react-lightning-design-system";
 
 export class UnitTests  extends React.Component {
 	constructor(props) {
@@ -11,10 +11,13 @@ export class UnitTests  extends React.Component {
   render() {
     return (
     <div>
+			<div style={{position: "absolute", right: "30px", top: "135px"}}>
+				<Button type="brand" onClick={() => this.doUpload()} icon="right" iconAlign="left" label="Run All Tests" />
+			</div>
       {this.props.unitTests.map((unitTest, index1) => (
       <div key={"ut"+index1} style={{paddingBottom: "30px"}}>
         <i className="fas fa-flag-checkered"></i>
-        {unitTest.name}
+				&nbsp;&nbsp;<b>{unitTest.name}</b>
         <div style={{paddingLeft: "40px", width: "70%"}}>
           <Table bordered fixedLayout>
             <TableHeader>
@@ -32,6 +35,9 @@ export class UnitTests  extends React.Component {
               ))}
             </TableBody>
           </Table>
+					<div style={{paddingTop:"10px"}}>
+						<i class="fas fa-child"></i> <b>Expected Result: <font color="green">{unitTest.expectedResult}</font></b>
+					</div>
         </div>
       </div>
       ))}
