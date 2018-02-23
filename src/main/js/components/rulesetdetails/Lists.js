@@ -16,7 +16,7 @@ export const Lists = ({lists}) => {
   return (
     <div>
       {Object.keys(lists).map((listName, index1) => (
-        <div>
+        <div style={{paddingBottom: "15px"}}>
           <i className="fas fa-list"></i> <b>{listName}</b> ({lists[listName].length})
           <div style={{paddingLeft: "20px"}}>
             {lists[listName].length<10 &&
@@ -51,7 +51,6 @@ export const Lists = ({lists}) => {
                   }} />
               }
           </div>
-          <br /><br />
         </div>
       ))}
     </div>

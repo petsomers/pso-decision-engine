@@ -12,11 +12,11 @@ export class UnitTests  extends React.Component {
     return (
     <div>
       {this.props.unitTests.map((unitTest, index1) => (
-      <div key={"ut"+index1}>
+      <div key={"ut"+index1} style={{paddingBottom: "30px"}}>
         <i className="fas fa-flag-checkered"></i>
         {unitTest.name}
-        <div style={{paddingLeft: "40px"}}>
-          <Table bordered>
+        <div style={{paddingLeft: "40px", width: "70%"}}>
+          <Table bordered fixedLayout>
             <TableHeader>
               <TableRow>
                 <TableHeaderColumn><b>Parameter</b></TableHeaderColumn>
@@ -33,7 +33,6 @@ export class UnitTests  extends React.Component {
             </TableBody>
           </Table>
         </div>
-        <br />
       </div>
       ))}
     </div>
