@@ -1,15 +1,17 @@
 import React from "react";
 import { Table , TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn, Button } from "react-lightning-design-system";
+import { UnitTestTrace } from "./UnitTestTrace"
 
 export const UnitTests = ({unitTests, runUnitTests, unitTestsResult}) => {
 	let utres=unitTestsResult!=null?unitTestsResult.unitTestResults:null;
 	return (
     <div>
 			<div style={{position: "absolute", right: "30px", top: "135px"}}>
+				{(unitTestsResult==null || !unitTestsResult.allTestsPassed) &&
 				<Button type="brand" onClick={() => runUnitTests()} icon="right" iconAlign="left" label="Run All Tests" />
+				}
 				{unitTestsResult!=null && unitTestsResult.allTestsPassed &&
 					<span>
-					<br />
 					<b><font color="green" size="+1"><i class="fas fa-check"></i> All Tests Passed</font></b>
 					</span>
 				}
@@ -24,6 +26,11 @@ export const UnitTests = ({unitTests, runUnitTests, unitTestsResult}) => {
       <div key={"ut"+utnr} style={{paddingBottom: "30px"}}>
         <i className="fas fa-flag-checkered"></i>
 				&nbsp;&nbsp;<b>{unitTest.name}</b>
+				{utres!=null && utres[utnr].passed &&
+						<span>
+							&nbsp;&nbsp;&nbsp;<b><font color="green"><i class="fas fa-check"></i>PASSED</font></b>
+						</span>
+				}
         <div style={{paddingLeft: "40px", width: "70%"}}>
           <Table bordered fixedLayout>
             <TableHeader>
@@ -44,6 +51,9 @@ export const UnitTests = ({unitTests, runUnitTests, unitTestsResult}) => {
 					<div style={{paddingTop:"10px"}}>
 						<i className="fas fa-child"></i> <b>Expected Result: <font color="green">{unitTest.expectedResult}</font></b>
 					</div>
+					{utres!=null && utres[utnr] &&
+						<UnitTestTrace runData={utres[utnr].run} />
+					}
         </div>
       </div>
       ))}
