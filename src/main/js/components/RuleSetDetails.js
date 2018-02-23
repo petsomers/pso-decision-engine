@@ -16,11 +16,16 @@ export class  RuleSetDetails extends React.Component {
 	}
 
 	setActiveTab(tab) {
-			this.setState({
-				...this.state,
-				activeTab:tab
-			});
-		}
+		this.setState({
+			...this.state,
+			activeTab:tab
+		});
+	}
+
+	runUnitTests() {
+		let d=this.props.ruleSetDetails;
+		this.props.runUnitTests(d.restEndpoint, d.id);
+	}
 
 	render() {
 		let d=this.props.ruleSetDetails;
@@ -74,7 +79,7 @@ export class  RuleSetDetails extends React.Component {
 					<Lists lists={d.lists} />
  				}
 				{(activeTab=="unitTests") &&
-					<UnitTests unitTests={d.unitTests} />
+					<UnitTests unitTests={d.unitTests} runUnitTests={() => this.runUnitTests()} />
  				}
 			</div>
 		</div>

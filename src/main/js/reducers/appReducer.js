@@ -11,7 +11,8 @@ const appReducer = (state = {
   inprogress: false,
   selectedEndpoint: "",
   selectedVersion: "",
-  ruleSetDetails: null
+  ruleSetDetails: null,
+  unitTestsResult: null
 }, action) => {
   if (action.type.endsWith("_FULFILLED")) {
     if (action.payload && action.payload.data && action.payload.data.error) {
@@ -83,7 +84,16 @@ const appReducer = (state = {
       selectedEndpoint:ruleSetResp.restEndpoint,
       selectedVersion:ruleSetResp.id,
       ruleSetDetails:ruleSetResp,
+      unitTestsResult: null,
       mainScreen: "ruleSetDetails"
+    }
+  break;
+  case "RUN_UNIT_TESTS_FULFILLED":
+    let unitTestsResult=action.payload.data
+    state = {
+      ...state,
+      inprogress: false,
+      unitTestsResult: unitTestsResult,
     }
   break;
   case "WINDOW_RESIZE":

@@ -12,7 +12,7 @@ export class UnitTests  extends React.Component {
     return (
     <div>
 			<div style={{position: "absolute", right: "30px", top: "135px"}}>
-				<Button type="brand" onClick={() => this.doUpload()} icon="right" iconAlign="left" label="Run All Tests" />
+				<Button type="brand" onClick={() => this.props.runUnitTests()} icon="right" iconAlign="left" label="Run All Tests" />
 			</div>
       {this.props.unitTests.map((unitTest, index1) => (
       <div key={"ut"+index1} style={{paddingBottom: "30px"}}>
@@ -36,7 +36,7 @@ export class UnitTests  extends React.Component {
             </TableBody>
           </Table>
 					<div style={{paddingTop:"10px"}}>
-						<i class="fas fa-child"></i> <b>Expected Result: <font color="green">{unitTest.expectedResult}</font></b>
+						<i className="fas fa-child"></i> <b>Expected Result: <font color="green">{unitTest.expectedResult}</font></b>
 					</div>
         </div>
       </div>

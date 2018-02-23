@@ -56,6 +56,7 @@ class App extends React.Component {
 					{this.props.mainScreen=="ruleSetDetails" &&
 						<RuleSetDetails
 							ruleSetDetails={this.props.ruleSetDetails}
+							runUnitTests={(endpoint, versionId) => this.props.runUnitTests(endpoint, versionId)}
 						/>
 					}
 					{this.props.inprogress &&
@@ -140,6 +141,14 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({
   			type: "GET_RULESET",
   			payload: axios.get("setup/source/"+endpoint+"/"+versionId)
+			});
+		},
+		runUnitTests: (endpoint, versionId) => {
+			console.log("RUNNING UNIT TESTS for "+endpoint+"/"+versionId);
+			dispatch({type: "SET_INPROGRESS"});
+			dispatch({
+  			type: "RUN_UNIT_TESTS",
+  			payload: axios.get("run_unittests/"+endpoint+"/"+versionId)
 			});
 		}
 	}
