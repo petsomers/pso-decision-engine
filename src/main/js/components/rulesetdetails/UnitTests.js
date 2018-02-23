@@ -12,13 +12,13 @@ export const UnitTests = ({unitTests, runUnitTests, unitTestsResult}) => {
 				}
 				{unitTestsResult!=null && unitTestsResult.allTestsPassed &&
 					<span>
-					<b><font color="green" size="+1"><i class="fas fa-check"></i> All Tests Passed</font></b>
+					<b><font color="green" size="+1"><i className="fas fa-check"></i> All Tests Passed</font></b>
 					</span>
 				}
 				{unitTestsResult!=null && !unitTestsResult.allTestsPassed &&
 					<span>
 					<br />
-					<b><font color="red" size="+1"><i class="fas fa-frown"></i>FAILED</font></b>
+					<b><font color="red" size="+1"><i className="fas fa-frown"></i>FAILED</font></b>
 					</span>
 				}
 			</div>
@@ -31,12 +31,12 @@ export const UnitTests = ({unitTests, runUnitTests, unitTestsResult}) => {
 				&nbsp;&nbsp;<b>{unitTest.name}</b>
 				{utres!=null && utres[utnr].passed &&
 						<span>
-							&nbsp;&nbsp;&nbsp;<b><font color="green"><i class="fas fa-check"></i>&nbsp;PASSED</font></b>
+							&nbsp;&nbsp;&nbsp;<b><font color="green"><i className="fas fa-check"></i>&nbsp;PASSED</font></b>
 						</span>
 				}
 				{utres!=null && !utres[utnr].passed &&
 						<span>
-							&nbsp;&nbsp;&nbsp;<b><font color="red"><i class="fas fa-frown"></i>&nbsp;FAILED</font></b>
+							&nbsp;&nbsp;&nbsp;<b><font color="red"><i className="fas fa-frown"></i>&nbsp;FAILED</font></b>
 						</span>
 				}
         <div style={{paddingLeft: "40px", width: "70%"}}>
@@ -60,7 +60,7 @@ export const UnitTests = ({unitTests, runUnitTests, unitTestsResult}) => {
 						<i className="fas fa-child"></i> <b>Expected Result: <font color="green">{unitTest.expectedResult}</font></b>
 						{utres!=null && utres[utnr].passed &&
 								<span>
-									&nbsp;<b><font color="green"><i class="fas fa-check"></i>&nbsp;</font></b>
+									&nbsp;<b><font color="green"><i className="fas fa-check"></i>&nbsp;</font></b>
 								</span>
 						}
 					</div>

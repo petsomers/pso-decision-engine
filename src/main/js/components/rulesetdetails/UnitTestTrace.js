@@ -8,12 +8,14 @@ export const UnitTestTrace = ({runData}) => {
       {runData.trace && runData.trace.length>0 &&
         <div>
         {runData.trace.map((t, tracenr) => (
-          <table key={"tr"+tracenr}>
-          <tr>
-            <td>{t.rule.sheetName}: {t.rule.rowNumber} - {t.rule.label}</td>
+          <div key={"tr"+tracenr} style={{paddingBottom:"10px"}}>
+          <table style={{width: "60%"}}>
+          <tbody>
+          <tr style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda"}}>
+            <td colSpan="2">{t.rule.sheetName}: {t.rule.rowNumber} - {t.rule.label}</td>
           </tr>
-          <tr>
-            <td>
+          <tr style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda"}}>
+            <td colSpan="2">
               {t.rule.parameterName} ({t.parameterValue})
               {t.rule.comparator}
               {t.rule.value1}
@@ -23,10 +25,12 @@ export const UnitTestTrace = ({runData}) => {
             </td>
           </tr>
           <tr>
-            <td>{t.rule.positiveResult}</td>
-            <td>{t.rule.negativeResult}</td>
+            <td style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%"}}>{t.rule.positiveResult}</td>
+            <td style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%"}}>{t.rule.negativeResult}</td>
           </tr>
+          </tbody>
           </table>
+          </div>
         ))}
         </div>
       }
