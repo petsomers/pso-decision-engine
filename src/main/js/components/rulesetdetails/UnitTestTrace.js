@@ -7,18 +7,12 @@ export const UnitTestTrace = ({runData}) => {
       <b>Unit Test Duration:</b> {runData.durationInMilliSeconds} ms<br />
       {runData.trace && runData.trace.length>0 &&
         <div>
-        <table>
-        <tr className="unitTests">
-          <td><b>POSITION</b></td>
-          <td><b>LABEL</b></td>
-          <td><b>CONDITION</b></td>
-          <td><b>POSITIVE RESULT</b></td>
-          <td><b>NEGATIVE RESULT</b></td>
-        </tr>
         {runData.trace.map((t, tracenr) => (
-          <tr key={"tr"+tracenr}>
-            <td>{t.rule.sheetName}: {t.rule.rowNumber}</td>
-            <td>{t.rule.label}</td>
+          <table key={"tr"+tracenr}>
+          <tr>
+            <td>{t.rule.sheetName}: {t.rule.rowNumber} - {t.rule.label}</td>
+          </tr>
+          <tr>
             <td>
               {t.rule.parameterName} ({t.parameterValue})
               {t.rule.comparator}
@@ -27,11 +21,13 @@ export const UnitTestTrace = ({runData}) => {
                 <span> ; {t.rule.value2}</span>
               }
             </td>
+          </tr>
+          <tr>
             <td>{t.rule.positiveResult}</td>
             <td>{t.rule.negativeResult}</td>
           </tr>
+          </table>
         ))}
-        </table>
         </div>
       }
       {runData.error &&
