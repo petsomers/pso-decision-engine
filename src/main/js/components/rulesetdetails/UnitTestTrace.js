@@ -13,10 +13,21 @@ export const UnitTestTrace = ({runData}) => {
           <table style={{width: "60%"}}>
           <tbody>
           <tr style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda"}}>
-            <td colSpan="2">{t.rule.sheetName}: {t.rule.rowNumber} - {t.rule.label}</td>
+            <td colSpan="2">
+              <i className="far fa-file-excel"></i> &nbsp;  {t.rule.sheetName}: {t.rule.rowNumber}
+              RESULT: {t.result}
+            </td>
           </tr>
+          {t.rule.label && t.rule.label!="" &&
+            <tr style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda"}}>
+              <td colSpan="2">
+                <i className="fas fa-tags"></i> &nbsp; {t.rule.label}
+              </td>
+            </tr>
+          }
           <tr style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda"}}>
             <td colSpan="2">
+              <i className="fas fa-balance-scale"></i> &nbsp;
               {t.rule.parameterName} ( <span style={borderedTextStyle}>{t.parameterValue}</span> )
               &nbsp; {t.rule.comparator} &nbsp;
               {t.rule.value1}
@@ -27,21 +38,21 @@ export const UnitTestTrace = ({runData}) => {
           </tr>
           <tr>
             {t.result==t.rule.positiveResult?(
-              <td style={{border: "2px", borderStyle: "solid", borderColor: "#dddbda", width:"50%", backgroundColor: "#EEEEEE"}}>
-                {t.rule.positiveResult}
+              <td style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%", backgroundColor: "#EEEEEE"}}>
+                <i className="fas fa-check"></i>  &nbsp; {t.rule.positiveResult} &nbsp;
               </td>
             ) : (
               <td style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%"}}>
-                {t.rule.positiveResult}
+                <i className="fas fa-check"></i>  &nbsp; {t.rule.positiveResult} &nbsp;
               </td>
             )}
             {t.result==t.rule.negativeResult?(
-              <td style={{border: "2px", borderStyle: "solid", borderColor: "#dddbda", width:"50%", backgroundColor: "#EEEEEE"}}>
-                {t.rule.negativeResult}
+              <td style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%", backgroundColor: "#EEEEEE"}}>
+                <i className="fas fa-times"></i> &nbsp; {t.rule.negativeResult} &nbsp;
               </td>
             ) : (
               <td style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%"}}>
-                {t.rule.negativeResult}
+                <i className="fas fa-times"></i>  &nbsp; {t.rule.negativeResult} &nbsp;
               </td>
             )}
           </tr>

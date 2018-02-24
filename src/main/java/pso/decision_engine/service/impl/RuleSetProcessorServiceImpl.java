@@ -75,7 +75,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			dte.setResult(ruleResult?"POSITIVE":"NEGATIVE");
 			String action=ruleResult?r.getPositiveResult():r.getNegativeResult();
 			if (action==null || action.isEmpty()) {
-				dte.setResult("NEXT");
+				dte.setResult("");
 				ruleNumber++;
 				continue;
 			}
