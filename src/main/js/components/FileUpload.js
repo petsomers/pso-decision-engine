@@ -60,7 +60,7 @@ export class FileUpload  extends React.Component {
   	return (
 		<div>
 			<h1>Excel File Upload</h1>
-			<i className="fa fa-file-excel-o" aria-hidden="true"></i> <b>Upload Excel File</b><br /><br />
+			<i className="far fa-file-excel"></i> &nbsp; <b>Upload Excel File</b><br /><br />
 			File: <input type="file" id="fileinput" onChange={(event) => this.selectUploadFile(event)}/>
 			<br />
 			{this.state.selectedUploadFile!=null &&
