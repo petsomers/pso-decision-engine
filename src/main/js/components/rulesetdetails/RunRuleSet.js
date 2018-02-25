@@ -7,7 +7,7 @@ export const RunRuleSet = ({inputParameters, runNowData, setRunNowParameterValue
   <div style={{position: "absolute", right: "left: 280px", top: "135px"}}>
 		<Button type="brand" onClick={() => runNow()} icon="right" iconAlign="left" label="Run" />
 	</div>
-  <div style={{display: "inline-block", width: "200px"}}>
+  <div style={{display: "inline-block", float: "left", width: "200px"}}>
     {Object.keys(inputParameters).map((parameterName, index) => (
       <Input
         key={index}
@@ -16,9 +16,11 @@ export const RunRuleSet = ({inputParameters, runNowData, setRunNowParameterValue
         onChange={(event) => setRunNowParameterValue(parameterName, event.target.value)}/>
       ))}
   </div>
-  <div style={{display: "inline-block"}}>
-    RUN RESULT
-  </div>
+  {runNowData.result &&
+    <div style={{display: "inline-block"}}>
+      {runNowData.result.errorMessage}
+    </div>
+  }
 </div>
     )
 };

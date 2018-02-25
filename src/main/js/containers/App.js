@@ -170,7 +170,7 @@ const mapDispatchToProps = (dispatch) => {
 			});
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
-				type: "run_now",
+				type: "RUN_NOW",
 				payload: axios.get("json/run/"+endpoint+"/"+versionId+"?trace=Y&"+parameterStr)
 			});
 		}

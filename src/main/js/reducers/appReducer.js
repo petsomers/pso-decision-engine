@@ -116,6 +116,15 @@ const appReducer = (state = {
       }
     }
   break;
+  case "RUN_NOW_FULFILLED":
+    state = {
+      ...state,
+      runNowData: {
+        ...state.runNowData,
+        result: action.payload.data
+      }
+    }
+  break;
   case "WINDOW_RESIZE":
     if (action.payload.height!=state.layout.windowHeight
       || action.payload.width!=state.layout.windowWidth) {
