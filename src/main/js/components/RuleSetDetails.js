@@ -4,7 +4,7 @@ import { InputParameters } from "./rulesetdetails/InputParameters"
 import { Rules } from "./rulesetdetails/Rules"
 import { Lists } from "./rulesetdetails/Lists"
 import { UnitTests } from "./rulesetdetails/UnitTests"
-
+import { RunRuleSet }  from "./rulesetdetails/RunRuleSet"
 import axios from "axios"
 
 export class  RuleSetDetails extends React.Component {
@@ -84,6 +84,13 @@ export class  RuleSetDetails extends React.Component {
 						unitTestsResult={this.props.unitTestsResult}
 						runUnitTests={() => this.runUnitTests()} />
  				}
+				{(activeTab=="runNow") &&
+					<RunRuleSet
+						inputParameters={d.inputParameters}
+						runNowData={this.props.runNowData}
+						setRunNowParameterValue={(name, value) => this.props.setRunNowParameterValue(name, value)}
+					/>
+				}
 			</div>
 		</div>
 	)

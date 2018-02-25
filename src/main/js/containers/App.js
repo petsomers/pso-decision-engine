@@ -58,6 +58,8 @@ class App extends React.Component {
 							ruleSetDetails={this.props.ruleSetDetails}
 							runUnitTests={(endpoint, versionId) => this.props.runUnitTests(endpoint, versionId)}
 							unitTestsResult={this.props.unitTestsResult}
+							setRunNowParameterValue={(name, value) => this.props.setRunNowParameterValue(name, value)}
+							runNowData={this.props.runNowData}
 						/>
 					}
 					{this.props.inprogress &&
@@ -88,6 +90,7 @@ const mapStateToProps = (state) => {
 		selectedEndpoint: state.appReducer.selectedEndpoint,
 		ruleSetDetails: state.appReducer.ruleSetDetails,
 		unitTestsResult: state.appReducer.unitTestsResult,
+		runNowData: state.appReducer.runNow,
 		layout: state.appReducer.layout,
 		mainScreen: state.appReducer.mainScreen,
 		errorMessage: state.appReducer.errorMessage
@@ -151,6 +154,12 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({
   			type: "RUN_UNIT_TESTS",
   			payload: axios.get("run_unittests/"+endpoint+"/"+versionId)
+			});
+		},
+		setRunNowParameterValue: (name, value) => {
+			dispatch({
+  			type: "SET_RUNNOW_PARAMETER_VALUE",
+  			payload: {parameterName: name, parameterValue: value}
 			});
 		}
 	}

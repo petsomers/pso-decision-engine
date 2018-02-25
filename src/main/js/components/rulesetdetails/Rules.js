@@ -43,14 +43,14 @@ export const Rules = ({rules}) => {
                 <div style={resultStyleGreen}>
                   <i className="fas fa-check"></i> &nbsp;&nbsp;&nbsp;
                   {rule.positiveResult=="" &&
-                    <i class="fas fa-level-down-alt"></i>
+                    <i className="fas fa-level-down-alt"></i>
                   }
                   {rule.positiveResult}
                 </div>
                 <div style={resultStyleRed}>
                   <i className="fas fa-times"></i> &nbsp;&nbsp;&nbsp;&nbsp;
                   {rule.negativeResult=="" &&
-                    <i class="fas fa-level-down-alt"></i>
+                    <i className="fas fa-level-down-alt"></i>
                   }
                   {rule.negativeResult}<br />
                   </div>
