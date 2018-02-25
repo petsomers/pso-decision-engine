@@ -27,6 +27,11 @@ export class  RuleSetDetails extends React.Component {
 		this.props.runUnitTests(d.restEndpoint, d.id);
 	}
 
+	runNow() {
+		let d=this.props.ruleSetDetails;
+		this.props.runNow(d.restEndpoint, d.id, this.props.runNowData.parameterValues);
+	}
+
 	render() {
 		let d=this.props.ruleSetDetails;
 		let activeTab=this.state.activeTab;
@@ -89,6 +94,7 @@ export class  RuleSetDetails extends React.Component {
 						inputParameters={d.inputParameters}
 						runNowData={this.props.runNowData}
 						setRunNowParameterValue={(name, value) => this.props.setRunNowParameterValue(name, value)}
+						runNow={() => this.runNow()}
 					/>
 				}
 			</div>

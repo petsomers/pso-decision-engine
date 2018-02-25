@@ -13,13 +13,13 @@ const appReducer = (state = {
   selectedVersion: "",
   ruleSetDetails: null,
   unitTestsResult: null,
-  runNow: {
+  runNowData: {
     parameterValues: {},
     result: null
   }
 }, action) => {
   if (action.type.endsWith("_FULFILLED")) {
-    if (action.payload && action.payload.data && action.payload.data.error) {
+    if (action.payload && action.payload.data && action.payload.data.error && !action.payload.data.trace) {
       state={...state, inprogress: false, errorMessage: action.payload.data.errorMessage};
       return state;
     }
@@ -107,8 +107,9 @@ const appReducer = (state = {
   case "SET_RUNNOW_PARAMETER_VALUE":
     state = {
       ...state,
-      runNow: {
+      runNowData: {
         parameterValues: {
+          ...state.runNowData.parameterValues,
           [action.payload.parameterName]:action.payload.parameterValue
         },
         result: null

@@ -60,6 +60,7 @@ class App extends React.Component {
 							unitTestsResult={this.props.unitTestsResult}
 							setRunNowParameterValue={(name, value) => this.props.setRunNowParameterValue(name, value)}
 							runNowData={this.props.runNowData}
+							runNow={(endpoint, versionId, parameters) => this.props.runNow(endpoint, versionId, parameters)}
 						/>
 					}
 					{this.props.inprogress &&
@@ -90,7 +91,7 @@ const mapStateToProps = (state) => {
 		selectedEndpoint: state.appReducer.selectedEndpoint,
 		ruleSetDetails: state.appReducer.ruleSetDetails,
 		unitTestsResult: state.appReducer.unitTestsResult,
-		runNowData: state.appReducer.runNow,
+		runNowData: state.appReducer.runNowData,
 		layout: state.appReducer.layout,
 		mainScreen: state.appReducer.mainScreen,
 		errorMessage: state.appReducer.errorMessage
@@ -160,6 +161,17 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({
   			type: "SET_RUNNOW_PARAMETER_VALUE",
   			payload: {parameterName: name, parameterValue: value}
+			});
+		},
+		runNow: (endpoint, versionId, parameters) => {
+			var parameterStr="";
+			Object.keys(parameters).map((parameterName, index) => {
+				parameterStr+= "&"+parameterName+'='+encodeURIComponent(parameters[parameterName]);
+			});
+			dispatch({type: "SET_INPROGRESS"});
+			dispatch({
+				type: "run_now",
+				payload: axios.get("json/run/"+endpoint+"/"+versionId+"?trace=Y&"+parameterStr)
 			});
 		}
 	}
