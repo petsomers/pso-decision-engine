@@ -5,7 +5,9 @@ export const UnitTestTrace = ({runData}) => {
   const borderedTextStyle={border: "1px", borderStyle: "solid", borderColor: "#CCCAC9", backgroundColor: "#EEEEEE"};
   return (
     <div>
-      <b>Unit Test Duration:</b> {runData.durationInMilliSeconds} ms<br />
+      {runData.durationInMilliSeconds>0 &&
+        <span><b>Duration:</b> {runData.durationInMilliSeconds} ms<br /></span>
+      }
       {runData.trace && runData.trace.length>0 &&
         <div>
         {runData.trace.map((t, tracenr) => (

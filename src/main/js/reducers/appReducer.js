@@ -89,7 +89,7 @@ const appReducer = (state = {
       selectedVersion:ruleSetResp.id,
       ruleSetDetails:ruleSetResp,
       unitTestsResult: null,
-      runNow: {
+      runNowData: {
         parameterValues: {},
         result: null
       },
