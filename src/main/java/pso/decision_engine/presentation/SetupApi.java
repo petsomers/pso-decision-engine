@@ -69,13 +69,13 @@ public class SetupApi {
 	}
 	
 	
-	@RequestMapping(value = "/download_excel/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/octetstream")
-	public void downloadExcel(@PathVariable String restEndPoint,@PathVariable String ruleSetId, HttpServletResponse resp) throws IOException {
-		if (!setupService.doesRuleSetExist(restEndPoint, ruleSetId)) {
+	@RequestMapping(value = "/download_excel/{restEndpoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/octetstream")
+	public void downloadExcel(@PathVariable String restEndpoint,@PathVariable String ruleSetId, HttpServletResponse resp) throws IOException {
+		if (!setupService.doesRuleSetExist(restEndpoint, ruleSetId)) {
 			resp.sendError(404);;
 			return;
 		}
-		if (!setupService.doesExcelFileExists(restEndPoint, ruleSetId)) {
+		if (!setupService.doesExcelFileExists(restEndpoint, ruleSetId)) {
 			resp.sendError(404);;
 			return;
 		}
@@ -84,49 +84,54 @@ public class SetupApi {
 		resp.setHeader( "Cache-Control","no-store" );
 		resp.setDateHeader( "Expires", 0 );
 		resp.setContentType("application/octetstream");
-		resp.setHeader("Content-Disposition", "attachment; filename="+restEndPoint+"_"+ruleSetId+".xlsx");
-		setupService.downloadExcel(restEndPoint, ruleSetId, resp.getOutputStream());
+		resp.setHeader("Content-Disposition", "attachment; filename="+restEndpoint+"_"+ruleSetId+".xlsx");
+		setupService.downloadExcel(restEndpoint, ruleSetId, resp.getOutputStream());
 	}
 	
-	@RequestMapping(value = "/setactive/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public String setActiveRuleSet(@PathVariable String restEndPoint,@PathVariable String ruleSetId) {
-		if (!setupService.doesRuleSetExist(restEndPoint, ruleSetId)) {
+	@RequestMapping(value = "/setactive/{restEndpoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public String setActiveRuleSet(@PathVariable String restEndpoint,@PathVariable String ruleSetId) {
+		if (!setupService.doesRuleSetExist(restEndpoint, ruleSetId)) {
 			return "RULESET NOT FOUND";
 		} else {
 			// todo: first run all unit tests before making a ruleset active
-			setupService.setActiveRuleSet(restEndPoint, ruleSetId);
+			setupService.setActiveRuleSet(restEndpoint, ruleSetId);
 			return "OK";
 		}
 	}
 	
 	@RequestMapping(value = "/endpoints",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public List<String> getAllEndPoints() {
-		return setupService.getAllEndPoints();
+	public List<String> getAllEndpoints() {
+		return setupService.getAllEndpoints();
 	}
 	
-	@RequestMapping(value = "/source/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public RuleSet getActiveRuleSet(@PathVariable String restEndPoint) {
-		return setupService.getActiveRuleSetByEndPoint(restEndPoint, true, true);
+	@RequestMapping(value = "/source/{restEndpoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public RuleSet getActiveRuleSet(@PathVariable String restEndpoint) {
+		return setupService.getActiveRuleSetByEndpoint(restEndpoint, true, true);
 	}
 	
-	@RequestMapping(value = "/source/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public RuleSet getRuleSet(@PathVariable String restEndPoint, @PathVariable String ruleSetId) {
-		return setupService.getRuleSet(restEndPoint, ruleSetId, true, true);
+	@RequestMapping(value = "/source/{restEndpoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public RuleSet getRuleSet(@PathVariable String restEndpoint, @PathVariable String ruleSetId) {
+		return setupService.getRuleSet(restEndpoint, ruleSetId, true, true);
 	}
 
-	@RequestMapping(value = "/versions/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public List<RuleSetInfo> getRuleSetVersions(@PathVariable String restEndPoint) {
-		return setupService.getRuleSetVersionsForEndPoint(restEndPoint);
+	@RequestMapping(value = "/versions/{restEndpoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public List<RuleSetInfo> getRuleSetVersions(@PathVariable String restEndpoint) {
+		return setupService.getRuleSetVersionsForEndpoint(restEndpoint);
 	}
 	
-	@RequestMapping(value = "/delete_inactive/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public void deleteInactiveVersion(@PathVariable String restEndPoint, @PathVariable String ruleSetId) {
-		setupService.deleteRuleSet(restEndPoint, ruleSetId);
+	@RequestMapping(value = "/delete/inactive/{restEndpoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public void deleteInactive(@PathVariable String restEndpoint) {
+		setupService.deleteInactiveRuleSetsForEndpoint(restEndpoint);
 	}
 	
-	@RequestMapping(value = "/delete/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public void delete(@PathVariable String restEndPoint) {
-		
+	@RequestMapping(value = "/delete/endpoint/{restEndpoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public void deleteRestEndpoint(@PathVariable String restEndpoint) {
+		setupService.deleteRuleSetsWithEndpoint(restEndpoint);
+	}
+	
+	@RequestMapping(value = "/delete/ruleset/{restEndpoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public void deleteRuleSet(@PathVariable String restEndpoint, @PathVariable String ruleSetId) {
+		setupService.deleteRuleSet(restEndpoint, ruleSetId);
 	}
 	
 }

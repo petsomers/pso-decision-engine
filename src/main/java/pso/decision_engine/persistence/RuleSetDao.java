@@ -14,13 +14,13 @@ public interface RuleSetDao {
 
 	public void saveRuleSet(RuleSet ruleSet);
 
-	public boolean doesRuleSetExist(String restEndPoint, String ruleSetId);
+	public boolean doesRuleSetExist(String restEndpoint, String ruleSetId);
 	
-	public void setActiveRuleSet(String restEndPoint, String ruleSetId);
+	public void setActiveRuleSet(String restEndpoint, String ruleSetId);
 
 	public RuleSet getRuleSet(String ruleSetId);
 
-	public String getActiveRuleSetId(String restEndPoint);
+	public String getActiveRuleSetId(String restEndpoint);
 
 	/**
 	 * 
@@ -30,16 +30,20 @@ public interface RuleSetDao {
 	 */
 	public HashMap<String, HashSet<String>> getRuleSetLists(String ruleSetId, boolean loadAll);
 
-	public List<String> getAllEndPoints();
+	public List<String> getAllEndpoints();
 	
 	public boolean isInList(String ruleSetId, String listName, String value);
 
-	public List<RuleSetInfo> getRuleSetVersionsForEndPoint(String restEndPoint);
+	public List<RuleSetInfo> getRuleSetVersionsForEndpoint(String restEndpoint);
 
 	public Hashtable<String, InputParameterInfo> getRuleSetInputParameters(String ruleSetId);
 	
 	public List<UnitTest> getRuleSetUnitTests(String ruleSetId);
 
-	public void deleteRuleSet(String restEndPoint, String ruleSetId);
+	public void deleteRuleSet(String restEndpoint, String ruleSetId);
+	
+	public void deleteRuleSetsWithEndpoint(String restEndpoint);
+
+	public void deleteRuleSetsWithEndpointSkipId(String restEndpoint, String activeId);
 
 }

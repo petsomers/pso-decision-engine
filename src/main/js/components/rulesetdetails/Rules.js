@@ -24,7 +24,7 @@ export const Rules = ({rules}) => {
         <div key={"sheet"+index1}>
           <p><i className="far fa-file-excel"></i> &nbsp;&nbsp; <b>Excel Sheet:</b> {sheet.sheetName}</p>
           {sheet.rules.map((rule, index2) => (
-            <div style={{paddingBottom: "20px"}}>
+            <div key={index1+"_"+index2} style={{paddingBottom: "20px"}}>
               <div style={sheetNumberStyle}>
                 {rule.rowNumber}
               </div>

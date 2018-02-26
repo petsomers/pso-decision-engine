@@ -94,8 +94,8 @@ public class SetupApiServiceImpl implements SetupApiService {
 	}
 	
 	@Override
-	public void downloadExcel(String restEndPoint, String ruleSetId, OutputStream out) throws IOException {
-		Path file=Paths.get(appConfig.getDataDirectory(), restEndPoint, ruleSetId+".xlsx");
+	public void downloadExcel(String restEndpoint, String ruleSetId, OutputStream out) throws IOException {
+		Path file=Paths.get(appConfig.getDataDirectory(), restEndpoint, ruleSetId+".xlsx");
 		File f=file.toFile();
 		if (!f.exists()) {
 			return;
@@ -106,8 +106,8 @@ public class SetupApiServiceImpl implements SetupApiService {
 	}
 	
 	@Override
-	public boolean doesExcelFileExists(String restEndPoint, String ruleSetId) {
-		Path file=Paths.get(appConfig.getDataDirectory(), restEndPoint, ruleSetId+".xlsx");
+	public boolean doesExcelFileExists(String restEndpoint, String ruleSetId) {
+		Path file=Paths.get(appConfig.getDataDirectory(), restEndpoint, ruleSetId+".xlsx");
 		File f=file.toFile();
 		return f.exists();
 	}
@@ -121,23 +121,23 @@ public class SetupApiServiceImpl implements SetupApiService {
 	}
 	
 	@Override
-	public String getActiveRuleSetId(String restEndPoint) {
-		return ruleSetDao.getActiveRuleSetId(restEndPoint);
+	public String getActiveRuleSetId(String restEndpoint) {
+		return ruleSetDao.getActiveRuleSetId(restEndpoint);
 	}
  	
 	
-	public RuleSet getActiveRuleSetByEndPoint(String restEndPoint, boolean loadAllLists, boolean loadUnitTests) {
-		String ruleSetId=ruleSetDao.getActiveRuleSetId(restEndPoint);
+	public RuleSet getActiveRuleSetByEndpoint(String restEndpoint, boolean loadAllLists, boolean loadUnitTests) {
+		String ruleSetId=ruleSetDao.getActiveRuleSetId(restEndpoint);
 		if (ruleSetId==null) return null;
-		return getRuleSet(restEndPoint, ruleSetId, loadAllLists, loadUnitTests);
+		return getRuleSet(restEndpoint, ruleSetId, loadAllLists, loadUnitTests);
 	}
 	
 	@Override
-	public RuleSet getRuleSet(String restEndPoint, String ruleSetId, boolean loadAllLists, boolean loadUnitTests) {
+	public RuleSet getRuleSet(String restEndpoint, String ruleSetId, boolean loadAllLists, boolean loadUnitTests) {
 		if (ruleSetId==null || ruleSetId.isEmpty()) return null;
 		RuleSet rs=ruleSetDao.getRuleSet(ruleSetId);
 		if (rs==null) return null;
-		if (!restEndPoint.equals(rs.getRestEndpoint())) return null;
+		if (!restEndpoint.equals(rs.getRestEndpoint())) return null;
 		rs.setLists(ruleSetDao.getRuleSetLists(rs.getId(), loadAllLists));
 		rs.setInputParameters(ruleSetDao.getRuleSetInputParameters(rs.getId()));
 		int i=0;
@@ -154,24 +154,24 @@ public class SetupApiServiceImpl implements SetupApiService {
 	}
 	
 	@Override
-	public void setActiveRuleSet(String restEndPoint, String ruleSetId) {
+	public void setActiveRuleSet(String restEndpoint, String ruleSetId) {
 		// TODO: first run UNIT TEST!!!
-		ruleSetDao.setActiveRuleSet(restEndPoint, ruleSetId);
+		ruleSetDao.setActiveRuleSet(restEndpoint, ruleSetId);
 	}
 	
 	@Override
-	public boolean doesRuleSetExist(String restEndPoint, String ruleSetId) {
-		return ruleSetDao.doesRuleSetExist(restEndPoint, ruleSetId);
+	public boolean doesRuleSetExist(String restEndpoint, String ruleSetId) {
+		return ruleSetDao.doesRuleSetExist(restEndpoint, ruleSetId);
 	}
 
 	@Override
-	public List<String> getAllEndPoints() {
-		return ruleSetDao.getAllEndPoints();
+	public List<String> getAllEndpoints() {
+		return ruleSetDao.getAllEndpoints();
 	}
 	
 	@Override
-	public List<RuleSetInfo> getRuleSetVersionsForEndPoint(String restEndPoint) {
-		return ruleSetDao.getRuleSetVersionsForEndPoint(restEndPoint);
+	public List<RuleSetInfo> getRuleSetVersionsForEndpoint(String restEndpoint) {
+		return ruleSetDao.getRuleSetVersionsForEndpoint(restEndpoint);
 	}
 	
 	@Override
@@ -184,24 +184,65 @@ public class SetupApiServiceImpl implements SetupApiService {
 	}
 
 	@Override
-	public void deleteRuleSet(String restEndPoint, String ruleSetId) {
-		Path file=Paths.get(appConfig.getDataDirectory(), restEndPoint, ruleSetId+".xlsx");
+	public void deleteRuleSet(String restEndpoint, String ruleSetId) {
+		ruleSetDao.deleteRuleSet(restEndpoint, ruleSetId);
+		Path excelfile=Paths.get(appConfig.getDataDirectory(), restEndpoint, ruleSetId+".xlsx");
+		Path jsonfile=Paths.get(appConfig.getDataDirectory(), restEndpoint, ruleSetId+".json");
 		try {
-			Files.deleteIfExists(file);
+			Files.deleteIfExists(excelfile);
+			Files.deleteIfExists(jsonfile);
 		} catch (IOException e) {
-			// permission issue? no big deal
 			e.printStackTrace();
 		}
-		ruleSetDao.deleteRuleSet(restEndPoint, ruleSetId);
 	}
 
 	@Override
-	public void deleteEndPoint(String restEndPoint) {
-		// 1. REMOVE ALL FILES from the directory
+	public void deleteRuleSetsWithEndpoint(String restEndpoint) {
+		// 1. REMOVE FROM DB
+		ruleSetDao.deleteRuleSetsWithEndpoint(restEndpoint);
 		
+		// 2. REMOVE ALL FILES from the directory
+		Path dir=Paths.get(appConfig.getDataDirectory(), restEndpoint);
+		try {
+			Files.list(dir)
+			.filter(Files::isRegularFile)
+			.filter(file -> file.endsWith(".xlsx") || file.endsWith(".json"))
+			.forEach(file -> {
+				try {
+					Files.deleteIfExists(file);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
-		// 2. REMOVE FROM DB
+	}
+
+	@Override
+	public void deleteInactiveRuleSetsForEndpoint(String restEndpoint) {
+		String activeId=getActiveRuleSetId(restEndpoint);
+		// 1. REMOVE FROM DB
+		ruleSetDao.deleteRuleSetsWithEndpointSkipId(restEndpoint, activeId);
 		
+		// 2. REMOVE ALL FILES from the directory
+		Path dir=Paths.get(appConfig.getDataDirectory(), restEndpoint);
+		try {
+			Files.list(dir)
+			.filter(Files::isRegularFile)
+			.filter(file -> file.endsWith(".xlsx") || file.endsWith(".json"))
+			.filter(file -> !file.startsWith(activeId))
+			.forEach(file -> {
+				try {
+					Files.deleteIfExists(file);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

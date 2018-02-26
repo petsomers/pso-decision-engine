@@ -13,9 +13,9 @@ public interface SetupApiService {
 
 	public ExcelParseResult addExcelFile(InputStream in) throws IOException;
 	
-	boolean doesExcelFileExists(String restEndPoint, String ruleSetId);
+	boolean doesExcelFileExists(String restEndpoint, String ruleSetId);
 	
-	public void downloadExcel(String restEndPoint, String ruleSetId, OutputStream out)  throws IOException;
+	public void downloadExcel(String restEndpoint, String ruleSetId, OutputStream out)  throws IOException;
 
 	/**
 	 * 
@@ -24,23 +24,25 @@ public interface SetupApiService {
 	 */
 	public String saveRuleSet(RuleSet ruleSet);
 	
-	public boolean doesRuleSetExist(String restEndPoint, String ruleSetId);
+	public boolean doesRuleSetExist(String restEndpoint, String ruleSetId);
 	
-	public List<String> getAllEndPoints();
+	public List<String> getAllEndpoints();
 	
-	public void setActiveRuleSet(String restEndPoint, String ruleSetId);
+	public void setActiveRuleSet(String restEndpoint, String ruleSetId);
 	
-	public String getActiveRuleSetId(String restEndPoint);
+	public String getActiveRuleSetId(String restEndpoint);
 	
-	public RuleSet getActiveRuleSetByEndPoint(String restEndPoint, boolean loadAllLists, boolean loadUnitTests);
+	public RuleSet getActiveRuleSetByEndpoint(String restEndpoint, boolean loadAllLists, boolean loadUnitTests);
 
-	public RuleSet getRuleSet(String restEndPoint, String ruleSetId, boolean loadAllLists, boolean loadUnitTests);
+	public RuleSet getRuleSet(String restEndpoint, String ruleSetId, boolean loadAllLists, boolean loadUnitTests);
 
-	public List<RuleSetInfo> getRuleSetVersionsForEndPoint(String restEndPoint);
+	public List<RuleSetInfo> getRuleSetVersionsForEndpoint(String restEndpoint);
 
 	public boolean isInList(RuleSet ruleSet, String listName, String value);
 	
-	public void deleteRuleSet(String restEndPoint, String ruleSetId);
+	public void deleteRuleSet(String restEndpoint, String ruleSetId);
 	
-	public void deleteEndPoint(String restEndPoint);
+	public void deleteInactiveRuleSetsForEndpoint(String restEndpoint);
+
+	public void deleteRuleSetsWithEndpoint(String restEndpoint);
 }

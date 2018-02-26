@@ -49,6 +49,7 @@ export class FileUpload  extends React.Component {
 								inProgress:false
 							});
 							this.props.selectVersion(result.data.restEndpoint, result.data.ruleSetId);
+							this.props.loadEndpoints();
 						}
 	        })
 	        .catch(error =>  {

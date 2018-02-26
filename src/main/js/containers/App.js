@@ -48,6 +48,7 @@ class App extends React.Component {
 					{this.props.mainScreen=="upload" &&
 						<FileUpload
 							selectVersion={(endpoint, versionId) => this.props.selectVersion(endpoint, versionId)}
+							loadEndpoints={() => this.props.loadEndpoints()}
 						/>
 					}
 					{this.props.mainScreen=="ruleSetVersionSelection" &&
@@ -184,6 +185,27 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		runNowClearResult: () => {
 			dispatch({type: "RUN_NOW_CLEAR_RESULT"});
+		},
+		deleteInactive: (endpoint) => {
+			dispatch({type: "SET_INPROGRESS"});
+			dispatch({
+				type: "DELETE_INACTIVE",
+				payload: axios.get("setup/delete/inactive/"+endpoint)
+			});
+		},
+		deleteEndpoint: (endpoint) => {
+			dispatch({type: "SET_INPROGRESS"});
+			dispatch({
+				type: "DELETE_ENDPOINT",
+				payload: axios.get("setup/delete/endpoint/"+endpoint)
+			});
+		},
+		deleteRuleSet: (endpoint, versionId) => {
+			dispatch({type: "SET_INPROGRESS"});
+			dispatch({
+				type: "DELETE_RULESET",
+				payload: axios.get("setup/delete/ruleset/"+endpoint+"/"+versionId)
+			});
 		}
 	}
 };

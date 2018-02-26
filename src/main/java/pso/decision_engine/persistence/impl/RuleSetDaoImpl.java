@@ -310,12 +310,12 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	}
 
 	@Override
-	public List<String> getAllEndPoints() {
+	public List<String> getAllEndpoints() {
 		return jdbcTemplate.query("select distinct restEndpoint from RuleSet", new MapSqlParameterSource(), (ResultSet rs, int rowNumber) -> rs.getString(1));
 	}
 	
 	@Override
-	public List<RuleSetInfo> getRuleSetVersionsForEndPoint(String restEndpoint) {
+	public List<RuleSetInfo> getRuleSetVersionsForEndpoint(String restEndpoint) {
 		return jdbcTemplate.query(
 			"select ruleSetId, restEndpoint, name, createdBy, version, remark, uploadDate, ars.ruleSetId as active from RuleSet as rs "+
 			"left join ActiveRuleSet as ars on ars.ruleSetId=rs.ruleSetId "+
@@ -364,10 +364,26 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	};
 
 	@Override
-	public void deleteRuleSet(String restEndPoint, String ruleSetId) {
+	public void deleteRuleSet(String restEndpoint, String ruleSetId) {
 		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("restEndpoint", restEndpoint)
 		.addValue("ruleSetId", ruleSetId);
-		jdbcTemplate.update("DELETE FROM RuleSet WHERE ruleSetId=:ruleSetId" , params);
+		jdbcTemplate.update("DELETE FROM RuleSet WHERE restEndpoint=:restEndpoint and ruleSetId=:ruleSetId" , params);
+	}
+
+	@Override
+	public void deleteRuleSetsWithEndpoint(String restEndpoint) {
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("restEndpoint", restEndpoint);
+		jdbcTemplate.update("DELETE FROM RuleSet WHERE restEndpoint=:restEndpoint" , params);
+	}
+
+	@Override
+	public void deleteRuleSetsWithEndpointSkipId(String restEndpoint, String activeId) {
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("restEndpoint", restEndpoint)
+		.addValue("activeId", activeId);
+		jdbcTemplate.update("DELETE FROM RuleSet WHERE restEndpoint=:restEndpoint and ruleSetId<>:activeId" , params);
 	}
 
 }
