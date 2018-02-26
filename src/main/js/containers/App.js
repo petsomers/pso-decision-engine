@@ -47,7 +47,7 @@ class App extends React.Component {
 					<div style={mainScreen}>
 					{this.props.mainScreen=="upload" &&
 						<FileUpload
-							setSelectedVersion={(endpoint, version) => this.props.setSelectedVersion(endpoint, version)}
+							selectVersion={(endpoint, versionId) => this.props.selectVersion(endpoint, versionId)}
 						/>
 					}
 					{this.props.mainScreen=="ruleSetVersionSelection" &&
@@ -62,6 +62,7 @@ class App extends React.Component {
 					{this.props.mainScreen=="ruleSetDetails" &&
 						<RuleSetDetails
 							ruleSetDetails={this.props.ruleSetDetails}
+							downloadExcel={() => this.downloadExcel(this.props.ruleSetDetails.restEndpoint, this.props.ruleSetDetails.id)}
 							runUnitTests={(endpoint, versionId) => this.props.runUnitTests(endpoint, versionId)}
 							unitTestsResult={this.props.unitTestsResult}
 							setRunNowParameterValue={(name, value) => this.props.setRunNowParameterValue(name, value)}
@@ -149,7 +150,7 @@ const mapDispatchToProps = (dispatch) => {
 			});
 		},
 		selectVersion: (endpoint, versionId) => {
-			console.log("LOAD VERSIONS for "+endpoint+"/"+versionId);
+			console.log("LOAD RULESET for "+endpoint+"/"+versionId);
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "GET_RULESET",

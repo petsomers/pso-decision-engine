@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.InputParameterInfo;
@@ -38,6 +39,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Transactional
 	@Override
 	public void saveRuleSet(RuleSet ruleSet) {
 		MapSqlParameterSource parameters=new MapSqlParameterSource()
@@ -360,5 +362,11 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		ruleSet.setActive(rs.getString("active")!=null);
 		return ruleSet;
 	};
+
+	@Override
+	public void deleteRuleSet(String restEndPoint, String ruleSetId) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

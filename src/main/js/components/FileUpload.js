@@ -45,10 +45,10 @@ export class FileUpload  extends React.Component {
 							this.setState({
 								...this.state,
 								errorMessage:"",
-								message: "Rest Endpoint: "+result.data.restEndpoint,
+								message: "Rest Endpoint: "+result.data.restEndpoint+" --- LOADING ...",
 								inProgress:false
 							});
-							this.props.setSelectedVersion(result.data.restEndpoint, result.data.ruleSetId);
+							this.props.selectVersion(result.data.restEndpoint, result.data.ruleSetId);
 						}
 	        })
 	        .catch(error =>  {

@@ -182,5 +182,17 @@ public class SetupApiServiceImpl implements SetupApiService {
 		}
 		return ruleSetDao.isInList(ruleSet.getId(), listName, value);
 	}
+
+	@Override
+	public void deleteRuleSet(String restEndPoint, String ruleSetId) {
+		Path file=Paths.get(appConfig.getDataDirectory(), restEndPoint, ruleSetId+".xlsx");
+		try {
+			Files.deleteIfExists(file);
+		} catch (IOException e) {
+			// permission issue? no big deal
+			e.printStackTrace();
+		}
+		ruleSetDao.deleteRuleSet(restEndPoint, ruleSetId);
+	}
 	
 }

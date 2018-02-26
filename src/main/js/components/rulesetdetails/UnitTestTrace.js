@@ -73,7 +73,7 @@ export const UnitTestTrace = ({runData}) => {
       }
       {runData.error &&
         <div>
-        <font color="red">Error</font><br />
+        <font color="red"><i className="fas fa-exclamation-triangle"></i> &nbsp; Error</font><br />
         </div>
       }
       {runData.messages && runData.messages.length>0 &&

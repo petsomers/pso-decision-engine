@@ -40,4 +40,6 @@ public interface RuleSetDao {
 	
 	public List<UnitTest> getRuleSetUnitTests(String ruleSetId);
 
+	public void deleteRuleSet(String restEndPoint, String ruleSetId);
+
 }

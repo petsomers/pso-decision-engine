@@ -61,6 +61,15 @@ export class  RuleSetDetails extends React.Component {
 				}
 			</div>
 			{(activeTab=="inputParameters") &&
+				<div style={{display: "inline-block", paddingLeft: "25px"}}>
+					<Button type="neutral" onClick={() => this.props.downloadExcel()} icon="download" iconAlign="left" label="Download Excel" />
+					<br />
+					<Button type="neutral" onClick={() => this.props.downloadExcel()} icon="download" iconAlign="left" label="Set Active" />
+					<br />
+					<Button type="neutral" onClick={() => this.props.downloadExcel()} icon="download" iconAlign="left" label="Delete" />
+				</div>
+			}
+			{(activeTab=="inputParameters") &&
 				<div>
 					<b>Remark:</b> {d.remark}<br />
 				</div>

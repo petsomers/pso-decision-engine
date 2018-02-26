@@ -43,7 +43,17 @@ export const RunRuleSet = ({inputParameters, runNowData, setRunNowParameterValue
   <div style={{display: "inline-block", paddingLeft: "10px", width:"60%"}}>
     {runNowData.result &&
       <div>
-        {runNowData.result.errorMessage}
+        {runNowData.result.error &&
+          <div style={{color:"red", paddingBottom:"20px"}}>
+          <i className="fas fa-exclamation-triangle"></i> &nbsp;
+          {runNowData.result.errorMessage}
+          </div>
+        }
+        {!runNowData.result.error && runNowData.result.decision &&
+          <div style={{color:"blue", paddingBottom:"20px", fontWeight:"bold", fontSize: "1.85em"}}>
+            <i className="fas fa-child"></i> &nbsp;&nbsp; Decision: {runNowData.result.decision}
+          </div>
+        }
         <UnitTestTrace runData={runNowData.result.run} />
       </div>
     }
