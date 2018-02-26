@@ -125,6 +125,15 @@ const appReducer = (state = {
       }
     }
   break;
+  case "RUN_NOW_CLEAR_INPUT":
+    state = {
+      ...state,
+      runNowData: {
+          parameterValues: {},
+          result: null
+      }
+    }
+  break;
   case "WINDOW_RESIZE":
     if (action.payload.height!=state.layout.windowHeight
       || action.payload.width!=state.layout.windowWidth) {

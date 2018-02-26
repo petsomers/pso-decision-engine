@@ -61,6 +61,7 @@ class App extends React.Component {
 							setRunNowParameterValue={(name, value) => this.props.setRunNowParameterValue(name, value)}
 							runNowData={this.props.runNowData}
 							runNow={(endpoint, versionId, parameters) => this.props.runNow(endpoint, versionId, parameters)}
+							runNowClearInput={() => this.props.runNowClearInput()}
 						/>
 					}
 					{this.props.inprogress &&
@@ -173,6 +174,9 @@ const mapDispatchToProps = (dispatch) => {
 				type: "RUN_NOW",
 				payload: axios.get("json/run/"+endpoint+"/"+versionId+"?trace=Y&"+parameterStr)
 			});
+		},
+		runNowClearInput: () => {
+			dispatch({type: "RUN_NOW_CLEAR_INPUT"});
 		}
 	}
 };

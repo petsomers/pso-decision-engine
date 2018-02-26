@@ -94,6 +94,7 @@ export class  RuleSetDetails extends React.Component {
 						runNowData={this.props.runNowData}
 						setRunNowParameterValue={(name, value) => this.props.setRunNowParameterValue(name, value)}
 						runNow={() => this.runNow()}
+						runNowClearInput={() => this.props.runNowClearInput()}
 					/>
 				}
 			</div>

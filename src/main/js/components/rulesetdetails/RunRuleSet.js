@@ -2,12 +2,12 @@ import React from "react";
 import { Input, Button } from "react-lightning-design-system";
 import { UnitTestTrace } from "./UnitTestTrace"
 
-export const RunRuleSet = ({inputParameters, runNowData, setRunNowParameterValue, runNow}) => {
+export const RunRuleSet = ({inputParameters, runNowData, setRunNowParameterValue, runNow, runNowClearInput}) => {
     return (
 <div>
   <div style={{position: "absolute", right: "30px", top: "135px"}}>
     {runNowData.result? (
-      <Button type="brand" onClick={() => runNow()} icon="left" iconAlign="left" label="Back" />
+      <Button type="brand" onClick={() => runNowClearInput()} icon="left" iconAlign="left" label="Back" />
     ):(
       <Button type="brand" onClick={() => runNow()} icon="right" iconAlign="left" label="Run" />
     )
