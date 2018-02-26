@@ -71,7 +71,6 @@ export class  RuleSetDetails extends React.Component {
 				<Tab eventKey="lists" title="Lists" />
 				<Tab eventKey="unitTests" title="Unit Tests" />
 				<Tab eventKey="runNow" title="Run" />
-				<Tab eventKey="statistics" title="Usage Statistics" />
 			</Tabs>
 			<div style={{backgroundColor: "white"}}>
 				{(activeTab=="inputParameters") &&
