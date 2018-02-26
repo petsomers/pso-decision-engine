@@ -1,11 +1,13 @@
 package pso.decision_engine.presentation;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +66,26 @@ public class SetupApi {
 			result.setErrorMessage(e.getMessage());
 			return result;
 		}
+	}
+	
+	
+	@RequestMapping(value = "/download_excel/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/octetstream")
+	public void downloadExcel(@PathVariable String restEndPoint,@PathVariable String ruleSetId, HttpServletResponse resp) throws IOException {
+		if (!setupService.doesRuleSetExist(restEndPoint, ruleSetId)) {
+			resp.sendError(404);;
+			return;
+		}
+		if (!setupService.doesExcelFileExists(restEndPoint, ruleSetId)) {
+			resp.sendError(404);;
+			return;
+		}
+		resp.setHeader("pragma", "no-cache");
+		resp.setHeader( "Cache-Control","no-cache" );
+		resp.setHeader( "Cache-Control","no-store" );
+		resp.setDateHeader( "Expires", 0 );
+		resp.setContentType("application/octetstream");
+		resp.setHeader("Content-Disposition", "attachment; filename="+restEndPoint+"_"+ruleSetId+".xlsx");
+		setupService.downloadExcel(restEndPoint, ruleSetId, resp.getOutputStream());
 	}
 	
 	@RequestMapping(value = "/setactive/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")

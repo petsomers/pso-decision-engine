@@ -8,6 +8,7 @@ public class AdminController {
 
 	@RequestMapping(value = "/admin")
 	public String index() {
+		// TODO: add session token
 		return "app";
 	}
 }

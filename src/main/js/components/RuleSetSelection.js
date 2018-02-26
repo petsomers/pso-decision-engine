@@ -35,8 +35,8 @@ export const RuleSetSelection = ({restEndpoints, layout, openFileUpload, selectE
 		borderBottom: 'solid',borderBottomWidth: '1px',borderBottomColor:'#CCCCCC'
 	};
 
-	const endPointCardStyle= {padding: "5px", whiteSpace: "nowrap"}
-	const endPointCardStyleSelected= {padding: "5px", whiteSpace: "nowrap", backgroundColor: "#CCCC"}
+	const endPointCardStyle= {padding: "5px", whiteSpace: "nowrap", backgroundColor: "#FFFFFF"}
+	const endPointCardStyleSelected= {padding: "5px", whiteSpace: "nowrap", backgroundColor: "#EEEEFF"}
   return (
   		<div>
 				<div style={restEndpointsTitleStyle}><b>Rest Endpoints</b></div>

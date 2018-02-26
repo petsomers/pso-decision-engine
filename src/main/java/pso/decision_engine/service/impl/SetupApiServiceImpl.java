@@ -1,5 +1,7 @@
 package pso.decision_engine.service.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,6 +15,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StreamUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -88,6 +91,25 @@ public class SetupApiServiceImpl implements SetupApiService {
 	private DateTimeFormatter ldtformatter = DateTimeFormatter.ofPattern("yyMMddHHmmssms");
 	private String createShortUniqueId() {
 		return LocalDateTime.now().format(ldtformatter)+Math.round(Math.random()*100d);
+	}
+	
+	@Override
+	public void downloadExcel(String restEndPoint, String ruleSetId, OutputStream out) throws IOException {
+		Path file=Paths.get(appConfig.getDataDirectory(), restEndPoint, ruleSetId+".xlsx");
+		File f=file.toFile();
+		if (!f.exists()) {
+			return;
+		}
+		try (FileInputStream i=new FileInputStream(f)) {
+			FileCopyUtils.copy(i, out);
+		}
+	}
+	
+	@Override
+	public boolean doesExcelFileExists(String restEndPoint, String ruleSetId) {
+		Path file=Paths.get(appConfig.getDataDirectory(), restEndPoint, ruleSetId+".xlsx");
+		File f=file.toFile();
+		return f.exists();
 	}
 	
 	@Override

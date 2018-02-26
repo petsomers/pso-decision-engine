@@ -63,9 +63,11 @@ const appReducer = (state = {
   case "GET_ENDPOINTS_FULFILLED":
     let selectedEndpoint=state.selectedEndpoint;
     let endpoints=action.payload.data;
+    /*
     if (selectedEndpoint=="" && endpoints.length>0) {
       selectedEndpoint=endpoints[0];
     }
+    */
     state = {
       ...state,
       inprogress: false,

@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "react-lightning-design-system";
 
-export const RuleSetVersionSelection = ({layout, selectedEndpoint, versions, selectVersion}) => {
+export const RuleSetVersionSelection = ({layout, selectedEndpoint, versions, selectVersion, downloadExcel, deleteVersion}) => {
 	const cardStyle= {
 		padding: "10px",
 		whiteSpace: "nowrap"
@@ -26,7 +26,11 @@ export const RuleSetVersionSelection = ({layout, selectedEndpoint, versions, sel
 						Name: {version.name}<br />
 						Created by: {version.createdBy}<br />
 						Version: {version.version}<br />
-						Remark: {version.remark}
+						Remark: {version.remark}<br />
+						<Button type="neutral" onClick={() => downloadExcel(version.restEndpoint, version.id)} icon="download" iconAlign="left" label="Download Excel" />
+						{!version.active &&
+							<Button type="neutral" onClick={() => deleteVersion(version.restEndpoint, version.id)} icon="delete" iconAlign="left" label="Delete" />
+						}
 					</div>
 				))}
   		</div>

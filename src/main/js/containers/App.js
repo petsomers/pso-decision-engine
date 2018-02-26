@@ -22,6 +22,10 @@ class App extends React.Component {
 		this.props.loadEndpoints();
 	}
 
+	downloadExcel(restEndpoint, ruleSetId) {
+		window.location.href="setup/download_excel/"+restEndpoint+"/"+ruleSetId;
+	}
+
 	handleResize = ({ width, height }) => this.props.onWindowResize(width, height);
 
 	render() {
@@ -52,6 +56,7 @@ class App extends React.Component {
 							selectedEndpoint={this.props.selectedEndpoint}
 							versions={this.props.versions}
 							selectVersion={(endpoint, versionId) => this.props.selectVersion(endpoint, versionId)}
+							downloadExcel={(restEndpoint, ruleSetId) => this.downloadExcel(restEndpoint, ruleSetId)}
 							/>
 					}
 					{this.props.mainScreen=="ruleSetDetails" &&
