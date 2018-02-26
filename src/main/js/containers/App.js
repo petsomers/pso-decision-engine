@@ -186,6 +186,13 @@ const mapDispatchToProps = (dispatch) => {
 		runNowClearResult: () => {
 			dispatch({type: "RUN_NOW_CLEAR_RESULT"});
 		},
+		setActive: (endpoint, versionId) => {
+			dispatch({type: "SET_INPROGRESS"});
+			dispatch({
+				type: "SET_ACTIVE",
+				payload: axios.get("setup/setactive/"+endpoint+"/"+versionId)
+			});
+		},
 		deleteInactive: (endpoint) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
