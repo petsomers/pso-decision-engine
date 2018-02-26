@@ -121,7 +121,7 @@ public class SetupApi {
 	
 	@RequestMapping(value = "/delete_inactive/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	public void deleteInactiveVersion(@PathVariable String restEndPoint, @PathVariable String ruleSetId) {
-
+		setupService.deleteRuleSet(restEndPoint, ruleSetId);
 	}
 	
 	@RequestMapping(value = "/delete/{restEndPoint}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")

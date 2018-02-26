@@ -41,4 +41,6 @@ public interface SetupApiService {
 	public boolean isInList(RuleSet ruleSet, String listName, String value);
 	
 	public void deleteRuleSet(String restEndPoint, String ruleSetId);
+	
+	public void deleteEndPoint(String restEndPoint);
 }

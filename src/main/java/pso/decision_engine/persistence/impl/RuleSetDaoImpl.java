@@ -365,8 +365,9 @@ public class RuleSetDaoImpl implements RuleSetDao {
 
 	@Override
 	public void deleteRuleSet(String restEndPoint, String ruleSetId) {
-		// TODO Auto-generated method stub
-		
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("ruleSetId", ruleSetId);
+		jdbcTemplate.update("DELETE FROM RuleSet WHERE ruleSetId=:ruleSetId" , params);
 	}
 
 }

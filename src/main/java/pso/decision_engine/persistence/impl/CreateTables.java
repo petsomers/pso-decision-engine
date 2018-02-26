@@ -35,7 +35,8 @@ public class CreateTables {
 		"CREATE TABLE IF NOT EXISTS ActiveRuleSet ("+
 		"restEndpoint VARCHAR(50) NOT NULL, "+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
-		"PRIMARY KEY (restEndpoint))",
+		"PRIMARY KEY (restEndpoint), "+
+		"FOREIGN KEY (ruleSetId) REFERENCES RuleSet (ruleSetId) ON DELETE CASCADE)",
 		
 		"CREATE UNIQUE INDEX IF NOT EXISTS activeRuleSet_ruleSetId "+
 		"on ActiveRuleSet (ruleSetId)",
@@ -45,7 +46,8 @@ public class CreateTables {
 		"parameterName VARCHAR(40) NOT NULL, "+
 		"parameterType VARCHAR(10) NOT NULL, "+
 		"defaultValue VARCHAR(100), "+
-		"PRIMARY KEY (ruleSetId, parameterName))",
+		"PRIMARY KEY (ruleSetId, parameterName), "+
+		"FOREIGN KEY (ruleSetId) REFERENCES RuleSet (ruleSetId) ON DELETE CASCADE)",
 		
 		"CREATE TABLE IF NOT EXISTS Rule ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
@@ -60,13 +62,15 @@ public class CreateTables {
 		"positiveResult VARCHAR(200), "+
 		"negativeResult VARCHAR(200), "+
 		"remark VARCHAR(500), "+
-		"PRIMARY KEY (ruleSetId, ruleNumber))",
+		"PRIMARY KEY (ruleSetId, ruleNumber), "+
+		"FOREIGN KEY (ruleSetId) REFERENCES RuleSet (ruleSetId) ON DELETE CASCADE)",
 		
 		"CREATE TABLE IF NOT EXISTS RuleSetLists ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
 		"listId INTEGER NOT NULL, "+
 		"listName VARCHAR(100), "+
-		"PRIMARY KEY (ruleSetId, listId))",
+		"PRIMARY KEY (ruleSetId, listId), "+
+		"FOREIGN KEY (ruleSetId) REFERENCES RuleSet (ruleSetId) ON DELETE CASCADE)",
 		
 		"CREATE UNIQUE INDEX IF NOT EXISTS list_name "+
 		"on RuleSetLists (ruleSetId, listName)",
@@ -75,22 +79,24 @@ public class CreateTables {
 		"ruleSetId VARCHAR(20) NOT NULL, "+
 		"listId INTEGER NOT NULL, "+
 		"listValue VARCHAR(100) NOT NULL, "+
-		"PRIMARY KEY (ruleSetId, listId, listValue))",
+		"PRIMARY KEY (ruleSetId, listId, listValue), "+
+		"FOREIGN KEY (ruleSetId, listId) REFERENCES RuleSetLists (ruleSetId, listId) ON DELETE CASCADE)",
 		
 		"CREATE TABLE IF NOT EXISTS RuleSetUnitTests ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
 		"unitTestId INTEGER NOT NULL, "+
 		"unitTestName VARCHAR(100) NOT NULL, "+
 		"expectedResult  VARCHAR(200) NOT NULL, "+
-		"PRIMARY KEY (ruleSetId, unitTestId))",
+		"PRIMARY KEY (ruleSetId, unitTestId), "+
+		"FOREIGN KEY (ruleSetId) REFERENCES RuleSet (ruleSetId) ON DELETE CASCADE)",
 		
 		"CREATE TABLE IF NOT EXISTS RuleSetUnitTestParameters ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
 		"unitTestId INTEGER NOT NULL, "+
 		"parameterName VARCHAR(40) NOT NULL, "+
 		"parameterValue VARCHAR(100), "+
-		"PRIMARY KEY (ruleSetId, unitTestId, parameterName))"
-		
+		"PRIMARY KEY (ruleSetId, unitTestId, parameterName), "+
+		"FOREIGN KEY (ruleSetId, unitTestId) REFERENCES RuleSetUnitTests (ruleSetId, unitTestId) ON DELETE CASCADE)",
 	};
     
 	@PostConstruct

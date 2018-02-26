@@ -158,7 +158,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 		// TODO: first run UNIT TEST!!!
 		ruleSetDao.setActiveRuleSet(restEndPoint, ruleSetId);
 	}
-
+	
 	@Override
 	public boolean doesRuleSetExist(String restEndPoint, String ruleSetId) {
 		return ruleSetDao.doesRuleSetExist(restEndPoint, ruleSetId);
@@ -193,6 +193,15 @@ public class SetupApiServiceImpl implements SetupApiService {
 			e.printStackTrace();
 		}
 		ruleSetDao.deleteRuleSet(restEndPoint, ruleSetId);
+	}
+
+	@Override
+	public void deleteEndPoint(String restEndPoint) {
+		// 1. REMOVE ALL FILES from the directory
+		
+		
+		// 2. REMOVE FROM DB
+		
 	}
 	
 }
