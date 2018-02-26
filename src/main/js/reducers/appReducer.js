@@ -125,11 +125,11 @@ const appReducer = (state = {
       }
     }
   break;
-  case "RUN_NOW_CLEAR_INPUT":
+  case "RUN_NOW_CLEAR_RESULT":
     state = {
       ...state,
       runNowData: {
-          parameterValues: {},
+          ...state.runNowData,
           result: null
       }
     }

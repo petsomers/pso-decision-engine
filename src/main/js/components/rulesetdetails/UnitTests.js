@@ -4,9 +4,10 @@ import { UnitTestTrace } from "./UnitTestTrace"
 
 export const UnitTests = ({unitTests, runUnitTests, unitTestsResult}) => {
 	let utres=unitTestsResult!=null?unitTestsResult.unitTestResults:null;
+	const runButtonPaneStyle={position: "absolute", right: "30px", top: "135px"};
 	return (
     <div>
-			<div style={{position: "absolute", right: "30px", top: "135px"}}>
+			<div style={runButtonPaneStyle}>
 				{(unitTestsResult==null || !unitTestsResult.allTestsPassed) &&
 				<Button type="brand" onClick={() => runUnitTests()} icon="right" iconAlign="left" label="Run All Tests" />
 				}

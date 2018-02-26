@@ -3,6 +3,8 @@ import { Table , TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowCo
 
 export const UnitTestTrace = ({runData}) => {
   const borderedTextStyle={border: "1px", borderStyle: "solid", borderColor: "#CCCAC9", backgroundColor: "#EEEEEE"};
+  const tdResultMatchStyle={border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%", backgroundColor: "#EEEEEE"};
+  const tdResultNoMatchStyle={border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%"};
   return (
     <div>
       {runData.durationInMilliSeconds>0 &&
@@ -12,7 +14,7 @@ export const UnitTestTrace = ({runData}) => {
         <div>
         {runData.trace.map((t, tracenr) => (
           <div key={"tr"+tracenr} style={{paddingBottom:"10px"}}>
-          <table style={{width: "70%"}}>
+          <table style={{width: "90%"}}>
           <tbody>
           <tr style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda"}}>
             <td>
@@ -45,20 +47,20 @@ export const UnitTestTrace = ({runData}) => {
           </tr>
           <tr>
             {t.result==t.rule.positiveResult?(
-              <td style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%", backgroundColor: "#EEEEEE"}}>
+              <td style={tdResultMatchStyle}>
                 <i className="fas fa-check"></i>  &nbsp; {t.rule.positiveResult} &nbsp;
               </td>
             ) : (
-              <td style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%"}}>
+              <td style={tdResultNoMatchStyle}>
                 <i className="fas fa-check"></i>  &nbsp; {t.rule.positiveResult} &nbsp;
               </td>
             )}
             {t.result==t.rule.negativeResult?(
-              <td style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%", backgroundColor: "#EEEEEE"}}>
+              <td style={tdResultMatchStyle}>
                 <i className="fas fa-times"></i> &nbsp; {t.rule.negativeResult} &nbsp;
               </td>
             ) : (
-              <td style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda", width:"50%"}}>
+              <td style={tdResultNoMatchStyle}>
                 <i className="fas fa-times"></i>  &nbsp; {t.rule.negativeResult} &nbsp;
               </td>
             )}

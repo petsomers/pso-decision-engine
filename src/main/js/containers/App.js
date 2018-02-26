@@ -36,6 +36,7 @@ class App extends React.Component {
 						restEndpoints={this.props.restEndpoints}
 						layout={this.props.layout}
 						openFileUpload={() => this.props.openFileUpload()}
+						selectedEndpoint={this.props.selectedEndpoint}
 						selectEndpoint={(endpoint) => this.props.selectEndpoint(endpoint)}
 						/>
 					</div>
@@ -51,7 +52,7 @@ class App extends React.Component {
 							selectedEndpoint={this.props.selectedEndpoint}
 							versions={this.props.versions}
 							selectVersion={(endpoint, versionId) => this.props.selectVersion(endpoint, versionId)}
-						/>
+							/>
 					}
 					{this.props.mainScreen=="ruleSetDetails" &&
 						<RuleSetDetails
@@ -61,7 +62,7 @@ class App extends React.Component {
 							setRunNowParameterValue={(name, value) => this.props.setRunNowParameterValue(name, value)}
 							runNowData={this.props.runNowData}
 							runNow={(endpoint, versionId, parameters) => this.props.runNow(endpoint, versionId, parameters)}
-							runNowClearInput={() => this.props.runNowClearInput()}
+							runNowClearResult={() => this.props.runNowClearResult()}
 						/>
 					}
 					{this.props.inprogress &&
@@ -175,8 +176,8 @@ const mapDispatchToProps = (dispatch) => {
 				payload: axios.get("json/run/"+endpoint+"/"+versionId+"?trace=Y&"+parameterStr)
 			});
 		},
-		runNowClearInput: () => {
-			dispatch({type: "RUN_NOW_CLEAR_INPUT"});
+		runNowClearResult: () => {
+			dispatch({type: "RUN_NOW_CLEAR_RESULT"});
 		}
 	}
 };

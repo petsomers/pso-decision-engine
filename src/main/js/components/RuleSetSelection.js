@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "react-lightning-design-system";
 
-export const RuleSetSelection = ({restEndpoints, layout, openFileUpload, selectEndpoint}) => {
+export const RuleSetSelection = ({restEndpoints, layout, openFileUpload, selectEndpoint, selectedEndpoint}) => {
 	const restEndpointsHeight=(layout.windowHeight-180)/2;
 	const globalListsHeight=restEndpointsHeight;
 
@@ -35,16 +35,14 @@ export const RuleSetSelection = ({restEndpoints, layout, openFileUpload, selectE
 		borderBottom: 'solid',borderBottomWidth: '1px',borderBottomColor:'#CCCCCC'
 	};
 
-	const cardStyle= {
-		padding: "5px",
-		whiteSpace: "nowrap"
-	}
+	const endPointCardStyle= {padding: "5px", whiteSpace: "nowrap"}
+	const endPointCardStyleSelected= {padding: "5px", whiteSpace: "nowrap", backgroundColor: "#CCCC"}
   return (
   		<div>
 				<div style={restEndpointsTitleStyle}><b>Rest Endpoints</b></div>
 				<div style={restEndpointsStyle} className='slds-table slds-table--bordered'>
 					{restEndpoints.map((endpoint, index) => (
-						<div key={endpoint} style={cardStyle} className='slds-table slds-table--bordered'>
+						<div key={endpoint} style={(selectedEndpoint==endpoint)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>
 							<a onClick={() => selectEndpoint(endpoint)}>
 								{endpoint}
 							</a>
