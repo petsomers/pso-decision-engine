@@ -66,7 +66,7 @@ export const UnitTests = ({unitTests, runUnitTests, unitTestsResult}) => {
 					</div>
         </div>
 				{utres!=null && utres[utnr] &&
-					<div style={{paddingLeft: "15px"}}>
+					<div style={{paddingLeft: "55px"}}>
 						<UnitTestTrace runData={utres[utnr].run} />
 					</div>
 				}

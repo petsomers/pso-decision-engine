@@ -19,7 +19,7 @@ const appReducer = (state = {
   }
 }, action) => {
   if (action.type.endsWith("_FULFILLED")) {
-    if (action.payload && action.payload.data && action.payload.data.error && !action.payload.data.trace) {
+    if (action.payload && action.payload.data && action.payload.data.error && !action.payload.data.run) {
       state={...state, inprogress: false, errorMessage: action.payload.data.errorMessage};
       return state;
     }

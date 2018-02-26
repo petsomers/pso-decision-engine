@@ -4,18 +4,23 @@ import { Table , TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowCo
 export const UnitTestTrace = ({runData}) => {
   const borderedTextStyle={border: "1px", borderStyle: "solid", borderColor: "#CCCAC9", backgroundColor: "#EEEEEE"};
   return (
-    <div style={{paddingLeft: "45px"}}>
+    <div>
       <b>Unit Test Duration:</b> {runData.durationInMilliSeconds} ms<br />
       {runData.trace && runData.trace.length>0 &&
         <div>
         {runData.trace.map((t, tracenr) => (
           <div key={"tr"+tracenr} style={{paddingBottom:"10px"}}>
-          <table style={{width: "60%"}}>
+          <table style={{width: "70%"}}>
           <tbody>
           <tr style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda"}}>
-            <td colSpan="2">
+            <td>
               <i className="far fa-file-excel"></i> &nbsp;  {t.rule.sheetName}: {t.rule.rowNumber}
-              RESULT: {t.result}
+            </td>
+            <td align="right">
+              &nbsp;
+              {t.result &&
+                <span>RESULT: {t.result}</span>
+              }
             </td>
           </tr>
           {t.rule.label && t.rule.label!="" &&
@@ -70,9 +75,9 @@ export const UnitTestTrace = ({runData}) => {
       {runData.messages && runData.messages.length>0 &&
         <div>
         <u>Info:</u>
-        runData.messages.map((message, index) => {
-          <div>{message}<br /></div>
-        });
+        { runData.messages.map((message, index) => (
+          <div key={"message_"+index}>{message}<br /></div>
+        ))};
         </div>
       }
     </div>

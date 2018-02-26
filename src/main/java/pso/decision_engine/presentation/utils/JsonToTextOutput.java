@@ -15,7 +15,7 @@ public class JsonToTextOutput {
 	
 	static public void renderDecisionResult(PrintWriter pw, DecisionResult r) {
 		pw.println("Trace:");
-		DecisionTrace t=r.getTrace();
+		DecisionTrace t=r.getRun();
 		if (t==null) {
 			pw.println("No trace information available.");
 			return;

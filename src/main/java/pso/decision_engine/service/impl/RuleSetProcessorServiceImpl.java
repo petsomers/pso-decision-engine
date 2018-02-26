@@ -35,7 +35,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 		long startnano=System.nanoTime();
 		DecisionResult result=new DecisionResult();
 		DecisionTrace trace=new DecisionTrace();
-		result.setTrace(trace);
+		result.setRun(trace);
 		trace.setRequestTimestamp(LocalDateTime.now());
 		trace.setInputParameters(parameters);
 		trace.setRuleSetId(rs.getId());
@@ -59,6 +59,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			dte.setRule(r);
 			if (executedRules.contains(ruleNumber)) {
 				trace.getMessages().add("ERROR: rule has already been executed.");
+				trace.setError(true);
 				result.setError(true);
 				result.setErrorMessage("Rule has already been executed.");
 				return result;
@@ -68,6 +69,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			if (ruleResult==null) {
 				String error="Error Evaluating Rule (sheet: "+r.getSheetName()+", row: "+r.getRowNumber()+")";
 				trace.getMessages().add("ERROR: "+error);
+				trace.setError(true);
 				result.setError(true);
 				result.setErrorMessage(error);
 				return result;
@@ -264,7 +266,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			UnitTestResult utr=new UnitTestResult();
 			utr.setName(unitTest.getName());
 			utr.setExpectedResult(unitTest.getExpectedResult());
-			utr.setRun(dr.getTrace());
+			utr.setRun(dr.getRun());
 			if (dr.isError()) {
 				result.setAllTestsPassed(false);
 				utr.setPassed(false);

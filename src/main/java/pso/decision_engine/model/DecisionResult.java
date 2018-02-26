@@ -7,7 +7,7 @@ public class DecisionResult {
 
 	private boolean error;
 	private String errorMessage;
-	private DecisionTrace trace;
+	private DecisionTrace run;
 	
 	private String decision;
 }
