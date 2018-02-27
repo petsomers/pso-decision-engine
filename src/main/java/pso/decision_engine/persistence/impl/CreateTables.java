@@ -65,7 +65,7 @@ public class CreateTables {
 		"PRIMARY KEY (ruleSetId, ruleNumber), "+
 		"FOREIGN KEY (ruleSetId) REFERENCES RuleSet (ruleSetId) ON DELETE CASCADE)",
 		
-		"CREATE TABLE IF NOT EXISTS RuleSetLists ("+
+		"CREATE CACHED TABLE IF NOT EXISTS RuleSetLists ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
 		"listId INTEGER NOT NULL, "+
 		"listName VARCHAR(100), "+

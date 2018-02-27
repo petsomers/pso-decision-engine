@@ -43,7 +43,7 @@ export const RuleSetSelection = ({restEndpoints, layout, openFileUpload, selectE
 				<div style={restEndpointsStyle} className='slds-table slds-table--bordered'>
 					{restEndpoints.map((endpoint, index) => (
 						<div key={endpoint} style={(selectedEndpoint==endpoint)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>
-							<i class="fas fa-genderless"></i> &nbsp; 
+							<i className="fas fa-genderless"></i> &nbsp; 
 							<a onClick={() => selectEndpoint(endpoint)}>
 								{endpoint}
 							</a>

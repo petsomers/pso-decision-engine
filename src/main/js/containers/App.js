@@ -74,7 +74,7 @@ class App extends React.Component {
 							deleteRuleSet={(endpoint, versionId) => this.props.deleteRuleSet(endpoint, versionId)}
 						/>
 					}
-					{this.props.inprogress &&
+					{this.props.inProgress &&
 						<Spinner />
 					}
 					{(this.props.infoMessage && this.props.infoMessage!="") &&
@@ -108,6 +108,7 @@ class App extends React.Component {
 const mapStateToProps = (state) => {
   return {
 		layout: state.appReducer.layout,
+		inProgress: state.appReducer.inProgress,
 		restEndpoints: state.appReducer.restEndpoints,
 		versions: state.appReducer.versions,
 		selectedEndpoint: state.appReducer.selectedEndpoint,

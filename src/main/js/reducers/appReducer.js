@@ -9,7 +9,7 @@ const appReducer = (state = {
   mainScreen: "welcome",
   restEndpoints: [],
   versions: [],
-  inprogress: false,
+  inProgress: false,
   selectedEndpoint: "",
   selectedVersion: "",
   ruleSetDetails: null,
@@ -21,7 +21,7 @@ const appReducer = (state = {
 }, action) => {
   if (action.type.endsWith("_FULFILLED")) {
     if (action.payload && action.payload.data && action.payload.data.error && !action.payload.data.run) {
-      state={...state, inprogress: false, errorMessage: action.payload.data.errorMessage};
+      state={...state, inProgress: false, errorMessage: action.payload.data.errorMessage};
       return state;
     }
   }
@@ -31,7 +31,7 @@ const appReducer = (state = {
     if (action.payload && action.payload && action.payload.message) {
       errorMessage=action.payload.message;
     }
-    state={...state, inprogress: false, errorMessage: errorMessage};
+    state={...state, inProgress: false, errorMessage: errorMessage};
     return state;
   }
   switch (action.type) {
@@ -66,7 +66,7 @@ const appReducer = (state = {
     let endpoints=action.payload.data;
     state = {
       ...state,
-      inprogress: false,
+      inProgress: false,
       selectedEndpoint:selectedEndpoint,
       restEndpoints:endpoints
     }
@@ -74,7 +74,7 @@ const appReducer = (state = {
   case "GET_VERSIONS_FULFILLED":
     state = {
       ...state,
-      inprogress: false,
+      inProgress: false,
       versions:action.payload.data
     }
   break;
@@ -82,7 +82,7 @@ const appReducer = (state = {
     let ruleSetResp=action.payload.data
     state = {
       ...state,
-      inprogress: false,
+      inProgress: false,
       selectedEndpoint:ruleSetResp.restEndpoint,
       selectedVersion:ruleSetResp.id,
       ruleSetDetails:ruleSetResp,
@@ -98,7 +98,7 @@ const appReducer = (state = {
     let unitTestsResult=action.payload.data
     state = {
       ...state,
-      inprogress: false,
+      inProgress: false,
       unitTestsResult: unitTestsResult,
     }
   break;
@@ -117,6 +117,7 @@ const appReducer = (state = {
   case "RUN_NOW_FULFILLED":
     state = {
       ...state,
+      inProgress: false,
       runNowData: {
         ...state.runNowData,
         result: action.payload.data
@@ -135,6 +136,7 @@ const appReducer = (state = {
   case "SET_ACTIVE_FULFILLED":
     state = {
       ...state,
+      inProgress: false,
       infoMessage: "This ruleset has been promoted."
     }
   break;
@@ -151,6 +153,7 @@ const appReducer = (state = {
     }
     state = {
       ...state,
+      inProgress: false,
       infoMessage: "The ruleset has been deleted.",
       mainScreen: "ruleSetVersionSelection",
       selectedVersion: ""
