@@ -46,18 +46,43 @@ public class ProcessorApi {
 			result.setErrorMessage("RuleSet not found.");
 			return result;
 		}
+		boolean trace=request.getParameter("trace")!=null && !"N".equalsIgnoreCase(request.getParameter("trace"));
 		final HashMap<String, String> parameters=new HashMap<>();
 		for (String parameter: Collections.list(request.getParameterNames())) {
 			if (!"trace".equals(parameter))
 				parameters.put(parameter, request.getParameter(parameter).trim());
 		}
-		return ruleSetProcessorService.runRuleSetWithParameters(ruleSet, parameters);
+		DecisionResult r=ruleSetProcessorService.runRuleSetWithParameters(ruleSet, parameters);
+		if (!trace) {
+			r.setRun(null);
+		}
+		return r;
     }
 	
 	
 	@RequestMapping(value = "/run/{restEndPoint}",method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-    public void runPlainText(HttpServletRequest request, PrintWriter pw, @PathVariable String restEndPoint) throws Exception {
+    public void runPlainText(HttpServletRequest request, 
+    		PrintWriter pw, 
+    		@PathVariable String restEndPoint) throws Exception {
 		DecisionResult r=runJson(request, restEndPoint);
+		boolean trace=request.getParameter("trace")!=null && !"N".equalsIgnoreCase(request.getParameter("trace"));
+		if (r.isError()) {
+			pw.print("ERROR: "+r.getErrorMessage());
+		} else {
+			pw.print(r.getDecision());
+		}
+		if (trace) {
+			pw.println();pw.println();
+			JsonToTextOutput.renderDecisionResult(pw, r);
+		}
+	}
+	
+	@RequestMapping(value = "/run/{restEndPoint}/{ruleSetId}",method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+    public void runPlainText(HttpServletRequest request, 
+    		PrintWriter pw, 
+    		@PathVariable String restEndPoint, 
+    		@PathVariable String ruleSetId) throws Exception {
+		DecisionResult r=runJson(request, restEndPoint, ruleSetId);
 		boolean trace=request.getParameter("trace")!=null && !"N".equalsIgnoreCase(request.getParameter("trace"));
 		if (r.isError()) {
 			pw.print("ERROR: "+r.getErrorMessage());

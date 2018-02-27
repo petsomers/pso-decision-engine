@@ -12,5 +12,6 @@ public enum Comparator {
 	NOT_IN_LIST, 
 	STARTS_WITH, 
 	CONTAINS, 
-	ENDS_WITH
+	ENDS_WITH,
+	ALWAYS
 }

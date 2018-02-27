@@ -20,6 +20,7 @@ public class ComparatorHelper {
 			case "STARTS WITH": return Comparator.STARTS_WITH;
 			case "CONTAINS": return Comparator.CONTAINS;
 			case "ENDS WITH": return Comparator.ENDS_WITH;
+			case "ALWAYS": return Comparator.ALWAYS;
 			default: return null;
 			
 		}
@@ -40,6 +41,7 @@ public class ComparatorHelper {
 			case STARTS_WITH: return "START WITH";
 			case CONTAINS: return "CONTAINS";
 			case ENDS_WITH: return "ENDS WITH";
+			case ALWAYS: return "ALWAYS";
 			default: return null;
 		}
 	}
