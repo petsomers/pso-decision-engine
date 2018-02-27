@@ -385,5 +385,34 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		.addValue("activeId", activeId);
 		jdbcTemplate.update("DELETE FROM RuleSet WHERE restEndpoint=:restEndpoint and ruleSetId<>:activeId" , params);
 	}
+	
+	@Override
+	public int getListId(String listName) {
+		// outside transaction! // atomic!
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("listName", listName);
+		try {
+			return jdbcTemplate.queryForObject(
+				"select listId from lists where listName=:listName", 
+				params, 
+				Integer.class);
+		} catch(EmptyResultDataAccessException emty) {
+		}
+		int listId=jdbcTemplate.queryForObject(
+				"select max(listId)+1 from lists", 
+				params, Integer.class);
+		
+		params.addValue("listId", listId);
+		jdbcTemplate.update("insert into Lists (listId, listName) values (:listId, :listName)", params) ;
+		return listId;
+	}
+	
+	@Override
+	@Transactional
+	public void uploadList(int listId, String[] values) {
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("listId", listId);
+		
+	}
 
 }

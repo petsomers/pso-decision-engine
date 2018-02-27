@@ -97,6 +97,20 @@ public class CreateTables {
 		"parameterValue VARCHAR(100), "+
 		"PRIMARY KEY (ruleSetId, unitTestId, parameterName), "+
 		"FOREIGN KEY (ruleSetId, unitTestId) REFERENCES RuleSetUnitTests (ruleSetId, unitTestId) ON DELETE CASCADE)",
+		
+		"CREATE TABLE IF NOT EXISTS Lists ("+
+		"listId INTEGER NOT NULL, "+
+		"listName VARCHAR(100), "+
+		"PRIMARY KEY (listId))",
+		
+		"CREATE INDEX IF NOT EXISTS lists_listName "+
+		"on Lists (listName)",
+		
+		"CREATE TABLE IF NOT EXISTS ListValues ("+
+		"listId INTEGER NOT NULL, "+
+		"listValue VARCHAR(100) NOT NULL, "+
+		"PRIMARY KEY (listId, listValue), "+
+		"FOREIGN KEY (listId) REFERENCES Lists (listId) ON DELETE CASCADE)"
 	};
     
 	@PostConstruct
