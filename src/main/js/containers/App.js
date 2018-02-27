@@ -70,6 +70,8 @@ class App extends React.Component {
 							runNowData={this.props.runNowData}
 							runNow={(endpoint, versionId, parameters) => this.props.runNow(endpoint, versionId, parameters)}
 							runNowClearResult={() => this.props.runNowClearResult()}
+							setActive={(endpoint, versionId) => this.props.setActive(endpoint, versionId)}
+							deleteRuleSet={(endpoint, versionId) => this.props.deleteRuleSet(endpoint, versionId)}
 						/>
 					}
 					{this.props.inprogress &&

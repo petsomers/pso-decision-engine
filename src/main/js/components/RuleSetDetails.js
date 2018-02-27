@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Spinner, Tabs, Tab } from "react-lightning-design-system";
+import { Button, Spinner, Tabs, Tab, Modal, ModalHeader, ModalFooter, ModalContent } from "react-lightning-design-system";
 import { InputParameters } from "./rulesetdetails/InputParameters"
 import { Rules } from "./rulesetdetails/Rules"
 import { Lists } from "./rulesetdetails/Lists"
@@ -11,7 +11,8 @@ export class  RuleSetDetails extends React.Component {
 	constructor(props) {
 		super();
 		this.state = {
-			activeTab: "inputParameters"
+			activeTab: "inputParameters",
+			confirmAction: null
 		}
 	}
 
@@ -31,6 +32,47 @@ export class  RuleSetDetails extends React.Component {
 		let d=this.props.ruleSetDetails;
 		this.props.runNow(d.restEndpoint, d.id, this.props.runNowData.parameterValues);
 	}
+
+	setActiveRequest() {
+		this.setState({
+			...this.state,
+			confirmAction: {
+				title: "Set Active",
+				info: "Are you sure you want to promote this rule set to be the active one?",
+				action: "SET_ACTIVE"
+			}
+		});
+	}
+
+	deleteRequest() {
+		this.setState({
+			...this.state,
+			confirmAction: {
+				title: "Delete Ruleset",
+				info: "Are you sure you want to delete this rule set?",
+				action: "DELETE"
+			}
+		});
+	}
+
+	cancelAction() {
+		this.setState({
+			...this.state,
+			confirmAction: null
+		});
+	}
+
+	confirmAction() {
+		if (!this.state.confirmAction) return;
+		this.cancelAction();
+		let d=this.props.ruleSetDetails;
+		if (this.state.confirmAction.action=="SET_ACTIVE") {
+			this.props.setActive(d.restEndpoint, d.id);
+		} else if (this.state.confirmAction.action=="DELETE") {
+			this.props.deleteRuleSet(d.restEndpoint, d.id);
+		}
+	}
+
 
 	render() {
 		let d=this.props.ruleSetDetails;
@@ -64,9 +106,9 @@ export class  RuleSetDetails extends React.Component {
 				<div style={{display: "inline-block", paddingLeft: "25px"}}>
 					<Button type="neutral" onClick={() => this.props.downloadExcel()} icon="download" iconAlign="left" label="Download Excel" />
 					<br />
-					<Button type="neutral" onClick={() => this.props.downloadExcel()} icon="download" iconAlign="left" label="Set Active" />
+					<Button type="neutral" onClick={() => this.setActiveRequest()} icon="connected_apps" iconAlign="left" label="Set Active" />
 					<br />
-					<Button type="neutral" onClick={() => this.props.downloadExcel()} icon="download" iconAlign="left" label="Delete" />
+					<Button type="neutral" onClick={() => this.deleteRequest()} icon="delete" iconAlign="left" label="Delete" />
 				</div>
 			}
 			{(activeTab=="inputParameters") &&
@@ -105,6 +147,20 @@ export class  RuleSetDetails extends React.Component {
 						runNow={() => this.runNow()}
 						runNowClearResult={() => this.props.runNowClearResult()}
 					/>
+				}
+				{this.state.confirmAction &&
+					<Modal opened>
+						<ModalHeader title={this.state.confirmAction.title} />
+						<ModalContent>
+							<div className="slds-p-around--small">
+								{this.state.confirmAction.info}
+							</div>
+						</ModalContent>
+						<ModalFooter directional={null}>
+							<Button type="neutral" label="Cancel" onClick={() => this.cancelAction()}/>
+							<Button type="brand" label="OK" onClick={() => this.confirmAction()}/>
+						</ModalFooter>
+					</Modal>
 				}
 			</div>
 		</div>
