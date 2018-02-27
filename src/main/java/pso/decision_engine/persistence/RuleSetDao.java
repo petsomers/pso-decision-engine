@@ -48,6 +48,6 @@ public interface RuleSetDao {
 
 	public int getListId(String listName);
 
-	public void uploadList(int listId, String[] values);
+	public void uploadList(int listId, List<String> values);
 
 }

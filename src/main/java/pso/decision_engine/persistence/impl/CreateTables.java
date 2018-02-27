@@ -106,10 +106,10 @@ public class CreateTables {
 		"CREATE INDEX IF NOT EXISTS lists_listName "+
 		"on Lists (listName)",
 		
-		"CREATE TABLE IF NOT EXISTS ListValues ("+
+		"CREATE CACHED TABLE IF NOT EXISTS ListValues ("+
 		"listId INTEGER NOT NULL, "+
-		"listValue VARCHAR(100) NOT NULL, "+
-		"PRIMARY KEY (listId, listValue), "+
+		"value VARCHAR(100) NOT NULL, "+
+		"PRIMARY KEY (listId, value), "+
 		"FOREIGN KEY (listId) REFERENCES Lists (listId) ON DELETE CASCADE)"
 	};
     

@@ -16,6 +16,7 @@ import org.springframework.util.StreamUtils;
 
 import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.ListParseResult;
+import pso.decision_engine.persistence.RuleSetDao;
 import pso.decision_engine.service.DataSetService;
 import pso.decision_engine.service.IdService;
 
@@ -27,6 +28,9 @@ public class DataSetServiceImpl implements DataSetService {
 	
 	@Autowired
 	private IdService idService;
+	
+	@Autowired	
+	private RuleSetDao ruleSetDao;
 	
 	@Override
 	public ListParseResult uploadList(String listName, InputStream in) throws IOException {
@@ -43,11 +47,13 @@ public class DataSetServiceImpl implements DataSetService {
 			try (Stream<String> stream = Files.lines(tempOutputFile)) {
 				stream
 				.map(line -> line.trim())
+				.filter(line -> !line.isEmpty())
 				.distinct()
 				.sorted()
 				.forEach(line -> {
 					try {
 						writer.write(line);
+						writer.write('\r');
 					} catch (IOException e) {
 						throw new RuntimeException("Error during list processing: "+e.getMessage(),e);
 					}
@@ -62,6 +68,10 @@ public class DataSetServiceImpl implements DataSetService {
 		}
 		
 		setActiveList(listName, id);
+		
+		int dbListId=ruleSetDao.getListId(listName);
+		ruleSetDao.uploadList(dbListId, Files.readAllLines(outputFile));
+		
 		result.setOk(true);
 		result.setListId(id);
 		result.setListName(listName);

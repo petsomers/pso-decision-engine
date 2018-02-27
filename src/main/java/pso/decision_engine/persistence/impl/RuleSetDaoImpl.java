@@ -398,9 +398,10 @@ public class RuleSetDaoImpl implements RuleSetDao {
 				Integer.class);
 		} catch(EmptyResultDataAccessException emty) {
 		}
-		int listId=jdbcTemplate.queryForObject(
-				"select max(listId)+1 from lists", 
+		Integer listId=jdbcTemplate.queryForObject(
+				"select max(listId) from Lists", 
 				params, Integer.class);
+		if (listId==null) listId=1;
 		
 		params.addValue("listId", listId);
 		jdbcTemplate.update("insert into Lists (listId, listName) values (:listId, :listName)", params) ;
@@ -409,10 +410,20 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	
 	@Override
 	@Transactional
-	public void uploadList(int listId, String[] values) {
+	public void uploadList(int listId, List<String> values) {
+		// maybe use reactive stream in batchs of x, instead of 1 shot?
 		MapSqlParameterSource params=new MapSqlParameterSource()
 		.addValue("listId", listId);
+		jdbcTemplate.update("DELETE FROM ListValues where listId=:listId", params);
 		
+		MapSqlParameterSource[] items=new MapSqlParameterSource[values.size()];
+		int[] i= {0};
+		values.forEach(value -> {
+			items[i[0]++]=new MapSqlParameterSource()
+				.addValue("listId", listId)
+				.addValue("value", value);
+		});
+		jdbcTemplate.batchUpdate("INSERT INTO ListValues (listId, value) values (:listId, :value)", items);
 	}
 
 }
