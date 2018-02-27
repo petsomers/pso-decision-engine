@@ -28,7 +28,7 @@ public interface SetupApiService {
 	
 	public List<String> getAllEndpoints();
 	
-	public void setActiveRuleSet(String restEndpoint, String ruleSetId);
+	public void setActiveRuleSet(String restEndpoint, String ruleSetId)  throws IOException;
 	
 	public String getActiveRuleSetId(String restEndpoint);
 	

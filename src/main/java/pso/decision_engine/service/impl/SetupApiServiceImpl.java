@@ -29,6 +29,7 @@ import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.RuleSetInfo;
 import pso.decision_engine.persistence.RuleSetDao;
 import pso.decision_engine.service.ExcelParserService;
+import pso.decision_engine.service.IdService;
 import pso.decision_engine.service.SetupApiService;
 
 @Service
@@ -36,6 +37,9 @@ public class SetupApiServiceImpl implements SetupApiService {
 
 	@Autowired
 	private AppConfig appConfig;
+	
+	@Autowired
+	private IdService idService;
 	
 	@Autowired
 	private RuleSetDao ruleSetDao;
@@ -53,7 +57,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 	 */
 	@Override
 	public ExcelParseResult addExcelFile(InputStream in) throws IOException {
-		String id=createShortUniqueId();
+		String id=idService.createShortUniqueId();
 		Path outputFile=Paths.get(appConfig.getDataDirectory(), "temp", id+".xlsx");
 		outputFile.toFile().getParentFile().mkdirs();
 		try (OutputStream out=Files.newOutputStream(outputFile)) {
@@ -88,11 +92,6 @@ public class SetupApiServiceImpl implements SetupApiService {
 		return result;
 	}
 	
-	private DateTimeFormatter ldtformatter = DateTimeFormatter.ofPattern("yyMMddHHmmssms");
-	private String createShortUniqueId() {
-		return LocalDateTime.now().format(ldtformatter)+Math.round(Math.random()*100d);
-	}
-	
 	@Override
 	public void downloadExcel(String restEndpoint, String ruleSetId, OutputStream out) throws IOException {
 		Path file=Paths.get(appConfig.getDataDirectory(), restEndpoint, ruleSetId+".xlsx");
@@ -114,7 +113,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 	
 	@Override
 	public String saveRuleSet(RuleSet ruleSet) {
-		String id=createShortUniqueId();
+		String id=idService.createShortUniqueId();
 		ruleSet.setId(id);
 		ruleSetDao.saveRuleSet(ruleSet);
 		return id;
@@ -154,9 +153,11 @@ public class SetupApiServiceImpl implements SetupApiService {
 	}
 	
 	@Override
-	public void setActiveRuleSet(String restEndpoint, String ruleSetId) {
-		// TODO: first run UNIT TEST!!!
+	public void setActiveRuleSet(String restEndpoint, String ruleSetId) throws IOException {
 		ruleSetDao.setActiveRuleSet(restEndpoint, ruleSetId);
+		Path activeIndicatorFile=Paths.get(appConfig.getDataDirectory(), restEndpoint, "active.txt");
+		Files.deleteIfExists(activeIndicatorFile);
+		Files.write(activeIndicatorFile, ruleSetId.getBytes("UTF-8"));
 	}
 	
 	@Override

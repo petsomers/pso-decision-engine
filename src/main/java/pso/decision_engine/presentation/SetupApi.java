@@ -17,10 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.Data;
 import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.ExcelParseResult;
+import pso.decision_engine.model.ListParseResult;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.RuleSetInfo;
+import pso.decision_engine.service.DataSetService;
 import pso.decision_engine.service.SetupApiService;
 
 @RestController
@@ -32,15 +35,10 @@ public class SetupApi {
 	
 	@Autowired
 	private SetupApiService setupService;
-
-	@RequestMapping(value = "/test",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    public ExcelParseResult test() throws Exception {
-		try (FileInputStream fi=new FileInputStream("C:\\SonyWorkspace\\documents\\projects\\aep\\decision engine\\Decision Engine Input - version 4.xlsx")) {
-		//try (FileInputStream fi=new FileInputStream("C:\\temp\\Decision Engine Input - version 3 - BIG.xlsx")) {
-			return setupService.addExcelFile(fi);
-		}
-    }
 	
+	@Autowired
+	private DataSetService dataSetService;
+
 	@RequestMapping(value = "/upload_excel",method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ExcelParseResult uploadExcel(HttpServletRequest req) throws Exception {
 		return setupService.addExcelFile(req.getInputStream());	
@@ -94,7 +92,11 @@ public class SetupApi {
 			return "RULESET NOT FOUND";
 		} else {
 			// todo: first run all unit tests before making a ruleset active
-			setupService.setActiveRuleSet(restEndpoint, ruleSetId);
+			try {
+				setupService.setActiveRuleSet(restEndpoint, ruleSetId);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			return "OK";
 		}
 	}
@@ -134,4 +136,37 @@ public class SetupApi {
 		setupService.deleteRuleSet(restEndpoint, ruleSetId);
 	}
 	
+	
+	@RequestMapping(value = "/upload_list/{listName}",method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public String uploadList(HttpServletRequest req, @PathVariable String listName) throws Exception {
+		try {
+			ListParseResult result=dataSetService.uploadList(listName, req.getInputStream());
+			if (result.isOk()) return "OK";
+			return "ERROR: "+result.getErrorMessage();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "ERROR: "+e.getMessage();
+		}
+	}
+	
+
+	@RequestMapping(method = RequestMethod.POST, path = "/form_upload_list/{listName}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = "application/json;charset=UTF-8")
+    public ListParseResult formUploadList(HttpServletRequest req, @PathVariable String listName) throws Exception {
+		ListParseResult result=new ListParseResult();
+		try {
+			Collection<Part> parts = req.getParts();
+			if (parts.isEmpty()) {
+				result.setErrorMessage("Invalid Request.");
+				return result;
+	        }
+			Part part = parts.iterator().next();
+			try (InputStream in = part.getInputStream()) {
+				return dataSetService.uploadList(listName, in);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setErrorMessage(e.getMessage());
+			return result;
+		}
+	}
 }
