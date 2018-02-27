@@ -28,9 +28,6 @@ export const RuleSetVersionSelection = ({layout, selectedEndpoint, versions, sel
 						Version: {version.version}<br />
 						Remark: {version.remark}<br />
 						<Button type="neutral" onClick={() => downloadExcel(version.restEndpoint, version.id)} icon="download" iconAlign="left" label="Download Excel" />
-						{!version.active &&
-							<Button type="neutral" onClick={() => deleteVersion(version.restEndpoint, version.id)} icon="delete" iconAlign="left" label="Delete" />
-						}
 					</div>
 				))}
   		</div>

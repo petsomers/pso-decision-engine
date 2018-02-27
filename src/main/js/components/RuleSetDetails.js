@@ -37,8 +37,8 @@ export class  RuleSetDetails extends React.Component {
 		this.setState({
 			...this.state,
 			confirmAction: {
-				title: "Set Active",
-				info: "Are you sure you want to promote this rule set to be the active one?",
+				title: "Deploy Ruleset",
+				info: "Are you sure you want to promote this rule set version to be the active one?",
 				action: "SET_ACTIVE"
 			}
 		});
@@ -106,7 +106,7 @@ export class  RuleSetDetails extends React.Component {
 				<div style={{display: "inline-block", paddingLeft: "25px"}}>
 					<Button type="neutral" onClick={() => this.props.downloadExcel()} icon="download" iconAlign="left" label="Download Excel" />
 					<br />
-					<Button type="neutral" onClick={() => this.setActiveRequest()} icon="connected_apps" iconAlign="left" label="Set Active" />
+					<Button type="neutral" onClick={() => this.setActiveRequest()} icon="connected_apps" iconAlign="left" label="Deploy" />
 					<br />
 					<Button type="neutral" onClick={() => this.deleteRequest()} icon="delete" iconAlign="left" label="Delete" />
 				</div>

@@ -77,13 +77,24 @@ class App extends React.Component {
 					{this.props.inprogress &&
 						<Spinner />
 					}
-					{(this.props.errorMessage!=null && this.props.errorMessage!="") &&
+					{(this.props.infoMessage && this.props.infoMessage!="") &&
+						<div style={{position: "fixed", zIndex:"100", right:"50px", bottom:"50px", width:"50%" }}>
+							<Notification
+								type="toast"
+								level="success"
+								alertTexture
+								onClose={()=>this.props.doClearMessages()}>
+								{this.props.infoMessage}
+						 </Notification>
+						</div>
+					}
+					{(this.props.errorMessage && this.props.errorMessage!="") &&
   				<div style={{position: "fixed", zIndex:"100", right:"50px", bottom:"50px", width:"50%" }}>
     				<Notification
     				  type="alert"
     				  level="error"
     				  alertTexture
-    				  onClose={()=>this.props.doClearErrorMessage()}>
+    				  onClose={()=>this.props.doClearMessages()}>
     					{this.props.errorMessage}
     				 </Notification>
   				 </div>
@@ -105,7 +116,8 @@ const mapStateToProps = (state) => {
 		runNowData: state.appReducer.runNowData,
 		layout: state.appReducer.layout,
 		mainScreen: state.appReducer.mainScreen,
-		errorMessage: state.appReducer.errorMessage
+		errorMessage: state.appReducer.errorMessage,
+		infoMessage: state.appReducer.infoMessage
   };
 };
 
@@ -117,8 +129,8 @@ const mapDispatchToProps = (dispatch) => {
 				payload: {width, height}
 			});
 		},
-		doClearErrorMessage() {
-			dispatch({type: "CLEAR_ERROR_MESSAGE"});
+		doClearMessages() {
+			dispatch({type: "CLEAR_MESSAGES"});
 		},
 		openFileUpload: (width, height) => {
 			dispatch({

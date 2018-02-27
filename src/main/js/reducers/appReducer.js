@@ -5,6 +5,7 @@ const appReducer = (state = {
     leftPaneWidth: 300
   },
   errorMessage: "",
+  infoMessage: "",
   mainScreen: "welcome",
   restEndpoints: [],
   versions: [],
@@ -34,8 +35,8 @@ const appReducer = (state = {
     return state;
   }
   switch (action.type) {
-  case "CLEAR_ERROR_MESSAGE":
-    state= {...state, errorMessage:null}
+  case "CLEAR_MESSAGES":
+    state= {...state, errorMessage:null, infoMessage:null}
   break;
   case "SET_INPROGRESS":
     state= {...state, inProgress: true}
@@ -63,11 +64,6 @@ const appReducer = (state = {
   case "GET_ENDPOINTS_FULFILLED":
     let selectedEndpoint=state.selectedEndpoint;
     let endpoints=action.payload.data;
-    /*
-    if (selectedEndpoint=="" && endpoints.length>0) {
-      selectedEndpoint=endpoints[0];
-    }
-    */
     state = {
       ...state,
       inprogress: false,
@@ -134,6 +130,30 @@ const appReducer = (state = {
           ...state.runNowData,
           result: null
       }
+    }
+  break;
+  case "SET_ACTIVE_FULFILLED":
+    state = {
+      ...state,
+      infoMessage: "This ruleset has been promoted."
+    }
+  break;
+  case "DELETE_RULESET_FULFILLED":
+    // remove version from versionlist
+    var pos=-1;
+    state.versions.map((version, index) => {
+      if (version.id==state.selectedVersion) {
+        pos=index;
+      }
+    })
+    if (pos>-1) {
+      state.versions.splice(pos,1);
+    }
+    state = {
+      ...state,
+      infoMessage: "The ruleset has been deleted.",
+      mainScreen: "ruleSetVersionSelection",
+      selectedVersion: ""
     }
   break;
   case "WINDOW_RESIZE":
