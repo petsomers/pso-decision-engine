@@ -1,13 +1,10 @@
 package pso.decision_engine.service.impl;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,6 +30,7 @@ public class DataSetServiceImpl implements DataSetService {
 	
 	@Override
 	public ListParseResult uploadList(String listName, InputStream in) throws IOException {
+		ListParseResult result=new ListParseResult();
 		String id=idService.createShortUniqueId();
 		Path tempOutputFile=Paths.get(appConfig.getDataDirectory()+"/lists", listName, id+"_raw.txt");
 		tempOutputFile.toFile().getParentFile().mkdirs();
@@ -41,19 +39,29 @@ public class DataSetServiceImpl implements DataSetService {
 		}
 		Path outputFile=Paths.get(appConfig.getDataDirectory()+"/lists", listName, id+".txt");
 		
-		try (PrintWriter out=new PrintWriter(new BufferedWriter(new FileWriter(outputFile.toFile())))) {
+		try(BufferedWriter writer = Files.newBufferedWriter(outputFile, Charset.forName("UTF-8"))) {
 			try (Stream<String> stream = Files.lines(tempOutputFile)) {
 				stream
 				.map(line -> line.trim())
 				.distinct()
 				.sorted()
-				.forEach(line -> out.println(line));
-			} catch (IOException e) {
+				.forEach(line -> {
+					try {
+						writer.write(line);
+					} catch (IOException e) {
+						throw new RuntimeException("Error during list processing: "+e.getMessage(),e);
+					}
+				});
+				writer.flush();
+			} catch (Exception e) {
+				result.setOk(false);
+				result.setErrorMessage(e.getMessage());
 				e.printStackTrace();
+				return result;
 			}
 		}
+		
 		setActiveList(listName, id);
-		ListParseResult result=new ListParseResult();
 		result.setOk(true);
 		result.setListId(id);
 		result.setListName(listName);
