@@ -46,8 +46,4 @@ public interface RuleSetDao {
 
 	public void deleteRuleSetsWithEndpointSkipId(String restEndpoint, String activeId);
 
-	public int getListId(String listName);
-
-	public void uploadList(int listId, List<String> values);
-
 }

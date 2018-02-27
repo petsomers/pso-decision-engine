@@ -1,6 +1,5 @@
 package pso.decision_engine.presentation;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.Data;
 import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.ExcelParseResult;
 import pso.decision_engine.model.ListParseResult;
@@ -169,4 +167,11 @@ public class SetupApi {
 			return result;
 		}
 	}
+	
+
+	@RequestMapping(value = "/lists",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public List<String> getAllLists() {
+		return dataSetService.getListNames();
+	}
+
 }

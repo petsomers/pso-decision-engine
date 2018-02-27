@@ -20,6 +20,7 @@ class App extends React.Component {
 
 	componentDidMount() {
 		this.props.loadEndpoints();
+		this.props.loadLists();
 	}
 
 	downloadExcel(restEndpoint, ruleSetId) {
@@ -38,9 +39,11 @@ class App extends React.Component {
 					<NavigationBar />
 					<RuleSetSelection
 						restEndpoints={this.props.restEndpoints}
+						lists={this.props.lists}
 						layout={this.props.layout}
 						openFileUpload={() => this.props.openFileUpload()}
 						selectedEndpoint={this.props.selectedEndpoint}
+						selectedList={this.props.selectedList}
 						selectEndpoint={(endpoint) => this.props.selectEndpoint(endpoint)}
 						/>
 					</div>
@@ -110,8 +113,10 @@ const mapStateToProps = (state) => {
 		layout: state.appReducer.layout,
 		inProgress: state.appReducer.inProgress,
 		restEndpoints: state.appReducer.restEndpoints,
+		lists: state.appReducer.lists,
 		versions: state.appReducer.versions,
 		selectedEndpoint: state.appReducer.selectedEndpoint,
+		selectedList:  state.appReducer.selectedList,
 		ruleSetDetails: state.appReducer.ruleSetDetails,
 		unitTestsResult: state.appReducer.unitTestsResult,
 		runNowData: state.appReducer.runNowData,
@@ -151,6 +156,14 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({
   			type: "GET_ENDPOINTS",
   			payload: axios.get("setup/endpoints")
+			});
+		},
+		loadLists: () => {
+			console.log("LOAD LISTS.....");
+			dispatch({type: "SET_INPROGRESS"});
+			dispatch({
+  			type: "GET_LISTS",
+  			payload: axios.get("setup/lists")
 			});
 		},
 		selectEndpoint: (endpoint) => {

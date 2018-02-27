@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "react-lightning-design-system";
 
-export const RuleSetSelection = ({restEndpoints, layout, openFileUpload, selectEndpoint, selectedEndpoint}) => {
+export const RuleSetSelection = ({restEndpoints, lists, layout, openFileUpload, selectEndpoint, selectedEndpoint, selectedList}) => {
 	const restEndpointsHeight=(layout.windowHeight-180)/2;
 	const globalListsHeight=restEndpointsHeight;
 
@@ -43,7 +43,7 @@ export const RuleSetSelection = ({restEndpoints, layout, openFileUpload, selectE
 				<div style={restEndpointsStyle} className='slds-table slds-table--bordered'>
 					{restEndpoints.map((endpoint, index) => (
 						<div key={endpoint} style={(selectedEndpoint==endpoint)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>
-							<i className="fas fa-genderless"></i> &nbsp; 
+							<i className="fas fa-genderless"></i> &nbsp;
 							<a onClick={() => selectEndpoint(endpoint)}>
 								{endpoint}
 							</a>
@@ -52,7 +52,14 @@ export const RuleSetSelection = ({restEndpoints, layout, openFileUpload, selectE
 				</div>
 				<div style={globalListTitleStyle}><b>Global Lists</b></div>
 				<div style={globalListStyle}>
-					Global Lists (for all endpoints and versions)
+					{lists.map((listName, index) => (
+					<div key={listName} style={(selectedList==listName)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>
+						<i className="fas fa-genderless"></i> &nbsp;
+						<a onClick={() => selectEndpoint(listName)}>
+							{listName}
+						</a>
+					</div>
+					))}
 				</div>
 				<div style={uploadStyle}>
 					<Button type="neutral" onClick={() => openFileUpload()} icon="new" iconAlign="left" label="Upload Excel" />

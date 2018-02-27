@@ -385,45 +385,5 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		.addValue("activeId", activeId);
 		jdbcTemplate.update("DELETE FROM RuleSet WHERE restEndpoint=:restEndpoint and ruleSetId<>:activeId" , params);
 	}
-	
-	@Override
-	public int getListId(String listName) {
-		// outside transaction! // atomic!
-		MapSqlParameterSource params=new MapSqlParameterSource()
-		.addValue("listName", listName);
-		try {
-			return jdbcTemplate.queryForObject(
-				"select listId from lists where listName=:listName", 
-				params, 
-				Integer.class);
-		} catch(EmptyResultDataAccessException emty) {
-		}
-		Integer listId=jdbcTemplate.queryForObject(
-				"select max(listId) from Lists", 
-				params, Integer.class);
-		if (listId==null) listId=1;
-		
-		params.addValue("listId", listId);
-		jdbcTemplate.update("insert into Lists (listId, listName) values (:listId, :listName)", params) ;
-		return listId;
-	}
-	
-	@Override
-	@Transactional
-	public void uploadList(int listId, List<String> values) {
-		// maybe use reactive stream in batchs of x, instead of 1 shot?
-		MapSqlParameterSource params=new MapSqlParameterSource()
-		.addValue("listId", listId);
-		jdbcTemplate.update("DELETE FROM ListValues where listId=:listId", params);
-		
-		MapSqlParameterSource[] items=new MapSqlParameterSource[values.size()];
-		int[] i= {0};
-		values.forEach(value -> {
-			items[i[0]++]=new MapSqlParameterSource()
-				.addValue("listId", listId)
-				.addValue("value", value);
-		});
-		jdbcTemplate.batchUpdate("INSERT INTO ListValues (listId, value) values (:listId, :value)", items);
-	}
 
 }
