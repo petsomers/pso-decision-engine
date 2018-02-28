@@ -6,11 +6,19 @@ export class FileUpload  extends React.Component {
 	constructor(props) {
 		super();
 		this.state = {
+			mode: null,
 			selectedUploadFile: null,
 			inProgress: false,
 			errorMessage: "",
 			message: "",
 		}
+	}
+
+	setMode(mode) {
+		if (mode=="") mode=null;
+		this.setState({
+			...this.state, mode
+		});
 	}
 
 	selectUploadFile(event) {
@@ -60,12 +68,63 @@ export class FileUpload  extends React.Component {
 	render() {
   	return (
 		<div>
-			<h1>Excel File Upload</h1>
-			<i className="far fa-file-excel"></i> &nbsp; <b>Upload Excel File</b><br /><br />
-			File: <input type="file" id="fileinput" onChange={(event) => this.selectUploadFile(event)}/>
-			<br />
-			{this.state.selectedUploadFile!=null &&
-				<Button type="neutral" onClick={() => this.doUpload()} icon="new" iconAlign="left" label="Upload File" />
+			{(!this.state.mode) ? (
+				<div>
+				<h2><b>What do you want to upload</b></h2>
+				<br />
+				<Button type="neutral" onClick={() => this.setMode("RULESET")} icon="new" iconAlign="left" label="1. Ruleset Excel File" />
+				<br />
+				<i>The Excel contains the complete RuleSet definitions.</i>
+				<br /><br />
+				<Button type="neutral" onClick={() => this.setMode("SET")} icon="new" iconAlign="left" label="2. Dataset Text File" />
+				<br />
+				<i>
+					A Dataset is a 1 column text file with unique values which can be used in a Rule Condition.<br />
+					No header row is required.
+				</i>
+				<br /><br />
+				<Button type="neutral" onClick={() => this.setMode("LOOKUP")} icon="new" iconAlign="left" label="3. Dataset Lookup Text File" />
+				<br />
+				<i>
+					A Dataset Lookup is a multi column text file where the first column contains the key, and the other columns parameter values.
+					<br />
+					A header row is required. The first header should be "KEY". The other columns headers should match the exact parameters names as defined in the Rulesets.
+				</i>
+				</div>
+			):(
+				<div style={{position: "absolute", right: "30px", top: "80px"}}>
+		      <Button type="brand" onClick={() => this.setMode("")} icon="left" iconAlign="left" label="Select Another File Type" />
+			  </div>
+			)}
+			{this.state.mode=="RULESET" &&
+				<div>
+					<h2><b>Ruleset Excel File Upload</b></h2>
+					<br /><br />
+					<i className="far fa-file-excel"></i> &nbsp; <b>Upload Excel File</b><br /><br />
+				</div>
+			}
+			{this.state.mode=="SET" &&
+				<div>
+					<h2><b>Dataset Text File Upload</b></h2>
+					<br /><br />
+					<i className="fas fa-bars"></i> &nbsp; <b>Upload Text File</b><br /><br />
+				</div>
+			}
+			{this.state.mode=="LOOKUP" &&
+				<div>
+					<h2><b>Lookup Text File Upload</b></h2>
+					<br /><br />
+					<i className="fas fa-th-list"></i> &nbsp; <b>Upload Lookup Text File</b><br /><br />
+				</div>
+			}
+			{this.state.mode &&
+				<div>
+					File: <input type="file" id="fileinput" onChange={(event) => this.selectUploadFile(event)}/>
+					<br />
+					{this.state.selectedUploadFile!=null &&
+						<Button type="neutral" onClick={() => this.doUpload()} icon="new" iconAlign="left" label="Upload File" />
+					}
+				</div>
 			}
 			{this.state.inProgress &&
 				<Spinner />
@@ -77,6 +136,7 @@ export class FileUpload  extends React.Component {
 			{this.state.message!="" &&
 				<div style={{color: "green"}}>{this.state.message}</div>
 			}
+
 
 		</div>
    )

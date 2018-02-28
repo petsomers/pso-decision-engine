@@ -2,14 +2,14 @@ import React from "react";
 import { Button } from "react-lightning-design-system";
 
 export const RuleSetSelection = ({restEndpoints, lists, layout, openFileUpload, selectEndpoint, selectedEndpoint, selectedList}) => {
-	const restEndpointsHeight=(layout.windowHeight-180)/2;
+	const restEndpointsHeight=(layout.windowHeight-160)/2;
 	const globalListsHeight=restEndpointsHeight;
 
 	const restEndpointTitlePosition=60;
 	const globalListTitlePosition=restEndpointTitlePosition+restEndpointsHeight+25;
 
 	const uploadStyle={
-		position:"fixed", top:(layout.windowHeight-50)+"px", left:"0px"
+		position:"fixed", top:(layout.windowHeight-45)+"px", left:"0px"
 	};
 
 	const restEndpointsTitleStyle={
@@ -62,7 +62,7 @@ export const RuleSetSelection = ({restEndpoints, lists, layout, openFileUpload, 
 					))}
 				</div>
 				<div style={uploadStyle}>
-					<Button type="neutral" onClick={() => openFileUpload()} icon="new" iconAlign="left" label="Upload Excel" />
+					<Button type="neutral" onClick={() => openFileUpload()} icon="new" iconAlign="left" label="Upload File" />
 				</div>
   		</div>
    );
