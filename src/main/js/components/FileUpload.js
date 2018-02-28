@@ -39,48 +39,42 @@ export class FileUpload  extends React.Component {
     var fd = new FormData();
     fd.append("upload_file", this.state.selectedUploadFile);
 		if (this.state.mode=="RULESET") {
-  		this.uploadRuleSet(fd);
+			this.uploadFile("setup/form_upload_excel", fd, (restEndpoint, ruleSetId) => {
+				this.props.selectVersion(restEndpoint, ruleSetId);
+				this.props.loadEndpoints();
+			});
 		} else if (this.state.mode=="SET") {
-			this.uploadDataSet(fd);
+			this.uploadFile(fd);
 		} else if (this.state.mode=="LOOKUP") {
-			this.uploadLookupDataSet(fd);
+			this.uploadFile(fd);
 		}
 	}
 
-	uploadRuleSet(fd) {
-		axios.post('setup/form_upload_excel', fd)
+	uploadFile(url, fd, onsuccess) {
+		axios.post(url, fd)
 			.then(result => {
 				console.log("File upload response", result)
 				if (!result.data.ok) {
 					this.setState({
 						...this.state,
 						errorMessage:result.data.errorMessage,
-						message: "?",
+						message: "",
 						inProgress:false
 					});
 				} else {
 					this.setState({
 						...this.state,
 						errorMessage:"",
-						message: "Rest Endpoint: "+result.data.restEndpoint+" --- LOADING ...",
+						message: "",
 						inProgress:false
 					});
-					this.props.selectVersion(result.data.restEndpoint, result.data.ruleSetId);
-					this.props.loadEndpoints();
+					onsuccess(result.data.restEndpoint, result.data.ruleSetId);
 				}
 			})
 			.catch(error =>  {
 				console.log("File upload error response: "+error.message,error)
 				this.setState({...this.state, inProgress:false, errorMessage: error.message});
 			 });
-	}
-
-	uploadDataSet(fd) {
-
-	}
-
-	uploadLookupDataSet(fd) {
-
 	}
 
 	render() {
@@ -129,6 +123,7 @@ export class FileUpload  extends React.Component {
 					<h2><b>Dataset Text File Upload</b></h2>
 					<br /><br />
 					<i className="fas fa-bars"></i> &nbsp; <b>Upload Text File</b><br /><br />
+					TODO: Input Dataset Name
 				</div>
 			}
 			{this.state.mode=="LOOKUP" &&
@@ -136,6 +131,7 @@ export class FileUpload  extends React.Component {
 					<h2><b>Lookup Text File Upload</b></h2>
 					<br /><br />
 					<i className="fas fa-th-list"></i> &nbsp; <b>Upload Lookup Text File</b><br /><br />
+					TODO: Input Dataset Name
 				</div>
 			}
 			{this.state.mode &&
