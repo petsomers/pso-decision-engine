@@ -20,6 +20,6 @@ public interface DataSetDao {
 
 	public boolean isKeyInDataSet(String dataSetVersionId, String key);
 
-	public void uploadSet(int listId, List<String> values);
+	public void uploadSet(String dataSetVersionId, List<String> values);
 
 }

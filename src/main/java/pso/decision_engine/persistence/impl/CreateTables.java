@@ -125,7 +125,7 @@ public class CreateTables {
 		"keyId INTEGER NOT NULL, "+
 		"key VARCHAR(100), "+
 		"PRIMARY KEY (dataSetVersionId, keyId), "+
-		"FOREIGN KEY (dataSetVersion) REFERENCES DataSetVersion (dataSetVersion) ON DELETE CASCADE)",
+		"FOREIGN KEY (dataSetVersionId) REFERENCES DataSetVersion (dataSetVersionId) ON DELETE CASCADE)",
 		
 		"CREATE INDEX IF NOT EXISTS DataSetKeyNameIndex "+
 		"on DataSetKeys (dataSetVersionId, key)",
@@ -135,7 +135,7 @@ public class CreateTables {
 		"valueId INTEGER NOT NULL, "+
 		"name VARCHAR(100), "+
 		"PRIMARY KEY (dataSetVersionId, valueId), "+
-		"FOREIGN KEY (dataSetVersion) REFERENCES DataSetVersion (dataSetVersion) ON DELETE CASCADE)",
+		"FOREIGN KEY (dataSetVersionId) REFERENCES DataSetVersion (dataSetVersionId) ON DELETE CASCADE)",
 		
 		"CREATE CACHED TABLE IF NOT EXISTS DataSetValues ("+
 		"dataSetVersionId VARCHAR(20) NOT NULL, "+
@@ -143,7 +143,7 @@ public class CreateTables {
 		"valueId INTEGER NOT NULL, "+
 		"value VARCHAR(100), "+
 		"PRIMARY KEY (dataSetVersionId, keyId, valueId), "+
-		"FOREIGN KEY (dataSetVersion) REFERENCES DataSetVersion (dataSetVersion) ON DELETE CASCADE)",
+		"FOREIGN KEY (dataSetVersionId) REFERENCES DataSetVersion (dataSetVersionId) ON DELETE CASCADE)",
 	};
     
 	@PostConstruct

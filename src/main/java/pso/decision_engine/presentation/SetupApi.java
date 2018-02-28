@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import pso.decision_engine.model.AppConfig;
+import pso.decision_engine.model.DataSetUploadResult;
 import pso.decision_engine.model.ExcelParseResult;
-import pso.decision_engine.model.ListParseResult;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.RuleSetInfo;
 import pso.decision_engine.service.DataSetService;
@@ -135,10 +135,10 @@ public class SetupApi {
 	}
 	
 	
-	@RequestMapping(value = "/upload_list/{listName}",method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-    public String uploadList(HttpServletRequest req, @PathVariable String listName) throws Exception {
+	@RequestMapping(value = "/dataset/upload_set/{dataSetName}",method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public String uploadList(HttpServletRequest req, @PathVariable String dataSetName) throws Exception {
 		try {
-			ListParseResult result=dataSetService.uploadList(listName, req.getInputStream());
+			DataSetUploadResult result=dataSetService.uploadSet(dataSetName, req.getInputStream());
 			if (result.isOk()) return "OK";
 			return "ERROR: "+result.getErrorMessage();
 		} catch (Exception e) {
@@ -148,9 +148,9 @@ public class SetupApi {
 	}
 	
 
-	@RequestMapping(method = RequestMethod.POST, path = "/form_upload_list/{listName}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = "application/json;charset=UTF-8")
-    public ListParseResult formUploadList(HttpServletRequest req, @PathVariable String listName) throws Exception {
-		ListParseResult result=new ListParseResult();
+	@RequestMapping(method = RequestMethod.POST, path = "/dataset/form_upload_set/{dataSetName}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = "application/json;charset=UTF-8")
+    public DataSetUploadResult formUploadList(HttpServletRequest req, @PathVariable String dataSetName) throws Exception {
+		DataSetUploadResult result=new DataSetUploadResult();
 		try {
 			Collection<Part> parts = req.getParts();
 			if (parts.isEmpty()) {
@@ -159,7 +159,7 @@ public class SetupApi {
 	        }
 			Part part = parts.iterator().next();
 			try (InputStream in = part.getInputStream()) {
-				return dataSetService.uploadList(listName, in);
+				return dataSetService.uploadSet(dataSetName, in);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -169,9 +169,9 @@ public class SetupApi {
 	}
 	
 
-	@RequestMapping(value = "/lists",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public List<String> getAllLists() {
-		return dataSetService.getListNames();
+	@RequestMapping(value = "/dataset/datasetnames",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public List<String> getDataSetNames() {
+		return dataSetService.getDataSetNames();
 	}
 
 }

@@ -113,7 +113,7 @@ public class DataSetDaoImpl implements DataSetDao {
 	
 	
 	@Override
-	public void uploadSet(int dataSetVersionId, List<String> values) {
+	public void uploadSet(String dataSetVersionId, List<String> values) {
 		// maybe use reactive stream in batchs of x, instead of 1 shot?
 		MapSqlParameterSource[] items=new MapSqlParameterSource[values.size()];
 		int[] i= {0};
