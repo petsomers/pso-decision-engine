@@ -29,7 +29,7 @@ public class CreateTables {
 		"uploadDate TIMESTAMP NOT NULL, "+
 		"PRIMARY KEY (ruleSetId))",
 		
-		"CREATE INDEX IF NOT EXISTS ruleset_restEndpoint "+
+		"CREATE INDEX IF NOT EXISTS ruleset_restEndpointIndex "+
 		"on RuleSet (restEndpoint)",
 		
 		"CREATE TABLE IF NOT EXISTS ActiveRuleSet ("+
@@ -38,7 +38,7 @@ public class CreateTables {
 		"PRIMARY KEY (restEndpoint), "+
 		"FOREIGN KEY (ruleSetId) REFERENCES RuleSet (ruleSetId) ON DELETE CASCADE)",
 		
-		"CREATE UNIQUE INDEX IF NOT EXISTS activeRuleSet_ruleSetId "+
+		"CREATE UNIQUE INDEX IF NOT EXISTS activeRuleSet_ruleSetIdIndex "+
 		"on ActiveRuleSet (ruleSetId)",
 		
 		"CREATE TABLE IF NOT EXISTS RuleSetParameters ("+
@@ -72,7 +72,7 @@ public class CreateTables {
 		"PRIMARY KEY (ruleSetId, listId), "+
 		"FOREIGN KEY (ruleSetId) REFERENCES RuleSet (ruleSetId) ON DELETE CASCADE)",
 		
-		"CREATE UNIQUE INDEX IF NOT EXISTS list_name "+
+		"CREATE UNIQUE INDEX IF NOT EXISTS list_nameIndex "+
 		"on RuleSetLists (ruleSetId, listName)",
 		
 		"CREATE TABLE IF NOT EXISTS RuleSetListValues ("+
@@ -98,19 +98,52 @@ public class CreateTables {
 		"PRIMARY KEY (ruleSetId, unitTestId, parameterName), "+
 		"FOREIGN KEY (ruleSetId, unitTestId) REFERENCES RuleSetUnitTests (ruleSetId, unitTestId) ON DELETE CASCADE)",
 		
-		"CREATE TABLE IF NOT EXISTS Lists ("+
-		"listId INTEGER NOT NULL, "+
-		"listName VARCHAR(100), "+
-		"PRIMARY KEY (listId))",
+		"CREATE TABLE IF NOT EXISTS DataSet ("+
+		"dataSetId VARCHAR(20) NOT NULL, "+
+		"name VARCHAR(100), "+
+		"type VARCHAR(10), "+ // SET or LOOKUP
+		"PRIMARY KEY (dataSetId))",
 		
-		"CREATE INDEX IF NOT EXISTS lists_listName "+
-		"on Lists (listName)",
+		"CREATE INDEX IF NOT EXISTS dataSet_nameIndex "+
+		"on DataSet (name)",
 		
-		"CREATE CACHED TABLE IF NOT EXISTS ListValues ("+
-		"listId INTEGER NOT NULL, "+
-		"value VARCHAR(100) NOT NULL, "+
-		"PRIMARY KEY (listId, value), "+
-		"FOREIGN KEY (listId) REFERENCES Lists (listId) ON DELETE CASCADE)"
+		"CREATE TABLE IF NOT EXISTS DataSetVersion ("+
+		"dataSetVersionId VARCHAR(20) NOT NULL, "+
+		"dataSetId VARCHAR(20) NOT NULL, "+
+		"uploadDate TIMESTAMP NOT NULL, "+
+		"PRIMARY KEY (dataSetVersionId), "+
+		"FOREIGN KEY (dataSetId) REFERENCES DataSet (dataSetId) ON DELETE CASCADE)",
+		
+		"CREATE TABLE IF NOT EXISTS ActiveDataSetVersion ("+
+		"dataSetId VARCHAR(20) NOT NULL, "+
+		"dataSetVersionId VARCHAR(20) NOT NULL, "+
+		"PRIMARY KEY (dataSetId), "+
+		"FOREIGN KEY (dataSetId) REFERENCES DataSet (dataSetId) ON DELETE CASCADE)",
+		
+		"CREATE CACHED TABLE IF NOT EXISTS DataSetKeys ("+
+		"dataSetVersionId VARCHAR(20) NOT NULL, "+
+		"keyId INTEGER NOT NULL, "+
+		"key VARCHAR(100), "+
+		"PRIMARY KEY (dataSetVersionId, keyId), "+
+		"FOREIGN KEY (dataSetVersion) REFERENCES DataSetVersion (dataSetVersion) ON DELETE CASCADE)",
+		
+		"CREATE INDEX IF NOT EXISTS DataSetKeyNameIndex "+
+		"on DataSetKeys (dataSetVersionId, key)",
+		
+		"CREATE TABLE IF NOT EXISTS DataSetValueNames ("+
+		"dataSetVersionId VARCHAR(20) NOT NULL, "+
+		"valueId INTEGER NOT NULL, "+
+		"name VARCHAR(100), "+
+		"PRIMARY KEY (dataSetVersionId, valueId), "+
+		"FOREIGN KEY (dataSetVersion) REFERENCES DataSetVersion (dataSetVersion) ON DELETE CASCADE)",
+		
+		"CREATE CACHED TABLE IF NOT EXISTS DataSetValues ("+
+		"dataSetVersionId VARCHAR(20) NOT NULL, "+
+		"keyId INTEGER NOT NULL, "+
+		"valueId INTEGER NOT NULL, "+
+		"value VARCHAR(100), "+
+		"PRIMARY KEY (dataSetVersionId, keyId, valueId), "+
+		"FOREIGN KEY (dataSetVersion) REFERENCES DataSetVersion (dataSetVersion) ON DELETE CASCADE)",
 	};
     
 	@PostConstruct

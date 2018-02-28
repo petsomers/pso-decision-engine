@@ -1,6 +1,8 @@
 package pso.decision_engine.persistence.impl;
 
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,14 +10,18 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
+import pso.decision_engine.model.enums.DataSetType;
 import pso.decision_engine.persistence.DataSetDao;
+import pso.decision_engine.service.IdService;
 
 @Component
 public class DataSetDaoImpl implements DataSetDao {
 
 	private NamedParameterJdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	private IdService idService;
 	
 	 @Autowired
     public void setJdbcTemplate (NamedParameterJdbcTemplate jdbcTemplate) {
@@ -23,70 +29,102 @@ public class DataSetDaoImpl implements DataSetDao {
     }
 	
 	@Override
-	public int getOrCreateListId(String listName) {
-		// outside transaction! // atomic!
+	public String getOrCreateDataSetId(String dataSetName, DataSetType dataSetType) {
 		MapSqlParameterSource params=new MapSqlParameterSource()
-		.addValue("listName", listName);
+		.addValue("dataSetName", dataSetName)
+		.addValue("dataSetType", dataSetType.toString());
 		try {
 			return jdbcTemplate.queryForObject(
-				"select listId from lists where listName=:listName", 
+				"select dataSetId from DataSet where name=:dataSetName and type=:type", 
 				params, 
-				Integer.class);
+				String.class);
 		} catch(EmptyResultDataAccessException emty) {
 		}
-		Integer listId=jdbcTemplate.queryForObject(
-				"select max(listId) from Lists", 
-				params, Integer.class);
-		if (listId==null) listId=1;
+		String dataSetId=idService.createShortUniqueId();
 		
-		params.addValue("listId", listId);
-		jdbcTemplate.update("insert into Lists (listId, listName) values (:listId, :listName)", params) ;
-		return listId;
+		params.addValue("dataSetId", dataSetId);
+		jdbcTemplate.update("insert into DataSet (dataSetId, name, type) values (:dataSetId, :dataSetName, :type)", params) ;
+		return dataSetId;
 	}
 	
 	@Override
-	@Transactional
-	public void uploadList(int listId, List<String> values) {
-		// maybe use reactive stream in batchs of x, instead of 1 shot?
+	public String createDataSetVersion(String dataSetId) {
+		String dataSetVersionId=idService.createShortUniqueId();
 		MapSqlParameterSource params=new MapSqlParameterSource()
-		.addValue("listId", listId);
-		jdbcTemplate.update("DELETE FROM ListValues where listId=:listId", params);
-		
-		MapSqlParameterSource[] items=new MapSqlParameterSource[values.size()];
-		int[] i= {0};
-		values.forEach(value -> {
-			items[i[0]++]=new MapSqlParameterSource()
-				.addValue("listId", listId)
-				.addValue("value", value);
-		});
-		jdbcTemplate.batchUpdate("INSERT INTO ListValues (listId, value) values (:listId, :value)", items);
-	}
-	
-	@Override
-	public List<String> getListNames() {
-		MapSqlParameterSource params=new MapSqlParameterSource();
-		return jdbcTemplate.query(
-			"SELECT distinct listName from Lists order by listName", 
-			params, 
-			(ResultSet rs, int rowNumber) -> rs.getString(1));
-	}
-	
-	@Override
-	public void deleteList(String listName) {
-		MapSqlParameterSource params=new MapSqlParameterSource()
-		.addValue("listName", listName);
-		jdbcTemplate.update("delete from Lists where listName=:listName", params);
+		.addValue("dataSetId", dataSetId)
+		.addValue("dataSetVersionId", dataSetVersionId)
+		.addValue("uploadDate", Timestamp.valueOf(LocalDateTime.now()));
+		jdbcTemplate.update("insert into DataSetVersion (dataSetVersionId, dataSetId, uploadDate) values (:dataSetVersionId, :dataSetId, :uploadDate)", params) ;
+		return dataSetVersionId;
 	}
 
 	@Override
-	public boolean isInList(String listName, String value) {
+	public void setActiveDataSetVersion(String dataSetId, String dataSetVersionId) {
 		MapSqlParameterSource params=new MapSqlParameterSource()
-		.addValue("listName", listName)
-		.addValue("listValue", value);
+		.addValue("dataSetId", dataSetId)
+		.addValue("dataSetVersionId", dataSetVersionId);
+		int c=jdbcTemplate.update("update ActiveDataSetVersion set dataSetVersionId=:dataSetVersionId where dataSetId=:dataSetId", params) ;
+		if (c==0)
+			jdbcTemplate.update("insert into ActiveDataSetVersion (dataSetId, dataSetVersionId) values (:dataSetId, :dataSetVersionId)", params);
+	}
+	
+	@Override
+	public String getActiveDataSetVersionForDataSetName(String dataSetName) {
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("dataSetName", dataSetName);
+		try {
+			return jdbcTemplate.queryForObject(
+				"SELECT a.dataSetVersionId from ActiveDataSetVersion as a "+ 
+				"left join DataSet as d on a.dataSetId=d.dataSetId "+
+				"where d.name:=dataSetName", 
+				params, 
+				String.class);
+		} catch(EmptyResultDataAccessException emty) {
+			return null;
+		}
+	}
+	
+	@Override
+	public List<String> getDataSetNames() {
+		MapSqlParameterSource params=new MapSqlParameterSource();
+		return jdbcTemplate.query(
+			"SELECT distinct name from DataSet order by name", 
+			params, 
+			(ResultSet rs, int rowNumber) -> rs.getString(1));
+	}
+
+	@Override
+	public void deleteDataSet(String dataSetName) {
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("dataSetName", dataSetName);
+		jdbcTemplate.update("delete from DataSet where name=:dataSetName", params);
+	}
+
+	@Override
+	public boolean isKeyInDataSet(String dataSetVersionId, String key) {
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("dataSetVersionId", dataSetVersionId)
+		.addValue("key", key);
 		return jdbcTemplate.queryForObject(
-			"select count(*) from Lists as l "+
-			"left join ListValues as lv on l.listId=lv.listId "+
-			"where l.listName=:listName and lv.listValue=:listValue", 
+			"select count(*) from DataSetKeys where dataSetVersion=:dataSetVersion and key=:key",
 			params, Integer.class)>0;
 	}
+	
+	
+	
+	@Override
+	public void uploadSet(int dataSetVersionId, List<String> values) {
+		// maybe use reactive stream in batchs of x, instead of 1 shot?
+		MapSqlParameterSource[] items=new MapSqlParameterSource[values.size()];
+		int[] i= {0};
+		values.forEach(value -> {
+			items[i[0]]=new MapSqlParameterSource()
+				.addValue("dataSetVersionId", dataSetVersionId)
+				.addValue("keyId", i[0])
+				.addValue("key", value);
+			i[0]++;
+		});
+		jdbcTemplate.batchUpdate("INSERT INTO DataSetKeys (dataSetVersionId, keyId, key) values (:dataSetVersionId, :keyId, :key)", items);
+	}
+
 }

@@ -3,9 +3,9 @@ package pso.decision_engine.model;
 import lombok.Data;
 
 @Data
-public class ListParseResult {
+public class DataSetUploadResult {
 	private boolean ok;
 	private String errorMessage;
-	private String listName;
-	private String listId;
+	private String dataSetName;
+	private String dataSetVersionId;
 }

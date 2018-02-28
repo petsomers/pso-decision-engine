@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
 import pso.decision_engine.model.AppConfig;
+import pso.decision_engine.model.DataSetUploadResult;
 import pso.decision_engine.model.ListParseResult;
+import pso.decision_engine.model.enums.DataSetType;
 import pso.decision_engine.persistence.DataSetDao;
 import pso.decision_engine.service.DataSetService;
 import pso.decision_engine.service.IdService;
@@ -34,8 +36,8 @@ public class DataSetServiceImpl implements DataSetService {
 	private DataSetDao dataSetDao;
 	
 	@Override
-	public ListParseResult uploadList(String listName, InputStream in) throws IOException {
-		ListParseResult result=new ListParseResult();
+	public DataSetUploadResult uploadSet(String dataSetName, InputStream in) throws IOException {
+		DataSetUploadResult result=new DataSetUploadResult();
 		String id=idService.createShortUniqueId();
 		Path rawOutputFile=Paths.get(appConfig.getDataDirectory()+"/lists", listName, id+"_raw.txt");
 		rawOutputFile.toFile().getParentFile().mkdirs();
@@ -101,6 +103,48 @@ public class DataSetServiceImpl implements DataSetService {
 	@Override
 	public boolean isInList(String listName, String value) {
 		return dataSetDao.isInList(listName, value);
+	}
+
+	@Override
+	public List<String> getDataSetNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteDataSet(String dataSetName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isKeyInDataSet(String listName, String key) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String getOrCreateDataSetId(String dataSetName, DataSetType dataSetType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String createDataSetVersion(String dataSetId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setActiveDataSetVersion(String dataSetId, String dataSetVersionId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getActiveDataSetVersionForDataSetName(String dataSetName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

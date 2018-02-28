@@ -39,9 +39,20 @@ public class RuleSetDaoImpl implements RuleSetDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Transactional
-	@Override
-	public void saveRuleSet(RuleSet ruleSet) {
+    @Override
+    public void saveRuleSet(RuleSet ruleSet) {
+    	// avoid @Transactional => don't lock any tables!
+    	try {
+    		doSaveRuleSet(ruleSet);
+    	} catch (Exception e) {
+    		try {
+    			deleteRuleSet(ruleSet.getRestEndpoint(), ruleSet.getId());
+    		} catch (Exception ex) {}
+    		throw new RuntimeException(e);
+    	}
+    }
+    
+	private void doSaveRuleSet(RuleSet ruleSet) {
 		MapSqlParameterSource parameters=new MapSqlParameterSource()
 		.addValue("ruleSetId", ruleSet.getId())
 		.addValue("restEndpoint", ruleSet.getRestEndpoint())

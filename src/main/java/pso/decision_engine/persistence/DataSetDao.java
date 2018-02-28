@@ -2,15 +2,24 @@ package pso.decision_engine.persistence;
 
 import java.util.List;
 
+import pso.decision_engine.model.enums.DataSetType;
+
 public interface DataSetDao {
 
-	public int getOrCreateListId(String listName);
+	public String getOrCreateDataSetId(String dataSetName, DataSetType dataSetType);
 
-	public void uploadList(int listId, List<String> values);
+	public String createDataSetVersion(String dataSetId);
 
-	public List<String> getListNames();
-
-	public void deleteList(String listName);
+	public void setActiveDataSetVersion(String dataSetId, String dataSetVersionId);
 	
-	public boolean isInList(String listName, String value);
+	public String getActiveDataSetVersionForDataSetName(String dataSetName);
+
+	public List<String> getDataSetNames();
+
+	public void deleteDataSet(String dataSetName);
+
+	public boolean isKeyInDataSet(String dataSetVersionId, String key);
+
+	public void uploadSet(int listId, List<String> values);
+
 }
