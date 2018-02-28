@@ -15,9 +15,9 @@ export class FileUpload  extends React.Component {
 	}
 
 	setMode(mode) {
-		if (mode=="") mode=null;
 		this.setState({
-			...this.state, mode
+			...this.state,
+			mode: mode
 		});
 	}
 
@@ -29,52 +29,71 @@ export class FileUpload  extends React.Component {
 	}
 
 	doUpload(event) {
-			this.setState({
-				...this.state,
-				errorMessage:"",
-				message: "",
-				inProgress:true
-			});
-			var xhr = new XMLHttpRequest();
-		    var fd = new FormData();
-		    fd.append("upload_file", this.state.selectedUploadFile);
-
-		    axios.post('setup/form_upload_excel', fd)
-	        .then(result => {
-	        	console.log("File upload response", result)
-						if (!result.data.ok) {
-							this.setState({
-			    			...this.state,
-			    			errorMessage:result.data.errorMessage,
-			    			message: "?",
-			    			inProgress:false
-		    			});
-						} else {
-							this.setState({
-								...this.state,
-								errorMessage:"",
-								message: "Rest Endpoint: "+result.data.restEndpoint+" --- LOADING ...",
-								inProgress:false
-							});
-							this.props.selectVersion(result.data.restEndpoint, result.data.ruleSetId);
-							this.props.loadEndpoints();
-						}
-	        })
-	        .catch(error =>  {
-	        	console.log("File upload error response: "+error.message,error)
-		    		this.setState({...this.state, inProgress:false, errorMessage: error.message});
-	         });
+		this.setState({
+			...this.state,
+			errorMessage:"",
+			message: "",
+			inProgress:true
+		});
+		var xhr = new XMLHttpRequest();
+    var fd = new FormData();
+    fd.append("upload_file", this.state.selectedUploadFile);
+		if (this.state.mode=="RULESET") {
+  		this.uploadRuleSet(fd);
+		} else if (this.state.mode=="SET") {
+			this.uploadDataSet(fd);
+		} else if (this.state.mode=="LOOKUP") {
+			this.uploadLookupDataSet(fd);
 		}
+	}
+
+	uploadRuleSet(fd) {
+		axios.post('setup/form_upload_excel', fd)
+			.then(result => {
+				console.log("File upload response", result)
+				if (!result.data.ok) {
+					this.setState({
+						...this.state,
+						errorMessage:result.data.errorMessage,
+						message: "?",
+						inProgress:false
+					});
+				} else {
+					this.setState({
+						...this.state,
+						errorMessage:"",
+						message: "Rest Endpoint: "+result.data.restEndpoint+" --- LOADING ...",
+						inProgress:false
+					});
+					this.props.selectVersion(result.data.restEndpoint, result.data.ruleSetId);
+					this.props.loadEndpoints();
+				}
+			})
+			.catch(error =>  {
+				console.log("File upload error response: "+error.message,error)
+				this.setState({...this.state, inProgress:false, errorMessage: error.message});
+			 });
+	}
+
+	uploadDataSet(fd) {
+
+	}
+
+	uploadLookupDataSet(fd) {
+
+	}
+
 	render() {
   	return (
 		<div>
-			{(!this.state.mode) ? (
+			{this.state.mode==null &&
 			<div>
 				<h2><b>What do you want to upload</b></h2>
 				<br />
 				<Button type="neutral" onClick={() => this.setMode("RULESET")} icon="new" iconAlign="left" label="1. Ruleset Excel File" />
 				<br />
-				<i className="far fa-file-excel"></i> &nbsp;<i>The Excel contains the complete RuleSet definitions.</i>
+				<i className="far fa-file-excel"></i> &nbsp;
+				<i>The Excel contains the complete RuleSet definitions.</i>
 				<br /><br />
 				<Button type="neutral" onClick={() => this.setMode("SET")} icon="new" iconAlign="left" label="2. Dataset Text File" />
 				<br />
@@ -92,11 +111,12 @@ export class FileUpload  extends React.Component {
 				 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A header row is required. The first header should be "KEY". The other columns headers should match the exact parameters names as defined in the Rulesets.
 				</i>
 			</div>
-			):(
+			}
+			{this.state.mode!=null &&
 				<div style={{position: "absolute", right: "30px", top: "80px"}}>
-		      <Button type="brand" onClick={() => this.setMode("")} icon="left" iconAlign="left" label="Select Another File Type" />
+		      <Button type="brand" onClick={() => this.setMode(null)} icon="left" iconAlign="left" label="Select Another File Type" />
 			  </div>
-			)}
+			}
 			{this.state.mode=="RULESET" &&
 				<div>
 					<h2><b>Ruleset Excel File Upload</b></h2>
@@ -137,9 +157,7 @@ export class FileUpload  extends React.Component {
 			{this.state.message!="" &&
 				<div style={{color: "green"}}>{this.state.message}</div>
 			}
-
-
 		</div>
-   )
- }
+	)}
+
 }
