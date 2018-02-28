@@ -50,7 +50,7 @@ export const RuleSetSelection = ({restEndpoints, lists, layout, openFileUpload, 
 						</div>
 					))}
 				</div>
-				<div style={globalListTitleStyle}><b>Global Lists</b></div>
+				<div style={globalListTitleStyle}><b>Datasets (Sets and Lookup Tables) Lists</b></div>
 				<div style={globalListStyle}>
 					{lists.map((listName, index) => (
 					<div key={listName} style={(selectedList==listName)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>

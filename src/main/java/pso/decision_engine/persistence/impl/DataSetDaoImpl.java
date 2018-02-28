@@ -35,7 +35,7 @@ public class DataSetDaoImpl implements DataSetDao {
 		.addValue("dataSetType", dataSetType.toString());
 		try {
 			return jdbcTemplate.queryForObject(
-				"select dataSetId from DataSet where name=:dataSetName and type=:type", 
+				"select dataSetId from DataSet where name=:dataSetName and type=:dataSetType", 
 				params, 
 				String.class);
 		} catch(EmptyResultDataAccessException emty) {
@@ -43,7 +43,7 @@ public class DataSetDaoImpl implements DataSetDao {
 		String dataSetId=idService.createShortUniqueId();
 		
 		params.addValue("dataSetId", dataSetId);
-		jdbcTemplate.update("insert into DataSet (dataSetId, name, type) values (:dataSetId, :dataSetName, :type)", params) ;
+		jdbcTemplate.update("insert into DataSet (dataSetId, name, type) values (:dataSetId, :dataSetName, :dataSetType)", params) ;
 		return dataSetId;
 	}
 	
