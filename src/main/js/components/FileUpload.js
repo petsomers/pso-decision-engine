@@ -69,28 +69,29 @@ export class FileUpload  extends React.Component {
   	return (
 		<div>
 			{(!this.state.mode) ? (
-				<div>
+			<div>
 				<h2><b>What do you want to upload</b></h2>
 				<br />
 				<Button type="neutral" onClick={() => this.setMode("RULESET")} icon="new" iconAlign="left" label="1. Ruleset Excel File" />
 				<br />
-				<i>The Excel contains the complete RuleSet definitions.</i>
+				<i className="far fa-file-excel"></i> &nbsp;<i>The Excel contains the complete RuleSet definitions.</i>
 				<br /><br />
 				<Button type="neutral" onClick={() => this.setMode("SET")} icon="new" iconAlign="left" label="2. Dataset Text File" />
 				<br />
+				<i className="fas fa-bars"></i> &nbsp;
 				<i>
 					A Dataset is a 1 column text file with unique values which can be used in a Rule Condition.<br />
-					No header row is required.
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No header row is required.
 				</i>
 				<br /><br />
 				<Button type="neutral" onClick={() => this.setMode("LOOKUP")} icon="new" iconAlign="left" label="3. Dataset Lookup Text File" />
 				<br />
+				<i className="fas fa-th-list"></i> &nbsp;
 				<i>
-					A Dataset Lookup is a multi column text file where the first column contains the key, and the other columns parameter values.
-					<br />
-					A header row is required. The first header should be "KEY". The other columns headers should match the exact parameters names as defined in the Rulesets.
+					A Dataset Lookup is a multi column text file where the first column contains the key, and the other columns parameter values.<br />
+				 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A header row is required. The first header should be "KEY". The other columns headers should match the exact parameters names as defined in the Rulesets.
 				</i>
-				</div>
+			</div>
 			):(
 				<div style={{position: "absolute", right: "30px", top: "80px"}}>
 		      <Button type="brand" onClick={() => this.setMode("")} icon="left" iconAlign="left" label="Select Another File Type" />
