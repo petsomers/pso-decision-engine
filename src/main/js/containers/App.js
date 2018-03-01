@@ -53,6 +53,7 @@ class App extends React.Component {
 							selectVersion={(endpoint, versionId) => this.props.selectVersion(endpoint, versionId)}
 							loadEndpoints={() => this.props.loadEndpoints()}
 							dataSets={this.props.dataSets}
+							loadDataSets={() => this.props.loadDataSets()}
 						/>
 					}
 					{this.props.mainScreen=="ruleSetVersionSelection" &&
