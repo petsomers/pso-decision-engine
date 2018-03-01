@@ -6,6 +6,7 @@ import java.util.List;
 
 import pso.decision_engine.model.DataSetName;
 import pso.decision_engine.model.DataSetUploadResult;
+import pso.decision_engine.model.ScrollItems;
 
 public interface DataSetService {
 	
@@ -25,6 +26,8 @@ public interface DataSetService {
 	 * @throws IOException
 	 */
 	public DataSetUploadResult uploadSet(String dataSetName, InputStream in) throws IOException;
+	
+	public ScrollItems<String> getKeysFromActiveDataSet(String dataSetName, String fromKey, int max);
 
 
 }

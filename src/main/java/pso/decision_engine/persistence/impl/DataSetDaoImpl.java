@@ -143,4 +143,18 @@ public class DataSetDaoImpl implements DataSetDao {
 			params
 		);
 	}
+	
+	@Override
+	public List<String> getKeyListFrom(String dataSetVersionId, String fromKey, int max) {
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("dataSetVersionId", dataSetVersionId)
+		.addValue("fromKey", fromKey)
+		.addValue("max", max);
+		return jdbcTemplate.query(
+			fromKey==null?
+			"select key from DataSetKeys where dataSetVersionId=:dataSetVersionId limit :max"
+			:"select key from DataSetKeys where dataSetVersionId=:dataSetVersionId where key>:fromKey limit :max", 
+			params,
+			(ResultSet rs, int rowNumber) -> rs.getString(1));
+	}
 }

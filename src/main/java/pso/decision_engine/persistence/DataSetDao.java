@@ -29,4 +29,6 @@ public interface DataSetDao {
 	
 	public void deleteInactiveDataSetVersions(String dataSetName);
 
+	public List<String> getKeyListFrom(String dataSetVersionId, String fromKey, int max);
+
 }

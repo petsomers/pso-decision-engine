@@ -8,16 +8,19 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
 import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.DataSetName;
 import pso.decision_engine.model.DataSetUploadResult;
+import pso.decision_engine.model.ScrollItems;
 import pso.decision_engine.model.enums.DataSetType;
 import pso.decision_engine.persistence.DataSetDao;
 import pso.decision_engine.service.DataSetService;
@@ -102,7 +105,24 @@ public class DataSetServiceImpl implements DataSetService {
 	public boolean isKeyInDataSet(String dataSetName, String key) {
 		String versionId=dataSetDao.getActiveDataSetVersionForDataSetName(dataSetName);
 		if (versionId==null) return false;
-		return dataSetDao.isKeyInDataSet(versionId, key); // better: use dataSetName directly
+		return dataSetDao.isKeyInDataSet(versionId, key);
+	}
+
+	@Override
+	public ScrollItems<String> getKeysFromActiveDataSet(String dataSetName, String fromKey, int max) {
+		ScrollItems<String> result=new ScrollItems<>();
+		String versionId=dataSetDao.getActiveDataSetVersionForDataSetName(dataSetName);
+		if (versionId==null) {
+			result.setItems(new ArrayList<>());
+			result.setHasMore(false);
+			return result;
+		}
+		result.setItems(dataSetDao.getKeyListFrom(versionId, fromKey, max+1));
+		if (result.getItems().size()>max) {
+			result.setHasMore(true);
+			result.getItems().remove(result.getItems().size()-1);
+		}
+		return result;
 	}
 
 }
