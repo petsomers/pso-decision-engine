@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
 import pso.decision_engine.model.AppConfig;
+import pso.decision_engine.model.DataSetName;
 import pso.decision_engine.model.DataSetUploadResult;
 import pso.decision_engine.model.enums.DataSetType;
 import pso.decision_engine.persistence.DataSetDao;
@@ -86,7 +87,7 @@ public class DataSetServiceImpl implements DataSetService {
 
 	
 	@Override
-	public List<String> getDataSetNames() {
+	public List<DataSetName> getDataSetNames() {
 		return dataSetDao.getDataSetNames();
 	}
 

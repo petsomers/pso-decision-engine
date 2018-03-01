@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import pso.decision_engine.model.AppConfig;
+import pso.decision_engine.model.DataSetName;
 import pso.decision_engine.model.DataSetUploadResult;
 import pso.decision_engine.model.ExcelParseResult;
 import pso.decision_engine.model.RuleSet;
@@ -169,8 +170,8 @@ public class SetupApi {
 	}
 	
 
-	@RequestMapping(value = "/dataset/datasetnames",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public List<String> getDataSetNames() {
+	@RequestMapping(value = "/dataset/datasets",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public List<DataSetName> getDataSets() {
 		return dataSetService.getDataSetNames();
 	}
 

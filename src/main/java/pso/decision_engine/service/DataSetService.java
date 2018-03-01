@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import pso.decision_engine.model.DataSetName;
 import pso.decision_engine.model.DataSetUploadResult;
 
 public interface DataSetService {
 	
-	public List<String> getDataSetNames();
+	public List<DataSetName> getDataSetNames();
 
 	public void deleteDataSet(String dataSetName);
 

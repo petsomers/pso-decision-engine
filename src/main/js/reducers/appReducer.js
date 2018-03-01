@@ -11,7 +11,7 @@ const appReducer = (state = {
   versions: [],
   inProgress: false,
   selectedEndpoint: "",
-  selectedList: "",
+  selectedDataSet: "",
   selectedVersion: "",
   ruleSetDetails: null,
   unitTestsResult: null,
@@ -19,7 +19,7 @@ const appReducer = (state = {
     parameterValues: {},
     result: null
   },
-  lists: []
+  dataSets: []
 }, action) => {
   if (action.type.endsWith("_FULFILLED")) {
     if (action.payload && action.payload.data && action.payload.data.error && !action.payload.data.run) {
@@ -73,11 +73,11 @@ const appReducer = (state = {
       restEndpoints:endpoints
     }
   break;
-  case "GET_LISTS_FULFILLED":
+  case "GET_DATASETS_FULFILLED":
     state = {
       ...state,
       inProgress: false,
-      lists:action.payload.data
+      dataSets:action.payload.data
     }
   break;
   case "GET_VERSIONS_FULFILLED":

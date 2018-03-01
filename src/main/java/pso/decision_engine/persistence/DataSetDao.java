@@ -2,6 +2,7 @@ package pso.decision_engine.persistence;
 
 import java.util.List;
 
+import pso.decision_engine.model.DataSetName;
 import pso.decision_engine.model.enums.DataSetType;
 
 public interface DataSetDao {
@@ -14,7 +15,7 @@ public interface DataSetDao {
 	
 	public String getActiveDataSetVersionForDataSetName(String dataSetName);
 
-	public List<String> getDataSetNames();
+	public List<DataSetName> getDataSetNames();
 
 	public void deleteDataSet(String dataSetName);
 

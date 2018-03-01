@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import pso.decision_engine.model.DataSetName;
 import pso.decision_engine.model.enums.DataSetType;
 import pso.decision_engine.persistence.DataSetDao;
 import pso.decision_engine.service.IdService;
@@ -85,12 +86,15 @@ public class DataSetDaoImpl implements DataSetDao {
 	}
 	
 	@Override
-	public List<String> getDataSetNames() {
+	public List<DataSetName> getDataSetNames() {
 		MapSqlParameterSource params=new MapSqlParameterSource();
 		return jdbcTemplate.query(
-			"SELECT distinct name from DataSet order by name", 
+			"SELECT name, type from DataSet order by name", 
 			params, 
-			(ResultSet rs, int rowNumber) -> rs.getString(1));
+			(ResultSet rs, int rowNumber) -> {
+				DataSetType type="LOOKUP".equals(rs.getString(2))?DataSetType.LOOKUP:DataSetType.SET;
+				return new DataSetName(rs.getString(1), type);
+			});
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "react-lightning-design-system";
 
-export const RuleSetSelection = ({restEndpoints, lists, layout, openFileUpload, selectEndpoint, selectedEndpoint, selectedList}) => {
+export const RuleSetSelection = ({restEndpoints, dataSets, layout, openFileUpload, selectEndpoint, selectedEndpoint, selectedDataSet}) => {
 	const restEndpointsHeight=(layout.windowHeight-160)/2;
 	const globalListsHeight=restEndpointsHeight;
 
@@ -52,11 +52,16 @@ export const RuleSetSelection = ({restEndpoints, lists, layout, openFileUpload, 
 				</div>
 				<div style={globalListTitleStyle}><b>Datasets (Sets and Lookup Tables) Lists</b></div>
 				<div style={globalListStyle}>
-					{lists.map((listName, index) => (
-					<div key={listName} style={(selectedList==listName)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>
-						<i className="fas fa-genderless"></i> &nbsp;
-						<a onClick={() => selectEndpoint(listName)}>
-							{listName}
+					{dataSets.map((dataSet, index) => (
+					<div key={dataSet.name} style={(selectedDataSet==dataSet.name)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>
+						<a onClick={() => selectEndpoint(dataSet.name)}>
+							{dataSet.type=="LOOKUP" ? (
+									<i className="fas fa-th-list"></i>
+								):(
+									<i className="fas fa-bars"></i>
+								)
+							}
+							&nbsp; {dataSet.name}
 						</a>
 					</div>
 					))}

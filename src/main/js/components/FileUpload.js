@@ -124,6 +124,7 @@ export class FileUpload  extends React.Component {
 					<br /><br />
 					<i className="fas fa-bars"></i> &nbsp; <b>Upload Text File</b><br /><br />
 					TODO: Input Dataset Name
+					TODO: Checkbox "Incremental"
 				</div>
 			}
 			{this.state.mode=="LOOKUP" &&
@@ -132,6 +133,7 @@ export class FileUpload  extends React.Component {
 					<br /><br />
 					<i className="fas fa-th-list"></i> &nbsp; <b>Upload Lookup Text File</b><br /><br />
 					TODO: Input Dataset Name
+					TODO: Checkbox "Incremental"
 				</div>
 			}
 			{this.state.mode &&
