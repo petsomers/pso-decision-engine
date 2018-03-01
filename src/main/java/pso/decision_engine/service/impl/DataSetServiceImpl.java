@@ -74,6 +74,7 @@ public class DataSetServiceImpl implements DataSetService {
 
 		dataSetDao.uploadSet(versionId, Flux.fromStream(Files.lines(outputFile)));
 		dataSetDao.setActiveDataSetVersion(dataSetId, versionId);
+		dataSetDao.deleteInactiveDataSetVersion(dataSetName);
 		result.setOk(true);
 		result.setDataSetVersionId(versionId);
 		result.setDataSetName(dataSetName);

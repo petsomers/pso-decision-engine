@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -130,5 +129,18 @@ public class DataSetDaoImpl implements DataSetDao {
 			});
 			jdbcTemplate.batchUpdate("INSERT INTO DataSetKeys (dataSetVersionId, keyId, key) values (:dataSetVersionId, :keyId, :key)", items);
 		});
+	}
+
+	@Override
+	public void deleteInactiveDataSetVersion(String dataSetName) {
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("dataSetName", dataSetName);
+		jdbcTemplate.update(
+			"delete from DataSetVersion where dataSetVersionId not in ( "+
+			"SELECT a.dataSetVersionId from ActiveDataSetVersion as a "+ 
+			"left join DataSet as d on a.dataSetId=d.dataSetId "+
+			"where d.name=:dataSetName)",
+			params
+		);
 	}
 }
