@@ -52,6 +52,7 @@ class App extends React.Component {
 						<FileUpload
 							selectVersion={(endpoint, versionId) => this.props.selectVersion(endpoint, versionId)}
 							loadEndpoints={() => this.props.loadEndpoints()}
+							dataSets={this.props.dataSets}
 						/>
 					}
 					{this.props.mainScreen=="ruleSetVersionSelection" &&
