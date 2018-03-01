@@ -105,6 +105,15 @@ export class FileUpload  extends React.Component {
 						inProgress:false
 					});
 				} else {
+					if (!result.data.ok) {
+						this.setState({
+							...this.state,
+							errorMessage:result.data.errorMessage,
+							message: "",
+							inProgress:false
+						});
+						return;
+					}
 					this.setState({
 						...this.state,
 						errorMessage:"",

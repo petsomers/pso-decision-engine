@@ -52,12 +52,11 @@ public class SetupApi {
 			if (parts.isEmpty()) {
 				result.setErrorMessage("Invalid Request.");
 				return result;
-	        }
-			
-			 Part part = parts.iterator().next();
-			 try (InputStream in = part.getInputStream()) {
+			}
+			Part part = parts.iterator().next();
+			try (InputStream in = part.getInputStream()) {
 				 return setupService.addExcelFile(in);
-			 }
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.setErrorMessage(e.getMessage());
