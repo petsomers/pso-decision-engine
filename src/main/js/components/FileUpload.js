@@ -84,6 +84,9 @@ export class FileUpload  extends React.Component {
 			this.uploadFile("setup/dataset/form_upload_set/"+dataSetName, fd, (restEndpoint, ruleSetId) => {
 				this.setState({
 					...this.state,
+					mode: null,
+					selectedDataSetName: null,
+					newDataSetName: null,
 					message: "Done.",
 					inProgress:false
 				});

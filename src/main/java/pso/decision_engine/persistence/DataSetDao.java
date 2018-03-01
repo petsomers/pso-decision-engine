@@ -1,9 +1,11 @@
 package pso.decision_engine.persistence;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import pso.decision_engine.model.DataSetName;
 import pso.decision_engine.model.enums.DataSetType;
+import reactor.core.publisher.Flux;
 
 public interface DataSetDao {
 
@@ -21,6 +23,8 @@ public interface DataSetDao {
 
 	public boolean isKeyInDataSet(String dataSetVersionId, String key);
 
-	public void uploadSet(String dataSetVersionId, List<String> values);
+	//public void uploadSet(String dataSetVersionId, List<String> values);
+	
+	public void uploadSet(String dataSetVersionId, Flux<String> in);
 
 }

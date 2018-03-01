@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,6 +16,7 @@ import pso.decision_engine.model.DataSetName;
 import pso.decision_engine.model.enums.DataSetType;
 import pso.decision_engine.persistence.DataSetDao;
 import pso.decision_engine.service.IdService;
+import reactor.core.publisher.Flux;
 
 @Component
 public class DataSetDaoImpl implements DataSetDao {
@@ -113,22 +115,20 @@ public class DataSetDaoImpl implements DataSetDao {
 			"select count(*) from DataSetKeys where dataSetVersion=:dataSetVersion and key=:key",
 			params, Integer.class)>0;
 	}
-	
-	
-	
-	@Override
-	public void uploadSet(String dataSetVersionId, List<String> values) {
-		// maybe use reactive stream in batchs of x, instead of 1 shot?
-		MapSqlParameterSource[] items=new MapSqlParameterSource[values.size()];
-		int[] i= {0};
-		values.forEach(value -> {
-			items[i[0]]=new MapSqlParameterSource()
-				.addValue("dataSetVersionId", dataSetVersionId)
-				.addValue("keyId", i[0])
-				.addValue("key", value);
-			i[0]++;
-		});
-		jdbcTemplate.batchUpdate("INSERT INTO DataSetKeys (dataSetVersionId, keyId, key) values (:dataSetVersionId, :keyId, :key)", items);
-	}
 
+	@Override
+	public void uploadSet(String dataSetVersionId, Flux<String> in) {
+		int[] keyId= {0};
+		in.buffer(1000).subscribe( values -> {
+			int[] i= {0};
+			MapSqlParameterSource[] items=new MapSqlParameterSource[values.size()];
+			values.forEach(value -> {
+				items[i[0]++]=new MapSqlParameterSource()
+					.addValue("dataSetVersionId", dataSetVersionId)
+					.addValue("keyId", keyId[0]++)
+					.addValue("key", value);
+			});
+			jdbcTemplate.batchUpdate("INSERT INTO DataSetKeys (dataSetVersionId, keyId, key) values (:dataSetVersionId, :keyId, :key)", items);
+		});
+	}
 }

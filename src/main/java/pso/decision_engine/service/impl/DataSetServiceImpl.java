@@ -21,6 +21,7 @@ import pso.decision_engine.model.DataSetUploadResult;
 import pso.decision_engine.model.enums.DataSetType;
 import pso.decision_engine.persistence.DataSetDao;
 import pso.decision_engine.service.DataSetService;
+import reactor.core.publisher.Flux;
 
 @Service
 public class DataSetServiceImpl implements DataSetService {
@@ -53,7 +54,7 @@ public class DataSetServiceImpl implements DataSetService {
 				.forEach(line -> {
 					try {
 						writer.write(line);
-						writer.write('\r');
+						writer.write("\r\n");
 					} catch (IOException e) {
 						throw new RuntimeException("Error during list processing: "+e.getMessage(),e);
 					}
@@ -71,7 +72,7 @@ public class DataSetServiceImpl implements DataSetService {
 		Files.move(tempOutFile, outputFile);
 		setActiveDataSet(dataSetName, versionId);
 
-		dataSetDao.uploadSet(versionId, Files.readAllLines(outputFile));
+		dataSetDao.uploadSet(versionId, Flux.fromStream(Files.lines(outputFile)));
 		dataSetDao.setActiveDataSetVersion(dataSetId, versionId);
 		result.setOk(true);
 		result.setDataSetVersionId(versionId);
