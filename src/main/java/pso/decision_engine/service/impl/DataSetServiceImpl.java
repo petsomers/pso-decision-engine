@@ -74,7 +74,7 @@ public class DataSetServiceImpl implements DataSetService {
 
 		dataSetDao.uploadSet(versionId, Flux.fromStream(Files.lines(outputFile)));
 		dataSetDao.setActiveDataSetVersion(dataSetId, versionId);
-		dataSetDao.deleteInactiveDataSetVersion(dataSetName);
+		dataSetDao.deleteInactiveDataSetVersions(dataSetName);
 		result.setOk(true);
 		result.setDataSetVersionId(versionId);
 		result.setDataSetName(dataSetName);
@@ -101,6 +101,7 @@ public class DataSetServiceImpl implements DataSetService {
 	@Override
 	public boolean isKeyInDataSet(String dataSetName, String key) {
 		String versionId=dataSetDao.getActiveDataSetVersionForDataSetName(dataSetName);
+		if (versionId==null) return false;
 		return dataSetDao.isKeyInDataSet(versionId, key); // better: use dataSetName directly
 	}
 

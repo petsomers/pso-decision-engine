@@ -13,7 +13,7 @@ public interface DataSetService {
 
 	public void deleteDataSet(String dataSetName);
 
-	public boolean isKeyInDataSet(String dataSetVersionId, String key);
+	public boolean isKeyInDataSet(String dataSetName, String key);
 
 	/**
 	 * upload the data in a new dataset version

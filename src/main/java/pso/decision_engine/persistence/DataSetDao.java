@@ -27,6 +27,6 @@ public interface DataSetDao {
 	
 	public void uploadSet(String dataSetVersionId, Flux<String> in);
 	
-	public void deleteInactiveDataSetVersion(String dataSetName);
+	public void deleteInactiveDataSetVersions(String dataSetName);
 
 }

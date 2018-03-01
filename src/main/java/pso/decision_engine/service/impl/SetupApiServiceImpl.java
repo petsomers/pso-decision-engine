@@ -26,6 +26,7 @@ import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.RuleSetInfo;
 import pso.decision_engine.persistence.RuleSetDao;
+import pso.decision_engine.service.DataSetService;
 import pso.decision_engine.service.ExcelParserService;
 import pso.decision_engine.service.IdService;
 import pso.decision_engine.service.SetupApiService;
@@ -41,6 +42,9 @@ public class SetupApiServiceImpl implements SetupApiService {
 	
 	@Autowired
 	private RuleSetDao ruleSetDao;
+	
+	@Autowired
+	private DataSetService dataSetService;
 	
 	@Autowired
 	private ExcelParserService excelParserService;
@@ -179,7 +183,9 @@ public class SetupApiServiceImpl implements SetupApiService {
 		if (memoryList!=null) {
 			return memoryList.contains(value);
 		}
-		return ruleSetDao.isInList(ruleSet.getId(), listName, value);
+		boolean fromLocalList=ruleSetDao.isInList(ruleSet.getId(), listName, value);
+		if (fromLocalList) return true;
+		return dataSetService.isKeyInDataSet(listName, value);
 	}
 
 	@Override

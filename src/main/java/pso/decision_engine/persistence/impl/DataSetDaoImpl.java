@@ -78,7 +78,7 @@ public class DataSetDaoImpl implements DataSetDao {
 			return jdbcTemplate.queryForObject(
 				"SELECT a.dataSetVersionId from ActiveDataSetVersion as a "+ 
 				"left join DataSet as d on a.dataSetId=d.dataSetId "+
-				"where d.name:=dataSetName", 
+				"where d.name=:dataSetName", 
 				params, 
 				String.class);
 		} catch(EmptyResultDataAccessException emty) {
@@ -111,7 +111,7 @@ public class DataSetDaoImpl implements DataSetDao {
 		.addValue("dataSetVersionId", dataSetVersionId)
 		.addValue("key", key);
 		return jdbcTemplate.queryForObject(
-			"select count(*) from DataSetKeys where dataSetVersion=:dataSetVersion and key=:key",
+			"select count(*) from DataSetKeys where dataSetVersionId=:dataSetVersionId and key=:key",
 			params, Integer.class)>0;
 	}
 
@@ -132,7 +132,7 @@ public class DataSetDaoImpl implements DataSetDao {
 	}
 
 	@Override
-	public void deleteInactiveDataSetVersion(String dataSetName) {
+	public void deleteInactiveDataSetVersions(String dataSetName) {
 		MapSqlParameterSource params=new MapSqlParameterSource()
 		.addValue("dataSetName", dataSetName);
 		jdbcTemplate.update(
