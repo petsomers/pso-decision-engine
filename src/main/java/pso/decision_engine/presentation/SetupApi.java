@@ -17,12 +17,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import pso.decision_engine.model.AppConfig;
-import pso.decision_engine.model.DataSetName;
-import pso.decision_engine.model.DataSetUploadResult;
 import pso.decision_engine.model.ExcelParseResult;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.model.RuleSetInfo;
-import pso.decision_engine.service.DataSetService;
 import pso.decision_engine.service.SetupApiService;
 
 @RestController
@@ -35,9 +32,6 @@ public class SetupApi {
 	@Autowired
 	private SetupApiService setupService;
 	
-	@Autowired
-	private DataSetService dataSetService;
-
 	@RequestMapping(value = "/upload_excel",method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public ExcelParseResult uploadExcel(HttpServletRequest req) throws Exception {
 		return setupService.addExcelFile(req.getInputStream());	
@@ -132,46 +126,6 @@ public class SetupApi {
 	@RequestMapping(value = "/delete/ruleset/{restEndpoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	public void deleteRuleSet(@PathVariable String restEndpoint, @PathVariable String ruleSetId) {
 		setupService.deleteRuleSet(restEndpoint, ruleSetId);
-	}
-	
-	
-	@RequestMapping(value = "/dataset/upload_set/{dataSetName}",method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-    public String uploadList(HttpServletRequest req, @PathVariable String dataSetName) throws Exception {
-		try {
-			DataSetUploadResult result=dataSetService.uploadSet(dataSetName, req.getInputStream());
-			if (result.isOk()) return "OK";
-			return "ERROR: "+result.getErrorMessage();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "ERROR: "+e.getMessage();
-		}
-	}
-	
-
-	@RequestMapping(method = RequestMethod.POST, path = "/dataset/form_upload_set/{dataSetName}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = "application/json;charset=UTF-8")
-    public DataSetUploadResult formUploadList(HttpServletRequest req, @PathVariable String dataSetName) throws Exception {
-		DataSetUploadResult result=new DataSetUploadResult();
-		try {
-			Collection<Part> parts = req.getParts();
-			if (parts.isEmpty()) {
-				result.setErrorMessage("Invalid Request.");
-				return result;
-	        }
-			Part part = parts.iterator().next();
-			try (InputStream in = part.getInputStream()) {
-				return dataSetService.uploadSet(dataSetName, in);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.setErrorMessage(e.getMessage());
-			return result;
-		}
-	}
-	
-
-	@RequestMapping(value = "/dataset/datasets",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public List<DataSetName> getDataSets() {
-		return dataSetService.getDataSetNames();
 	}
 
 }

@@ -7,8 +7,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import pso.decision_engine.model.AppConfig;
+
 @Component
 public class CreateTables {
+	
+	@Autowired
+	private AppConfig appConfig;
 
 	private NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -148,6 +153,7 @@ public class CreateTables {
     
 	@PostConstruct
 	public void prepareDatabase() {
+		if (!appConfig.isCreateTables()) return;
 		System.out.println("CREATE DB");
 		MapSqlParameterSource params=new MapSqlParameterSource();
 		for (String sql:createTables) {

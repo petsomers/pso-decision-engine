@@ -285,9 +285,9 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		final int[] currentUnitTestId=new int[] {-1};
 		final ArrayList<UnitTest> result=new ArrayList<>();
 		jdbcTemplate.query(
-			"select unitTestId, unitTestName, expectedResult, parameterName, parameterValue from RuleSetUnitTests as ut "+
+			"select ut.unitTestId, unitTestName, expectedResult, parameterName, parameterValue from RuleSetUnitTests as ut "+
 			"left join RuleSetUnitTestParameters as utp on ut.ruleSetId=utp.ruleSetId and ut.unitTestId=utp.unitTestId "+
-			"where ruleSetId=:ruleSetId order by unitTestId",
+			"where ut.ruleSetId=:ruleSetId order by ut.unitTestId",
 			new MapSqlParameterSource().addValue("ruleSetId", ruleSetId),
 			(ResultSet rs) -> {
 				int unitTestId=rs.getInt("unitTestId");
@@ -328,9 +328,9 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	@Override
 	public List<RuleSetInfo> getRuleSetVersionsForEndpoint(String restEndpoint) {
 		return jdbcTemplate.query(
-			"select ruleSetId, restEndpoint, name, createdBy, version, remark, uploadDate, ars.ruleSetId as active from RuleSet as rs "+
+			"select rs.ruleSetId, rs.restEndpoint, name, createdBy, version, remark, uploadDate, ars.ruleSetId as active from RuleSet as rs "+
 			"left join ActiveRuleSet as ars on ars.ruleSetId=rs.ruleSetId "+
-			"where restEndpoint=:restEndpoint order by ruleSetId desc",
+			"where rs.restEndpoint=:restEndpoint order by ruleSetId desc",
 			new MapSqlParameterSource().addValue("restEndpoint", restEndpoint),
 			ruleSetInfoRowMapper);
 	}

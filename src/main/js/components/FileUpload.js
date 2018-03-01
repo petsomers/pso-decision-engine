@@ -81,7 +81,7 @@ export class FileUpload  extends React.Component {
 				this.props.loadEndpoints();
 			});
 		} else if (this.state.mode=="SET") {
-			this.uploadFile("setup/dataset/form_upload_set/"+dataSetName, fd, () => {
+			this.uploadFile("dataset/form_upload_set/"+dataSetName, fd, () => {
 				this.props.loadDataSets();
 				this.setState({
 					...this.state,

@@ -165,7 +165,7 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "GET_DATASETS",
-  			payload: axios.get("setup/dataset/datasets")
+  			payload: axios.get("dataset/all")
 			});
 		},
 		selectEndpoint: (endpoint) => {

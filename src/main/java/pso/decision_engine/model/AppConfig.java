@@ -11,4 +11,6 @@ import lombok.Data;
 public class AppConfig {
 	private String dataDirectory;
 	private int maxInMemoryListSize;
+	
+	private boolean createTables;
 }

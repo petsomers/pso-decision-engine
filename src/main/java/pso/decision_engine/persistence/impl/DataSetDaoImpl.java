@@ -152,8 +152,8 @@ public class DataSetDaoImpl implements DataSetDao {
 		.addValue("max", max);
 		return jdbcTemplate.query(
 			fromKey==null?
-			"select key from DataSetKeys where dataSetVersionId=:dataSetVersionId limit :max"
-			:"select key from DataSetKeys where dataSetVersionId=:dataSetVersionId where key>:fromKey limit :max", 
+			"select key from DataSetKeys where dataSetVersionId=:dataSetVersionId order by key limit :max"
+			:"select key from DataSetKeys where dataSetVersionId=:dataSetVersionId and key>:fromKey order by key limit :max", 
 			params,
 			(ResultSet rs, int rowNumber) -> rs.getString(1));
 	}
