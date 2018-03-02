@@ -8,6 +8,7 @@ import { RuleSetSelection } from '../components/RuleSetSelection'
 import { FileUpload } from '../components/FileUpload'
 import { RuleSetVersionSelection } from '../components/RuleSetVersionSelection'
 import { RuleSetDetails} from '../components/RuleSetDetails'
+import { DataSetDetails } from '../components/DataSetDetails'
 import axios from "axios"
 
 class App extends React.Component {
@@ -43,8 +44,9 @@ class App extends React.Component {
 						layout={this.props.layout}
 						openFileUpload={() => this.props.openFileUpload()}
 						selectedEndpoint={this.props.selectedEndpoint}
-						selectedDataSet={this.props.selectedDataSet}
+						selectedDataSetInfo={this.props.selectedDataSetInfo}
 						selectEndpoint={(endpoint) => this.props.selectEndpoint(endpoint)}
+						selectDataSet={(dataSetInfo) => this.props.selectDataSet(dataSetInfo)}
 						/>
 					</div>
 					<div style={mainScreen}>
@@ -77,6 +79,11 @@ class App extends React.Component {
 							runNowClearResult={() => this.props.runNowClearResult()}
 							setActive={(endpoint, versionId) => this.props.setActive(endpoint, versionId)}
 							deleteRuleSet={(endpoint, versionId) => this.props.deleteRuleSet(endpoint, versionId)}
+						/>
+					}
+					{this.props.mainScreen=="dataSetDetails" &&
+						<DataSetDetails
+							selectedDataSetInfo={this.props.selectedDataSetInfo}
 						/>
 					}
 					{this.props.inProgress &&
@@ -118,7 +125,7 @@ const mapStateToProps = (state) => {
 		dataSets: state.appReducer.dataSets,
 		versions: state.appReducer.versions,
 		selectedEndpoint: state.appReducer.selectedEndpoint,
-		selectedDataSet:  state.appReducer.selectedDataSet,
+		selectedDataSetInfo:  state.appReducer.selectedDataSetInfo,
 		ruleSetDetails: state.appReducer.ruleSetDetails,
 		unitTestsResult: state.appReducer.unitTestsResult,
 		runNowData: state.appReducer.runNowData,
@@ -243,6 +250,9 @@ const mapDispatchToProps = (dispatch) => {
 				type: "DELETE_RULESET",
 				payload: axios.get("setup/delete/ruleset/"+endpoint+"/"+versionId)
 			});
+		},
+		selectDataSet: (dataSetInfo) => {
+			dispatch({type: "SELECT_DATA_SET", payload: dataSetInfo});
 		}
 	}
 };

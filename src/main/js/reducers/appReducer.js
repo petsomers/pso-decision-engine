@@ -11,7 +11,7 @@ const appReducer = (state = {
   versions: [],
   inProgress: false,
   selectedEndpoint: "",
-  selectedDataSet: "",
+  selectedDataSetInfo: null,
   selectedVersion: "",
   ruleSetDetails: null,
   unitTestsResult: null,
@@ -166,6 +166,13 @@ const appReducer = (state = {
       infoMessage: "The ruleset has been deleted.",
       mainScreen: "ruleSetVersionSelection",
       selectedVersion: ""
+    }
+  break;
+  case "SELECT_DATA_SET":
+    state = {
+      ...state,
+      selectedDataSetInfo: action.payload,
+      mainScreen: "dataSetDetails"
     }
   break;
   case "WINDOW_RESIZE":

@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
 import pso.decision_engine.model.AppConfig;
-import pso.decision_engine.model.DataSetName;
+import pso.decision_engine.model.DataSetInfo;
 import pso.decision_engine.model.DataSetUploadResult;
 import pso.decision_engine.model.ScrollItems;
 import pso.decision_engine.model.enums.DataSetType;
@@ -51,6 +51,14 @@ public class DataSetServiceImpl implements DataSetService {
 			try (Stream<String> stream = Files.lines(rawOutputFile)) {
 				stream
 				.map(line -> line.trim())
+				.map(line -> {
+					// remove tabs, a set only has 1 column
+					int tabpos=line.indexOf('\t');
+					if (tabpos>=0) {
+						return line.substring(0, tabpos).trim();
+					}
+					return line;
+				})
 				.filter(line -> !line.isEmpty())
 				.distinct()
 				.sorted()
@@ -92,7 +100,7 @@ public class DataSetServiceImpl implements DataSetService {
 
 	
 	@Override
-	public List<DataSetName> getDataSetNames() {
+	public List<DataSetInfo> getDataSetNames() {
 		return dataSetDao.getDataSetNames();
 	}
 

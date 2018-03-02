@@ -3,7 +3,7 @@ package pso.decision_engine.persistence;
 import java.util.List;
 import java.util.stream.Stream;
 
-import pso.decision_engine.model.DataSetName;
+import pso.decision_engine.model.DataSetInfo;
 import pso.decision_engine.model.enums.DataSetType;
 import reactor.core.publisher.Flux;
 
@@ -17,7 +17,7 @@ public interface DataSetDao {
 	
 	public String getActiveDataSetVersionForDataSetName(String dataSetName);
 
-	public List<DataSetName> getDataSetNames();
+	public List<DataSetInfo> getDataSetNames();
 
 	public void deleteDataSet(String dataSetName);
 

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import pso.decision_engine.model.DataSetName;
+import pso.decision_engine.model.DataSetInfo;
 import pso.decision_engine.model.DataSetUploadResult;
 import pso.decision_engine.model.ScrollItems;
 import pso.decision_engine.service.DataSetService;
@@ -28,12 +28,12 @@ public class DataSetApi {
 	private DataSetService dataSetService;
 	
 	@RequestMapping(value = "/all",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public List<DataSetName> getDataSets() {
+	public List<DataSetInfo> getDataSets() {
 		return dataSetService.getDataSetNames();
 	}
 	
 	@RequestMapping(value = "/upload_set/{dataSetName}",method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-    public String uploadList(HttpServletRequest req, @PathVariable String dataSetName) throws Exception {
+    public String uploadSet(HttpServletRequest req, @PathVariable String dataSetName) throws Exception {
 		try {
 			DataSetUploadResult result=dataSetService.uploadSet(dataSetName, req.getInputStream());
 			if (result.isOk()) return "OK";
@@ -46,7 +46,7 @@ public class DataSetApi {
 	
 
 	@RequestMapping(method = RequestMethod.POST, path = "/form_upload_set/{dataSetName}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = "application/json;charset=UTF-8")
-    public DataSetUploadResult formUploadList(HttpServletRequest req, @PathVariable String dataSetName) throws Exception {
+    public DataSetUploadResult formUploadSet(HttpServletRequest req, @PathVariable String dataSetName) throws Exception {
 		DataSetUploadResult result=new DataSetUploadResult();
 		try {
 			Collection<Part> parts = req.getParts();
@@ -68,7 +68,7 @@ public class DataSetApi {
 	@RequestMapping(value = "/keys/{dataSetName}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	public ScrollItems<String> keys(@PathVariable String dataSetName, @RequestParam String fromKey) {
 		if (fromKey!=null && fromKey.trim().length()==0) fromKey=null;
-		return dataSetService.getKeysFromActiveDataSet(dataSetName, fromKey, 150);
+		return dataSetService.getKeysFromActiveDataSet(dataSetName, fromKey, 300);
 	}
 	
 }

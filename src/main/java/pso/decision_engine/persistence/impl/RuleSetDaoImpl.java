@@ -15,7 +15,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.InputParameterInfo;
@@ -25,6 +24,7 @@ import pso.decision_engine.model.RuleSetInfo;
 import pso.decision_engine.model.UnitTest;
 import pso.decision_engine.persistence.RuleSetDao;
 import pso.decision_engine.utils.ComparatorHelper;
+import reactor.core.publisher.Flux;
 
 @Component
 public class RuleSetDaoImpl implements RuleSetDao {
@@ -156,19 +156,20 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	}
 	
 	private void saveList(String ruleSetId, int listId, HashSet<String> values) {
-		MapSqlParameterSource[] listValues=new MapSqlParameterSource[values.size()];
-		int j=0;
-		for (String value:values) {
-			listValues[j++]=
-				new MapSqlParameterSource()
-				.addValue("ruleSetId", ruleSetId)
-				.addValue("listId", listId)
-				.addValue("listValue", value);
-		};
-		jdbcTemplate.batchUpdate(
-			"INSERT INTO RuleSetListValues (ruleSetId, listId, listValue) "+
-			"values (:ruleSetId, :listId, :listValue)", listValues);
-		listValues=null;
+		Flux.fromIterable(values).buffer(1000).subscribe( valueList -> {
+			MapSqlParameterSource[] batch=new MapSqlParameterSource[valueList.size()];
+			int[] j= {0};
+			valueList.forEach(value -> {
+				batch[j[0]++]=
+					new MapSqlParameterSource()
+					.addValue("ruleSetId", ruleSetId)
+					.addValue("listId", listId)
+					.addValue("listValue", value);
+			});
+			jdbcTemplate.batchUpdate(
+				"INSERT INTO RuleSetListValues (ruleSetId, listId, listValue) "+
+				"values (:ruleSetId, :listId, :listValue)", batch);
+		});
 	}
 	
 	@Override
