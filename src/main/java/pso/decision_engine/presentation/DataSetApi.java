@@ -1,10 +1,12 @@
 package pso.decision_engine.presentation;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +70,17 @@ public class DataSetApi {
 	@RequestMapping(value = "/keys/{dataSetName}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	public ScrollItems<String> keys(@PathVariable String dataSetName, @RequestParam(required=false) String fromKey) {
 		if (fromKey!=null && fromKey.trim().length()==0) fromKey=null;
-		return dataSetService.getKeysFromActiveDataSet(dataSetName, fromKey, 200);
+		return dataSetService.getKeysFromActiveDataSet(dataSetName, fromKey, 100);
 	}
 	
+	@RequestMapping(value = "/download_excel/{restEndpoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/octetstream")
+	public void downloadExcel(@PathVariable String restEndpoint,@PathVariable String ruleSetId, HttpServletResponse resp) throws IOException {
+		
+		resp.setHeader("pragma", "no-cache");
+		resp.setHeader( "Cache-Control","no-cache" );
+		resp.setHeader( "Cache-Control","no-store" );
+		resp.setDateHeader( "Expires", 0 );
+		resp.setContentType("application/octetstream");
+		resp.setHeader("Content-Disposition", "attachment; filename="+restEndpoint+"_"+ruleSetId+".xlsx");
+	}
 }
