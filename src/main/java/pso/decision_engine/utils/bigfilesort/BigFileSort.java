@@ -1,4 +1,4 @@
-package pso.decision_engine.utils;
+package pso.decision_engine.utils.bigfilesort;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,28 +14,17 @@ import java.util.stream.Stream;
 
 import lombok.Data;
 
+/**
+ * Merge Sort using files
+ * @author Peter Somers
+ *
+ */
 public class BigFileSort {
 	
-	@Data
-	private static class SplitFileProgress {
-		private int lineNumber;
-		private int fileNumber;
-		private ArrayList<String> lines=new ArrayList<>();
-		private ArrayList<Path> files=new ArrayList<>();
-	}
-	
-	@Data
-	private static class LastLineStatus {
-		BufferedReader reader;
-		boolean needNewLine=true;
-		boolean endOfFile=false;
-		String line=null;
-	}
-	
-	static public Path sortAndRemoveDuplicates(final Path inputFile, final String outputFileName, final String outputFileExtension) throws IOException {
-		Path tempDir=Paths.get(inputFile.getParent().toString(), "temp");
+	static public Path sortAndRemoveDuplicates(BigFileSortCommand c) throws IOException {
+		Path tempDir=Paths.get(c.getInputFile().getParent().toString(), "temp");
 		tempDir.toFile().mkdirs();
-		List<Path> files=split(inputFile, outputFileName, outputFileExtension);
+		List<Path> files=split(c);
 		ArrayList<BufferedReader> readers=new ArrayList<>();
 		ArrayList<LastLineStatus> lastLines=new ArrayList<>();
 		try {
@@ -47,7 +36,7 @@ public class BigFileSort {
 				lls.setNeedNewLine(true);
 				lastLines.add(lls);
 			}
-			Path outputFile=Paths.get(inputFile.getParent().toString(), outputFileName+"."+outputFileExtension);
+			Path outputFile=Paths.get(c.getInputFile().getParent().toString(), c.getOutputFileName()+"."+c.getOutputFileExtension());
 			try(BufferedWriter writer = Files.newBufferedWriter(outputFile, Charset.forName("UTF-8"))) {
 				String lastText=null;
 				MAINLOOP: while (true) {
@@ -86,6 +75,22 @@ public class BigFileSort {
 		
 	}
 	
+	@Data
+	private static class SplitFileProgress {
+		private int lineNumber;
+		private int fileNumber;
+		private ArrayList<String> lines=new ArrayList<>();
+		private ArrayList<Path> files=new ArrayList<>();
+	}
+	
+	@Data
+	private static class LastLineStatus {
+		private BufferedReader reader;
+		private boolean needNewLine=true;
+		private boolean endOfFile=false;
+		private String line=null;
+	}
+	
 	static private void getLastLines(ArrayList<LastLineStatus> lastLines) throws IOException {
 		for (LastLineStatus ll:lastLines) {
 			if (ll.isNeedNewLine() && !ll.endOfFile) {
@@ -97,13 +102,13 @@ public class BigFileSort {
  		}
 	}
 	
-	static private List<Path> split(final Path inputFile, final String outputFileName, final String outputFileExtension) throws IOException {
+	static private List<Path> split(BigFileSortCommand c) throws IOException {
 		final SplitFileProgress sfp=new SplitFileProgress();
-		try (Stream<String> stream = Files.lines(inputFile)) {
+		try (Stream<String> stream = Files.lines(c.getInputFile())) {
 			stream.forEach(line -> {
 				try {
 					if (sfp.getLineNumber()>0 && sfp.getLineNumber()%100000==0) {
-						Path outputFile=Paths.get(inputFile.getParent().toString(), "temp", outputFileName+"_"+sfp.getFileNumber()+"."+outputFileExtension);
+						Path outputFile=Paths.get(c.getInputFile().getParent().toString(), "temp", c.getOutputFileName()+"_"+sfp.getFileNumber()+"."+c.getOutputFileExtension());
 						if (sfp.getFileNumber()==0) {
 							outputFile.toFile().getParentFile().mkdirs();	
 						}
@@ -112,17 +117,24 @@ public class BigFileSort {
 						sfp.setFileNumber(sfp.getFileNumber()+1);
 						sfp.setLines(new ArrayList<>());
 					}
-					String l=line.trim();
-					if (l.length()>0) {
+					String l=line;
+					if (c.isRemoveTabs()) {
+						int tabIndex=line.indexOf('\t');
+						if (tabIndex>=0) {
+							l=l.substring(0, tabIndex);
+						}
+					}
+					l=l.trim();
+					if (l.length()>0 || !c.isRemoveEmptyLines()) {
 						sfp.setLineNumber(sfp.getLineNumber()+1);
-						sfp.getLines().add(line.trim());	
+						sfp.getLines().add(l);	
 					}
 				} catch (IOException ioe) {
 					throw new RuntimeException(ioe);
 				}
 			});
 		}
-		Path outputFile=Paths.get(inputFile.getParent().toString(), "temp", outputFileName+"_"+sfp.getFileNumber()+"."+outputFileExtension);
+		Path outputFile=Paths.get(c.getInputFile().getParent().toString(), "temp", c.getOutputFileName()+"_"+sfp.getFileNumber()+"."+c.getOutputFileExtension());
 		if (sfp.getFileNumber()==0) {
 			outputFile.toFile().getParentFile().mkdirs();	
 		}
@@ -149,7 +161,15 @@ public class BigFileSort {
 	
 	static public void main(String[] args) throws IOException {
 		Path inputFile=Paths.get("C:/temp/decision_engine/testbigsort/partsfile-1.txt");
-		BigFileSort.sortAndRemoveDuplicates(inputFile, "partsfile-1-output", "txt");
+		BigFileSortCommand c=new BigFileSortCommand();
+		c.setInputFile(inputFile);
+		c.setOutputFileName("partsfile-1-output");
+		c.setOutputFileExtension("txt");
+		c.setKeepFirstLine(false);
+		c.setOnlySortOnFirstTab(false);
+		c.setRemoveTabs(false);
+		c.setRemoveEmptyLines(true);
+		BigFileSort.sortAndRemoveDuplicates(c);
 	}
 
 }

@@ -1,16 +1,13 @@
 package pso.decision_engine.service.impl;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +20,8 @@ import pso.decision_engine.model.ScrollItems;
 import pso.decision_engine.model.enums.DataSetType;
 import pso.decision_engine.persistence.DataSetDao;
 import pso.decision_engine.service.DataSetService;
-import pso.decision_engine.utils.BigFileSort;
+import pso.decision_engine.utils.bigfilesort.BigFileSort;
+import pso.decision_engine.utils.bigfilesort.BigFileSortCommand;
 import reactor.core.publisher.Flux;
 
 @Service
@@ -46,7 +44,15 @@ public class DataSetServiceImpl implements DataSetService {
 			StreamUtils.copy(in, out);
 		}
 	
-		Path tempOutFile=BigFileSort.sortAndRemoveDuplicates(rawOutputFile, versionId+"_temp", "txt");
+		BigFileSortCommand c=new BigFileSortCommand();
+		c.setInputFile(rawOutputFile);
+		c.setOutputFileName(versionId+"_temp");
+		c.setOutputFileExtension("txt");
+		c.setKeepFirstLine(false);
+		c.setOnlySortOnFirstTab(false);
+		c.setRemoveTabs(false);
+		c.setRemoveEmptyLines(true);
+		Path tempOutFile=BigFileSort.sortAndRemoveDuplicates(c);
 		
 /*		
 		Path tempOutFile=Paths.get(appConfig.getDataDirectory()+"/datasets/sets/", dataSetName, versionId+"_temp.txt");
