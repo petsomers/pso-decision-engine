@@ -109,7 +109,7 @@ public class CreateTables {
 		"type VARCHAR(10), "+ // SET or LOOKUP
 		"PRIMARY KEY (dataSetId))",
 		
-		"CREATE INDEX IF NOT EXISTS dataSet_nameIndex "+
+		"CREATE UNIQUE INDEX IF NOT EXISTS dataSet_nameIndex "+
 		"on DataSet (name)",
 		
 		"CREATE TABLE IF NOT EXISTS DataSetVersion ("+

@@ -137,9 +137,10 @@ public class DataSetDaoImpl implements DataSetDao {
 		.addValue("dataSetName", dataSetName);
 		jdbcTemplate.update(
 			"delete from DataSetVersion where dataSetVersionId not in ( "+
-			"SELECT a.dataSetVersionId from ActiveDataSetVersion as a "+ 
-			"left join DataSet as d on a.dataSetId=d.dataSetId "+
-			"where d.name=:dataSetName)",
+			"  SELECT a.dataSetVersionId from ActiveDataSetVersion as a "+ 
+			"  left join DataSet as d on a.dataSetId=d.dataSetId "+
+			"  where d.name=:dataSetName) "+
+			"and dataSetId=(select d2.dataSetId from DataSet as d2 where d2.name=:dataSetName)",
 			params
 		);
 	}

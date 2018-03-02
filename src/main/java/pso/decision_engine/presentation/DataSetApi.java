@@ -70,7 +70,7 @@ public class DataSetApi {
 	@RequestMapping(value = "/keys/{dataSetName}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	public ScrollItems<String> keys(@PathVariable String dataSetName, @RequestParam(required=false) String fromKey) {
 		if (fromKey!=null && fromKey.trim().length()==0) fromKey=null;
-		return dataSetService.getKeysFromActiveDataSet(dataSetName, fromKey, 100);
+		return dataSetService.getKeysFromActiveDataSet(dataSetName, fromKey, 70);
 	}
 	
 	@RequestMapping(value = "/download_excel/{restEndpoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/octetstream")
