@@ -2,7 +2,6 @@ package pso.decision_engine.utils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -33,7 +32,7 @@ public class BigFileSort {
 		String line=null;
 	}
 	
-	public void sortAndRemoveDuplicates(final Path inputFile, final String outputFileName, final String outputFileExtension) throws IOException {
+	static public Path sortAndRemoveDuplicates(final Path inputFile, final String outputFileName, final String outputFileExtension) throws IOException {
 		Path tempDir=Paths.get(inputFile.getParent().toString(), "temp");
 		tempDir.toFile().mkdirs();
 		List<Path> files=split(inputFile, outputFileName, outputFileExtension);
@@ -78,6 +77,7 @@ public class BigFileSort {
 					lastText=lowestString;
 				}
 			}
+			return outputFile;
 		} finally {
 			for (BufferedReader r:readers) {
 				try {r.close();} catch(Exception e) {;}
@@ -86,7 +86,7 @@ public class BigFileSort {
 		
 	}
 	
-	private void getLastLines(ArrayList<LastLineStatus> lastLines) throws IOException {
+	static private void getLastLines(ArrayList<LastLineStatus> lastLines) throws IOException {
 		for (LastLineStatus ll:lastLines) {
 			if (ll.isNeedNewLine() && !ll.endOfFile) {
 				ll.setNeedNewLine(false);
@@ -97,7 +97,7 @@ public class BigFileSort {
  		}
 	}
 	
-	private List<Path> split(final Path inputFile, final String outputFileName, final String outputFileExtension) throws IOException {
+	static private List<Path> split(final Path inputFile, final String outputFileName, final String outputFileExtension) throws IOException {
 		final SplitFileProgress sfp=new SplitFileProgress();
 		try (Stream<String> stream = Files.lines(inputFile)) {
 			stream.forEach(line -> {
@@ -131,7 +131,7 @@ public class BigFileSort {
 		return sfp.getFiles();
 	}
 	
-	private void sortAndWriteLinesToFile(Path outputFile, List<String> lines) throws IOException {
+	static private void sortAndWriteLinesToFile(Path outputFile, List<String> lines) throws IOException {
 		Collections.sort(lines);
 		try(final BufferedWriter writer = Files.newBufferedWriter(outputFile, Charset.forName("UTF-8"))) {
 			lines.stream().forEach(sortedline -> {
@@ -148,9 +148,8 @@ public class BigFileSort {
 	
 	
 	static public void main(String[] args) throws IOException {
-		BigFileSort bfs=new BigFileSort();
 		Path inputFile=Paths.get("C:/temp/decision_engine/testbigsort/partsfile-1.txt");
-		bfs.sortAndRemoveDuplicates(inputFile, "partsfile-1-output", "txt");
+		BigFileSort.sortAndRemoveDuplicates(inputFile, "partsfile-1-output", "txt");
 	}
 
 }

@@ -23,6 +23,7 @@ import pso.decision_engine.model.ScrollItems;
 import pso.decision_engine.model.enums.DataSetType;
 import pso.decision_engine.persistence.DataSetDao;
 import pso.decision_engine.service.DataSetService;
+import pso.decision_engine.utils.BigFileSort;
 import reactor.core.publisher.Flux;
 
 @Service
@@ -44,6 +45,10 @@ public class DataSetServiceImpl implements DataSetService {
 		try (OutputStream out=Files.newOutputStream(rawOutputFile)) {
 			StreamUtils.copy(in, out);
 		}
+	
+		Path tempOutFile=BigFileSort.sortAndRemoveDuplicates(rawOutputFile, versionId+"_temp", "txt");
+		
+/*		
 		Path tempOutFile=Paths.get(appConfig.getDataDirectory()+"/datasets/sets/", dataSetName, versionId+"_temp.txt");
 		
 		try(BufferedWriter writer = Files.newBufferedWriter(tempOutFile, Charset.forName("UTF-8"))) {
@@ -77,8 +82,10 @@ public class DataSetServiceImpl implements DataSetService {
 				return result;
 			}
 		}
-
+*/
 		Path outputFile=Paths.get(appConfig.getDataDirectory()+"/datasets/sets/", dataSetName, versionId+".txt");
+		
+		
 		Files.move(tempOutFile, outputFile);
 		setActiveDataSet(dataSetName, versionId);
 
