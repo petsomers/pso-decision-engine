@@ -56,7 +56,7 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "GET_RULESET",
-  			payload: axios.get("setup/source/"+endpoint+"/"+versionId)
+  			payload: axios.get("setup/source/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId))
 			});
 		},
 		runUnitTests: (endpoint, versionId) => {
@@ -64,7 +64,7 @@ const mapDispatchToProps = (dispatch) => {
 			//dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "RUN_UNIT_TESTS",
-  			payload: axios.get("run_unittests/"+endpoint+"/"+versionId)
+  			payload: axios.get("run_unittests/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId))
 			});
 		},
 		setRunNowParameterValue: (name, value) => {
@@ -91,37 +91,43 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
 				type: "SET_ACTIVE",
-				payload: axios.get("setup/setactive/"+endpoint+"/"+versionId)
+				payload: axios.get("setup/setactive/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId))
 			});
 		},
 		deleteInactive: (endpoint) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
 				type: "DELETE_INACTIVE",
-				payload: axios.get("setup/delete/inactive/"+endpoint)
+				payload: axios.get("setup/delete/inactive/"+encodeURIComponent(endpoint))
 			});
 		},
 		deleteEndpoint: (endpoint) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
 				type: "DELETE_ENDPOINT",
-				payload: axios.get("setup/delete/endpoint/"+endpoint)
+				payload: axios.get("setup/delete/endpoint/"+encodeURIComponent(endpoint))
 			});
 		},
 		deleteRuleSet: (endpoint, versionId) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
 				type: "DELETE_RULESET",
-				payload: axios.get("setup/delete/ruleset/"+endpoint+"/"+versionId)
+				payload: axios.get("setup/delete/ruleset/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId))
 			});
 		},
 		selectDataSet: (dataSetInfo) => {
 			dispatch({type: "SELECT_DATA_SET", payload: dataSetInfo});
       dispatch({
 				type: "LOAD_DATA_SET_DATA",
-				payload: axios.get("dataset/keys/"+dataSetInfo.name)
+				payload: axios.get("dataset/keys/"+encodeURIComponent(dataSetInfo.name))
 			});
-		}
+		},
+    loadMoreDataSetData: (dataSetInfo, fromKey) => {
+      dispatch({
+				type: "LOAD_MORE_DATA_SET_DATA",
+				payload: axios.get("dataset/keys/"+encodeURIComponent(dataSetInfo.name)+"?fromKey="+encodeURIComponent(fromKey))
+			});
+    }
 	}
 };
 

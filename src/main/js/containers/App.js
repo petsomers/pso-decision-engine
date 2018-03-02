@@ -86,6 +86,7 @@ class App extends React.Component {
 						<DataSetDetails
 							selectedDataSetInfo={this.props.selectedDataSetInfo}
 							dataSetData={this.props.dataSetData}
+							loadMoreDataSetData={this.props.loadMoreDataSetData}
 						/>
 					}
 					{this.props.inProgress &&
@@ -135,7 +136,8 @@ const mapStateToProps = (state) => {
 		mainScreen: state.appReducer.mainScreen,
 		errorMessage: state.appReducer.errorMessage,
 		infoMessage: state.appReducer.infoMessage,
-		dataSetData: state.appReducer.dataSetData
+		dataSetData: state.appReducer.dataSetData,
+		loadMoreDataSetData: state.appReducer.loadMoreDataSetData
   };
 };
 

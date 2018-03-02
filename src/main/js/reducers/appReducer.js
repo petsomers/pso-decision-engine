@@ -184,6 +184,7 @@ const appReducer = (state = {
     }
   break;
   case "LOAD_DATA_SET_DATA_PENDING":
+  case "LOAD_MORE_DATA_SET_DATA_PENDING":
     state = {
       ...state,
       dataSetData: {
@@ -199,6 +200,18 @@ const appReducer = (state = {
         rows: action.payload.data.items,
         hasMore: action.payload.data.hasMore,
         loading: false
+      }
+    }
+  break;
+  case "LOAD_MORE_DATA_SET_DATA_FULFILLED":
+    var incomingRows=action.payload.data.items;
+    state = {
+      ...state,
+      dataSetData: {
+        ... state.dataSetData,
+        hasMore: action.payload.data.hasMore,
+        loading: false,
+        rows: state.dataSetData.rows.concat(incomingRows)
       }
     }
   break;
