@@ -181,7 +181,7 @@ const mapDispatchToProps = (dispatch) => {
 				type: "SET_SELECTED_ENDPOINT",
 				payload: endpoint
 			});
-			dispatch({type: "SET_INPROGRESS"});
+			//dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "GET_VERSIONS",
   			payload: axios.get("setup/versions/"+endpoint)
@@ -197,7 +197,7 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		runUnitTests: (endpoint, versionId) => {
 			console.log("RUNNING UNIT TESTS for "+endpoint+"/"+versionId);
-			dispatch({type: "SET_INPROGRESS"});
+			//dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "RUN_UNIT_TESTS",
   			payload: axios.get("run_unittests/"+endpoint+"/"+versionId)

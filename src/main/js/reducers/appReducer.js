@@ -11,7 +11,6 @@ const appReducer = (state = {
   versions: [],
   inProgress: false,
   selectedEndpoint: "",
-  selectedDataSetInfo: null,
   selectedVersion: "",
   ruleSetDetails: null,
   unitTestsResult: null,
@@ -19,7 +18,8 @@ const appReducer = (state = {
     parameterValues: {},
     result: null
   },
-  dataSets: []
+  dataSets: [],
+  selectedDataSetInfo: null,
 }, action) => {
   if (action.type.endsWith("_FULFILLED")) {
     if (action.payload && action.payload.data && action.payload.data.error && !action.payload.data.run) {
@@ -52,13 +52,14 @@ const appReducer = (state = {
     state = {
       ...state,
       selectedEndpoint: action.payload,
+      selectedDataSetInfo: null,
       mainScreen: "ruleSetVersionSelection"
-
     }
   break;
   case "SET_SELECTED_VERSION":
     state = {
       ...state,
+      selectedDataSetInfo: null,
       selectedEndpoint: action.payload.endpoint,
       selectedVersion: action.payload.version
     }
@@ -172,6 +173,8 @@ const appReducer = (state = {
     state = {
       ...state,
       selectedDataSetInfo: action.payload,
+      selectedEndpoint: "",
+      selectedVersion: "",
       mainScreen: "dataSetDetails"
     }
   break;
