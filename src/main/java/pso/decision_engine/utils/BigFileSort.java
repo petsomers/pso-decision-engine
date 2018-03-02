@@ -25,19 +25,58 @@ public class BigFileSort {
 		private ArrayList<Path> files=new ArrayList<>();
 	}
 	
+	@Data
+	private static class LastLineStatus {
+		BufferedReader reader;
+		boolean needNewLine=true;
+		boolean endOfFile=false;
+		String line=null;
+	}
+	
 	public void sortAndRemoveDuplicates(final Path inputFile, final String outputFileName, final String outputFileExtension) throws IOException {
 		Path tempDir=Paths.get(inputFile.getParent().toString(), "temp");
 		tempDir.toFile().mkdirs();
 		List<Path> files=split(inputFile, outputFileName, outputFileExtension);
 		ArrayList<BufferedReader> readers=new ArrayList<>();
+		ArrayList<LastLineStatus> lastLines=new ArrayList<>();
 		try {
 			for (Path f:files) {
-				Files.newBufferedReader(f);
+				BufferedReader reader=Files.newBufferedReader(f);
+				readers.add(reader);
+				LastLineStatus lls=new LastLineStatus();
+				lls.setReader(reader);
+				lls.setNeedNewLine(true);
+				lastLines.add(lls);
 			}
 			Path outputFile=Paths.get(inputFile.getParent().toString(), outputFileName+"."+outputFileExtension);
-			ArrayList<String> lastLines=new ArrayList<>(); 
 			try(BufferedWriter writer = Files.newBufferedWriter(outputFile, Charset.forName("UTF-8"))) {
-				
+				String lastText=null;
+				MAINLOOP: while (true) {
+					getLastLines(lastLines);
+					
+					int lowestIndex=-1;
+					String lowestString=null;
+					int i=-1;
+					CHECKALL: for (LastLineStatus ll:lastLines) {
+						i++;
+						if (ll.endOfFile) continue CHECKALL;
+						if (lowestString==null || lowestString.compareTo(ll.getLine())>0) {
+							lowestString=ll.getLine();
+							lowestIndex=i;
+						}
+					}
+					if (lowestIndex==-1) {
+						//finished
+						break MAINLOOP;
+					}
+					lastLines.get(lowestIndex).setNeedNewLine(true);
+					if (lastText==null || !lastText.equals(lowestString)) {
+						// remove duplicates
+						writer.write(lowestString);
+						writer.write("\r\n");
+					}
+					lastText=lowestString;
+				}
 			}
 		} finally {
 			for (BufferedReader r:readers) {
@@ -45,6 +84,17 @@ public class BigFileSort {
 			}
 		}
 		
+	}
+	
+	private void getLastLines(ArrayList<LastLineStatus> lastLines) throws IOException {
+		for (LastLineStatus ll:lastLines) {
+			if (ll.isNeedNewLine() && !ll.endOfFile) {
+				ll.setNeedNewLine(false);
+				String line=ll.getReader().readLine();
+				ll.setLine(line);
+				if (line==null) ll.setEndOfFile(true);
+			}
+ 		}
 	}
 	
 	private List<Path> split(final Path inputFile, final String outputFileName, final String outputFileExtension) throws IOException {
