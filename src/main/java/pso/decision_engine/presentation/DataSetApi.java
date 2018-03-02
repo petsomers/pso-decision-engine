@@ -1,7 +1,11 @@
 package pso.decision_engine.presentation;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,6 +25,7 @@ import pso.decision_engine.model.DataSetInfo;
 import pso.decision_engine.model.DataSetUploadResult;
 import pso.decision_engine.model.ScrollItems;
 import pso.decision_engine.service.DataSetService;
+import reactor.core.publisher.Flux;
 
 @RestController
 @RequestMapping("/dataset")
@@ -73,14 +78,32 @@ public class DataSetApi {
 		return dataSetService.getKeysFromActiveDataSet(dataSetName, fromKey, 70);
 	}
 	
-	@RequestMapping(value = "/download_excel/{restEndpoint}/{ruleSetId}",method = RequestMethod.GET, produces = "application/octetstream")
-	public void downloadExcel(@PathVariable String restEndpoint,@PathVariable String ruleSetId, HttpServletResponse resp) throws IOException {
-		
+	@RequestMapping(value = "/download/{dataSetName}",method = RequestMethod.GET, produces = "application/octetstream")
+	public void downloadDataSet(@PathVariable String dataSetName, HttpServletResponse resp) throws IOException {
+		Flux<String> f=dataSetService.streamKeysFromActiveDataSet(dataSetName);
+		if (f==null) {
+			resp.sendError(404);
+			return;
+		}
 		resp.setHeader("pragma", "no-cache");
 		resp.setHeader( "Cache-Control","no-cache" );
 		resp.setHeader( "Cache-Control","no-store" );
 		resp.setDateHeader( "Expires", 0 );
 		resp.setContentType("application/octetstream");
-		resp.setHeader("Content-Disposition", "attachment; filename="+restEndpoint+"_"+ruleSetId+".xlsx");
+		resp.setHeader("Content-Disposition", "attachment; filename="+ dataSetName+".txt");
+		OutputStreamWriter ow=new OutputStreamWriter(resp.getOutputStream(), "UTF-8");
+		f.buffer(100).subscribe( values -> {
+			StringBuilder batch=new StringBuilder();
+			values.forEach(value -> {
+				batch.append(value);
+				batch.append("\r\n");
+			});
+			try {
+				ow.write(batch.toString());
+			} catch (IOException e) { // user cancelled the download => stop db query
+				throw new RuntimeException(e);
+			}
+		});
+		ow.flush();
 	}
 }

@@ -31,4 +31,6 @@ public interface DataSetDao {
 
 	public List<String> getKeyListFrom(String dataSetVersionId, String fromKey, int max);
 
+	public Flux<String> streamKeysFromActiveDataSet(String versionId);
+
 }

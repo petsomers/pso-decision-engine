@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "react-lightning-design-system";
 
-export const DataSetDetails = ({selectedDataSetInfo, dataSetData, loadMoreDataSetData}) => {
+export const DataSetDetails = ({selectedDataSetInfo, dataSetData, loadMoreDataSetData, downloadDataSet}) => {
 	return (
   	<div>
 			<div style={{display: "inline-block", width: "350px"}}>
@@ -15,7 +15,7 @@ export const DataSetDetails = ({selectedDataSetInfo, dataSetData, loadMoreDataSe
 				<b>{selectedDataSetInfo.name}</b>
 			</div>
 			<div style={{display: "inline-block", paddingLeft: "25px"}}>
-				<Button type="neutral" onClick={() => alert("Download")} icon="new" iconAlign="left" label="Download" />
+				<Button type="neutral" onClick={() => downloadDataSet(selectedDataSetInfo)} icon="new" iconAlign="left" label="Download" />
 				&nbsp;
 				<Button type="neutral" onClick={() => alert("Download")} icon="new" iconAlign="left" label="Delete" />
 			</div>
@@ -30,12 +30,12 @@ export const DataSetDetails = ({selectedDataSetInfo, dataSetData, loadMoreDataSe
 					</div>
 				}
 				{dataSetData.hasMore && !dataSetData.loading &&
-					<div>
+					<div style={{padding: "20px"}}>
 						<Button type="neutral" onClick={() => loadMoreDataSetData(selectedDataSetInfo, dataSetData.rows[dataSetData.rows.length-1])} icon="new" iconAlign="left" label="Load More" />
 					</div>
 				}
 				{dataSetData.loading &&
-					<div>
+					<div style={{padding: "20px"}}>
 						<i className="fas fa-spinner fa-spin"></i>
 					</div>
 				}

@@ -26,7 +26,11 @@ class App extends React.Component {
 	}
 
 	downloadExcel(restEndpoint, ruleSetId) {
-		window.location.href="setup/download_excel/"+restEndpoint+"/"+ruleSetId;
+		window.location.href="setup/download_excel/"+encodeURIComponent(restEndpoint)+"/"+encodeURIComponent(ruleSetId);
+	}
+
+	downloadDataSet(dataSetInfo) {
+		window.location.href="dataset/download/"+encodeURIComponent(dataSetInfo.name);
 	}
 
 	handleResize = ({ width, height }) => this.props.onWindowResize(width, height);
@@ -86,7 +90,8 @@ class App extends React.Component {
 						<DataSetDetails
 							selectedDataSetInfo={this.props.selectedDataSetInfo}
 							dataSetData={this.props.dataSetData}
-							loadMoreDataSetData={this.props.loadMoreDataSetData}
+							loadMoreDataSetData={(dataSetInfo, fromKey) => this.props.loadMoreDataSetData(dataSetInfo, fromKey)}
+							downloadDataSet={(dataSetInfo) => this.downloadDataSet(dataSetInfo)}
 						/>
 					}
 					{this.props.inProgress &&

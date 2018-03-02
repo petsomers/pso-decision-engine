@@ -132,4 +132,11 @@ public class DataSetServiceImpl implements DataSetService {
 		return result;
 	}
 
+	@Override
+	public Flux<String> streamKeysFromActiveDataSet(String dataSetName) {
+		String versionId=dataSetDao.getActiveDataSetVersionForDataSetName(dataSetName);
+		if (versionId==null) return null;
+		return dataSetDao.streamKeysFromActiveDataSet(versionId);
+	}
+
 }

@@ -153,9 +153,22 @@ public class DataSetDaoImpl implements DataSetDao {
 		.addValue("max", max);
 		return jdbcTemplate.query(
 			fromKey==null?
-			"select key from DataSetKeys where dataSetVersionId=:dataSetVersionId order by key limit :max"
-			:"select key from DataSetKeys where dataSetVersionId=:dataSetVersionId and key>:fromKey order by key limit :max", 
+			"select key from DataSetKeys where dataSetVersionId=:dataSetVersionId order by keyId limit :max"
+			:"select key from DataSetKeys where dataSetVersionId=:dataSetVersionId and key>:fromKey order by keyId limit :max", 
 			params,
 			(ResultSet rs, int rowNumber) -> rs.getString(1));
+	}
+
+	@Override
+	public Flux<String> streamKeysFromActiveDataSet(String dataSetVersionId) {
+		return Flux.<String>create(emitter -> {
+			MapSqlParameterSource params=new MapSqlParameterSource()
+			.addValue("dataSetVersionId", dataSetVersionId);
+			jdbcTemplate.query(
+				"select key from DataSetKeys where dataSetVersionId=:dataSetVersionId order by keyId",
+				params,
+				(ResultSet rs) -> {emitter.next(rs.getString(1));});
+			emitter.complete();
+		});
 	}
 }

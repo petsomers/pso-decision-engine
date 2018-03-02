@@ -7,6 +7,7 @@ import java.util.List;
 import pso.decision_engine.model.DataSetInfo;
 import pso.decision_engine.model.DataSetUploadResult;
 import pso.decision_engine.model.ScrollItems;
+import reactor.core.publisher.Flux;
 
 public interface DataSetService {
 	
@@ -28,6 +29,7 @@ public interface DataSetService {
 	public DataSetUploadResult uploadSet(String dataSetName, InputStream in) throws IOException;
 	
 	public ScrollItems<String> getKeysFromActiveDataSet(String dataSetName, String fromKey, int max);
-
+	
+	public Flux<String> streamKeysFromActiveDataSet(String dataSetName);
 
 }
