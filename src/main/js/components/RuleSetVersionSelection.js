@@ -13,7 +13,7 @@ export const RuleSetVersionSelection = ({layout, selectedEndpoint, versions, sel
 	}
   return (
   		<div>
-					<i className="fas fa-genderless"></i> &nbsp;
+					<i className="far fa-dot-circle"></i> &nbsp;
 					<b>Rest Endpoint:</b> {selectedEndpoint}<br />
 				{versions.map((version, index) => (
 					<div key={version.id} style={version.active?liveCardStyle:cardStyle} className='slds-table slds-table--bordered'>

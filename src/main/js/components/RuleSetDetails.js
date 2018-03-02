@@ -117,7 +117,7 @@ export class  RuleSetDetails extends React.Component {
 				</div>
 			}
 			<Tabs type="default" defaultActiveKey={activeTab}  onSelect={(tabName) => this.setActiveTab(tabName)}>
-				<Tab eventKey="inputParameters" title="Input Parameters" />
+				<Tab eventKey="inputParameters" title="Input Parameters"/>
 				<Tab eventKey="rules" title="Rules" />
 				<Tab eventKey="lists" title="Lists" />
 				<Tab eventKey="unitTests" title="Unit Tests" />

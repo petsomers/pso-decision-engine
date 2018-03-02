@@ -43,7 +43,7 @@ export const RuleSetSelection = ({restEndpoints, dataSets, layout, openFileUploa
 				<div style={restEndpointsStyle} className='slds-table slds-table--bordered'>
 					{restEndpoints.map((endpoint, index) => (
 						<div key={endpoint} style={(selectedEndpoint==endpoint)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>
-							<i className="fas fa-genderless"></i> &nbsp;
+							<i className="far fa-dot-circle"></i> &nbsp;
 							<a onClick={() => selectEndpoint(endpoint)}>
 								{endpoint}
 							</a>
