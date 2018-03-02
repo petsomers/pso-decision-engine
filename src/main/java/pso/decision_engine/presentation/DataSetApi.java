@@ -66,7 +66,7 @@ public class DataSetApi {
 	}
 	
 	@RequestMapping(value = "/keys/{dataSetName}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	public ScrollItems<String> keys(@PathVariable String dataSetName, @RequestParam String fromKey) {
+	public ScrollItems<String> keys(@PathVariable String dataSetName, @RequestParam(required=false) String fromKey) {
 		if (fromKey!=null && fromKey.trim().length()==0) fromKey=null;
 		return dataSetService.getKeysFromActiveDataSet(dataSetName, fromKey, 300);
 	}

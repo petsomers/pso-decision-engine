@@ -117,6 +117,10 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		selectDataSet: (dataSetInfo) => {
 			dispatch({type: "SELECT_DATA_SET", payload: dataSetInfo});
+      dispatch({
+				type: "LOAD_DATA_SET_DATA",
+				payload: axios.get("dataset/keys/"+dataSetInfo.name)
+			});
 		}
 	}
 };

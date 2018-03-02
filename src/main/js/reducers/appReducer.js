@@ -20,6 +20,11 @@ const appReducer = (state = {
   },
   dataSets: [],
   selectedDataSetInfo: null,
+  dataSetData: {
+    rows: [],
+    hasMore: false,
+    loading: false
+  }
 }, action) => {
   if (action.type.endsWith("_FULFILLED")) {
     if (action.payload && action.payload.data && action.payload.data.error && !action.payload.data.run) {
@@ -176,6 +181,25 @@ const appReducer = (state = {
       selectedEndpoint: "",
       selectedVersion: "",
       mainScreen: "dataSetDetails"
+    }
+  break;
+  case "LOAD_DATA_SET_DATA_PENDING":
+    state = {
+      ...state,
+      dataSetData: {
+        ... state.dataSetData,
+        loading: true
+      }
+    }
+  break;
+  case "LOAD_DATA_SET_DATA_FULFILLED":
+    state = {
+      ...state,
+      dataSetData: {
+        rows: action.payload.data.items,
+        hasMore: action.payload.data.hasMore,
+        loading: false
+      }
     }
   break;
   case "WINDOW_RESIZE":
