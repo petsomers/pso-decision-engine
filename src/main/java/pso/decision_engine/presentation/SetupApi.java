@@ -74,7 +74,7 @@ public class SetupApi {
 		resp.setHeader( "Cache-Control","no-store" );
 		resp.setDateHeader( "Expires", 0 );
 		resp.setContentType("application/octetstream");
-		resp.setHeader("Content-Disposition", "attachment; filename="+restEndpoint+"_"+ruleSetId+".xlsx");
+		resp.setHeader("Content-Disposition", "attachment; filename=\""+restEndpoint+"_"+ruleSetId+".xlsx\"");
 		setupService.downloadExcel(restEndpoint, ruleSetId, resp.getOutputStream());
 	}
 	

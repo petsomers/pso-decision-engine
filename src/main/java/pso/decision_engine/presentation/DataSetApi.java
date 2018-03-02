@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.List;
 
@@ -90,7 +91,7 @@ public class DataSetApi {
 		resp.setHeader( "Cache-Control","no-store" );
 		resp.setDateHeader( "Expires", 0 );
 		resp.setContentType("application/octetstream");
-		resp.setHeader("Content-Disposition", "attachment; filename="+ dataSetName+".txt");
+		resp.setHeader("Content-Disposition", "attachment; filename=\""+ dataSetName+".txt\"");
 		OutputStreamWriter ow=new OutputStreamWriter(resp.getOutputStream(), "UTF-8");
 		f.buffer(100).subscribe( values -> {
 			StringBuilder batch=new StringBuilder();

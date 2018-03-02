@@ -67,7 +67,7 @@ export const RuleSetSelection = ({restEndpoints, dataSets, layout, openFileUploa
 					))}
 				</div>
 				<div style={uploadStyle}>
-					<Button type="neutral" onClick={() => openFileUpload()} icon="new" iconAlign="left" label="Upload File" />
+					<Button type="neutral" onClick={() => openFileUpload()} icon="upload" iconAlign="left" label="Upload File" />
 				</div>
   		</div>
    );

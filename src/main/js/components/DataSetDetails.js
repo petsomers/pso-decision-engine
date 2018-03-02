@@ -15,9 +15,9 @@ export const DataSetDetails = ({selectedDataSetInfo, dataSetData, loadMoreDataSe
 				<b>{selectedDataSetInfo.name}</b>
 			</div>
 			<div style={{display: "inline-block", paddingLeft: "25px"}}>
-				<Button type="neutral" onClick={() => downloadDataSet(selectedDataSetInfo)} icon="new" iconAlign="left" label="Download" />
+				<Button type="neutral" onClick={() => downloadDataSet(selectedDataSetInfo)} icon="download" iconAlign="left" label="Download" />
 				&nbsp;
-				<Button type="neutral" onClick={() => alert("Download")} icon="new" iconAlign="left" label="Delete" />
+				<Button type="neutral" onClick={() => alert("Download")} icon="delete" iconAlign="left" label="Delete" />
 			</div>
 
 			{dataSetData &&
@@ -31,7 +31,7 @@ export const DataSetDetails = ({selectedDataSetInfo, dataSetData, loadMoreDataSe
 				}
 				{dataSetData.hasMore && !dataSetData.loading &&
 					<div style={{padding: "20px"}}>
-						<Button type="neutral" onClick={() => loadMoreDataSetData(selectedDataSetInfo, dataSetData.rows[dataSetData.rows.length-1])} icon="new" iconAlign="left" label="Load More" />
+						<Button type="neutral" onClick={() => loadMoreDataSetData(selectedDataSetInfo, dataSetData.rows[dataSetData.rows.length-1])} icon="more" iconAlign="left" label="Load More" />
 					</div>
 				}
 				{dataSetData.loading &&

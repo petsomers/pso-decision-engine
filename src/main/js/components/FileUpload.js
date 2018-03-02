@@ -217,7 +217,7 @@ export class FileUpload  extends React.Component {
 					File: <input type="file" id="fileinput" onChange={(event) => this.selectUploadFile(event)}/>
 					<br /><br />
 					{this.state.selectedUploadFile!=null &&
-						<Button type="neutral" onClick={() => this.doUpload()} icon="new" iconAlign="left" label="Upload File" />
+						<Button type="neutral" onClick={() => this.doUpload()} icon="upload" iconAlign="left" label="Upload File" />
 					}
 				</div>
 			}
