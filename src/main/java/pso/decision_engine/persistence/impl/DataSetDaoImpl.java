@@ -3,6 +3,7 @@ package pso.decision_engine.persistence.impl;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import pso.decision_engine.model.DataSetInfo;
+import pso.decision_engine.model.ParameterValuesRow;
 import pso.decision_engine.model.enums.DataSetType;
 import pso.decision_engine.persistence.DataSetDao;
 import pso.decision_engine.service.IdService;
@@ -125,7 +127,7 @@ public class DataSetDaoImpl implements DataSetDao {
 	}
 
 	@Override
-	public void uploadSet(String dataSetVersionId, Flux<String> in) {
+	public void uploadDataSetKeys(String dataSetVersionId, Flux<String> in) {
 		int[] keyId= {0};
 		in.buffer(1000).subscribe( values -> {
 			int[] i= {0};
@@ -179,5 +181,38 @@ public class DataSetDaoImpl implements DataSetDao {
 				(ResultSet rs) -> {emitter.next(rs.getString(1));});
 			emitter.complete();
 		});
+	}
+	
+	@Override
+	public void saveDataSetParameterNames(String dataSetVersionId, List<String> parameterNames) {
+		MapSqlParameterSource[] items=new MapSqlParameterSource[parameterNames.size()];
+		int[] parameterId= {0};
+		parameterNames.forEach(name -> {
+			items[parameterId[0]]=new MapSqlParameterSource()
+				.addValue("dataSetVersionId", dataSetVersionId)
+				.addValue("valueId", parameterId[0]++)
+				.addValue("name", name);
+		});
+		jdbcTemplate.batchUpdate("INSERT INTO DataSetValueNames (dataSetVersionId, valueId, name) values (:dataSetVersionId, :valueId, :name)", items);
+	}
+
+	@Override
+	public void uploadDataSetValues(String dataSetVersionId, Flux<ParameterValuesRow> in) {
+		in.buffer(100).subscribe( rows -> {
+			ArrayList<MapSqlParameterSource> dbparams=new ArrayList<>();
+			rows.forEach(row -> {
+				int[] valueId= {1}; // start from 1.
+				row.getValues().forEach(value -> {
+					dbparams.add(new MapSqlParameterSource()
+					.addValue("dataSetVersionId", dataSetVersionId)
+					.addValue("keyId", row.getKeyId())
+					.addValue("valueId", valueId[0]++)
+					.addValue("value", value));
+				});
+		
+			});
+			jdbcTemplate.batchUpdate("INSERT INTO DataSetValues (dataSetVersionId, keyId, valueId, value) values (:dataSetVersionId, :keyId, :valueId, :value)", dbparams.toArray(new MapSqlParameterSource[0]));
+		});
+		
 	}
 }
