@@ -6,9 +6,15 @@ export const DataSetDetails = ({selectedDataSetInfo, dataSetData, loadMoreDataSe
   	<div>
 			<div style={{display: "inline-block", width: "350px"}}>
 				{selectedDataSetInfo.type=="LOOKUP" ? (
-					<i className="fas fa-th-list"></i>
+					<span>
+						<i className="fas fa-table"></i>
+						&nbsp; <b>Lookup Table</b>
+					</span>
 				):(
-					<i className="fas fa-bars"></i>
+					<span>
+						<i className="fas fa-bars"></i>
+						&nbsp; <b>List</b>
+					</span>
 				)
 				}
 				&nbsp;&nbsp;

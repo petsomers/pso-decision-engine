@@ -56,7 +56,7 @@ export const RuleSetSelection = ({restEndpoints, dataSets, layout, openFileUploa
 					<div key={dataSet.name} style={(selectedDataSetInfo && selectedDataSetInfo.name==dataSet.name)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>
 						<a onClick={() => selectDataSet(dataSet)}>
 							{dataSet.type=="LOOKUP" ? (
-									<i className="fas fa-th-list"></i>
+									<i className="fas fa-table"></i>
 								):(
 									<i className="fas fa-bars"></i>
 								)

@@ -155,7 +155,7 @@ export class FileUpload  extends React.Component {
 				<br /><br />
 				<Button type="neutral" onClick={() => this.setMode("LOOKUP")} icon="new" iconAlign="left" label="3. Dataset LOOKUP Text File" />
 				<br />
-				<i className="fas fa-th-list"></i> &nbsp;
+				<i className="fas fa-table"></i> &nbsp;
 				<i>
 					A Dataset Lookup is a multi column text file where the first column contains the key.<br />
 				 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A header row is required. The header names should match the exact parameters names as defined in the Rulesets.
@@ -207,7 +207,7 @@ export class FileUpload  extends React.Component {
 				<div>
 					<h2><b>Lookup Text File Upload</b></h2>
 					<br /><br />
-					<i className="fas fa-th-list"></i> &nbsp; <b>Upload Text File</b><br /><br />
+					<i className="fas fa-table"></i> &nbsp; <b>Upload Text File</b><br /><br />
 					<Picklist
 						label="Select LOOKUP Data Set"
 						selectedText=""
