@@ -147,7 +147,7 @@ export class FileUpload  extends React.Component {
 				<br /><br />
 				<Button type="neutral" onClick={() => this.setMode("LIST")} icon="new" iconAlign="left" label="2. Dataset LIST Text File" />
 				<br />
-				<i className="fas fa-bars"></i> &nbsp;
+				<i className="fas fa-list-alt"></i> &nbsp;
 				<i>
 					A Dataset List is a 1 column text file with unique values that can be used in a Rule Condition.<br />
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No header row is required.
@@ -178,7 +178,7 @@ export class FileUpload  extends React.Component {
 				<div>
 					<h2><b>Data Set Text File Upload</b></h2>
 					<br /><br />
-					<i className="fas fa-bars"></i> &nbsp; <b>Upload Text File</b><br /><br />
+					<i className="fas fa-list-alt"></i> &nbsp; <b>Upload Text File</b><br /><br />
 					<Picklist
 					  label="Select LIST Data Set"
 					  selectedText=""

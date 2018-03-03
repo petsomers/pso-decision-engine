@@ -12,7 +12,7 @@ export const DataSetDetails = ({selectedDataSetInfo, dataSetData, loadMoreDataSe
 					</span>
 				):(
 					<span>
-						<i className="fas fa-bars"></i>
+						<i className="fas fa-list-alt"></i>
 						&nbsp; <b>List</b>
 					</span>
 				)

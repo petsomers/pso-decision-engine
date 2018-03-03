@@ -58,7 +58,7 @@ export const RuleSetSelection = ({restEndpoints, dataSets, layout, openFileUploa
 							{dataSet.type=="LOOKUP" ? (
 									<i className="fas fa-table"></i>
 								):(
-									<i className="fas fa-bars"></i>
+									<i className="fas fa-list-alt"></i>
 								)
 							}
 							&nbsp; {dataSet.name}
