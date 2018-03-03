@@ -70,7 +70,8 @@ public class CreateTables {
 		"PRIMARY KEY (ruleSetId, ruleNumber), "+
 		"FOREIGN KEY (ruleSetId) REFERENCES RuleSet (ruleSetId) ON DELETE CASCADE)",
 		
-		"CREATE CACHED TABLE IF NOT EXISTS RuleSetLists ("+
+		//"CREATE CACHED TABLE IF NOT EXISTS RuleSetLists ("+
+		"CREATE TABLE IF NOT EXISTS RuleSetLists ("+
 		"ruleSetId VARCHAR(20) NOT NULL, "+
 		"listId INTEGER NOT NULL, "+
 		"listName VARCHAR(100), "+
@@ -125,7 +126,8 @@ public class CreateTables {
 		"PRIMARY KEY (dataSetId), "+
 		"FOREIGN KEY (dataSetId) REFERENCES DataSet (dataSetId) ON DELETE CASCADE)",
 		
-		"CREATE CACHED TABLE IF NOT EXISTS DataSetKeys ("+
+		//"CREATE CACHED TABLE IF NOT EXISTS DataSetKeys ("+
+		"CREATE TABLE IF NOT EXISTS DataSetKeys ("+
 		"dataSetVersionId VARCHAR(20) NOT NULL, "+
 		"keyId INTEGER NOT NULL, "+
 		"key VARCHAR(100), "+
@@ -142,7 +144,8 @@ public class CreateTables {
 		"PRIMARY KEY (dataSetVersionId, valueId), "+
 		"FOREIGN KEY (dataSetVersionId) REFERENCES DataSetVersion (dataSetVersionId) ON DELETE CASCADE)",
 		
-		"CREATE CACHED TABLE IF NOT EXISTS DataSetValues ("+
+		//"CREATE CACHED TABLE IF NOT EXISTS DataSetValues ("+
+		"CREATE TABLE IF NOT EXISTS DataSetValues ("+
 		"dataSetVersionId VARCHAR(20) NOT NULL, "+
 		"keyId INTEGER NOT NULL, "+
 		"valueId INTEGER NOT NULL, "+
