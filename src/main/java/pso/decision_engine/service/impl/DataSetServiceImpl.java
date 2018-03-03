@@ -34,10 +34,18 @@ public class DataSetServiceImpl implements DataSetService {
 	private DataSetDao dataSetDao;
 	
 	@Override
-	public DataSetUploadResult uploadSet(String dataSetName, InputStream in) throws IOException {
+	public DataSetUploadResult uploadDataSet(String dataSetName, DataSetType dataSetType, InputStream in) throws IOException {
 		DataSetUploadResult result=new DataSetUploadResult();
-		String dataSetId=dataSetDao.getOrCreateDataSetId(dataSetName, DataSetType.SET);
-		String versionId=dataSetDao.createDataSetVersion(dataSetId);
+		DataSetInfo dataSetInfo=dataSetDao.getDataSetInfo(dataSetName);
+		if (dataSetInfo==null) {
+			String id=dataSetDao.createDataSet(dataSetName, dataSetType);
+			dataSetInfo=new DataSetInfo(id, dataSetName, dataSetType);
+		} else if (dataSetInfo.getType()!=dataSetType) {
+			result.setErrorMessage("The data set already exists for another type.");
+			return result;
+		}
+		
+		String versionId=dataSetDao.createDataSetVersion(dataSetInfo.getId());
 		Path rawOutputFile=Paths.get(appConfig.getDataDirectory()+"/datasets/sets/", dataSetName, versionId+"_raw.txt");
 		rawOutputFile.toFile().getParentFile().mkdirs();
 		try (OutputStream out=Files.newOutputStream(rawOutputFile)) {
@@ -96,7 +104,7 @@ public class DataSetServiceImpl implements DataSetService {
 		setActiveDataSet(dataSetName, versionId);
 
 		dataSetDao.uploadSet(versionId, Flux.fromStream(Files.lines(outputFile)));
-		dataSetDao.setActiveDataSetVersion(dataSetId, versionId);
+		dataSetDao.setActiveDataSetVersion(dataSetInfo.getId(), versionId);
 		dataSetDao.deleteInactiveDataSetVersions(dataSetName);
 		result.setOk(true);
 		result.setDataSetVersionId(versionId);

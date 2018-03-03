@@ -50,7 +50,7 @@ export const RuleSetSelection = ({restEndpoints, dataSets, layout, openFileUploa
 						</div>
 					))}
 				</div>
-				<div style={globalListTitleStyle}><b>Datasets (Sets and Lookup Tables) Lists</b></div>
+				<div style={globalListTitleStyle}><b>Datasets (Lists and Lookup Tables) Lists</b></div>
 				<div style={globalListStyle}>
 					{dataSets.map((dataSet, index) => (
 					<div key={dataSet.name} style={(selectedDataSetInfo && selectedDataSetInfo.name==dataSet.name)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>

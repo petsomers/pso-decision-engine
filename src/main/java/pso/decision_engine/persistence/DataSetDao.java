@@ -1,7 +1,6 @@
 package pso.decision_engine.persistence;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import pso.decision_engine.model.DataSetInfo;
 import pso.decision_engine.model.enums.DataSetType;
@@ -9,8 +8,10 @@ import reactor.core.publisher.Flux;
 
 public interface DataSetDao {
 
-	public String getOrCreateDataSetId(String dataSetName, DataSetType dataSetType);
-
+	public DataSetInfo getDataSetInfo(String dataSetName);
+	
+	public String createDataSet(String dataSetName, DataSetType dataSetType);
+	
 	public String createDataSetVersion(String dataSetId);
 
 	public void setActiveDataSetVersion(String dataSetId, String dataSetVersionId);

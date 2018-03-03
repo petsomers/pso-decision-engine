@@ -1,12 +1,8 @@
 package pso.decision_engine.presentation;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pso.decision_engine.model.DataSetInfo;
 import pso.decision_engine.model.DataSetUploadResult;
 import pso.decision_engine.model.ScrollItems;
+import pso.decision_engine.model.enums.DataSetType;
 import pso.decision_engine.service.DataSetService;
 import reactor.core.publisher.Flux;
 
@@ -40,10 +37,16 @@ public class DataSetApi {
 		return dataSetService.getDataSetNames();
 	}
 	
-	@RequestMapping(value = "/upload_set/{dataSetName}",method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-    public String uploadSet(HttpServletRequest req, @PathVariable String dataSetName) throws Exception {
+	@RequestMapping(value = "/upload/{dataSetType}/{dataSetName}",method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public String uploadSet(HttpServletRequest req, 
+    		@PathVariable String dataSetType, 
+    		@PathVariable String dataSetName) throws Exception {
 		try {
-			DataSetUploadResult result=dataSetService.uploadSet(dataSetName, req.getInputStream());
+			DataSetType dataSetTypeE=DataSetType.fromString(dataSetType);
+			if (dataSetTypeE==null) {
+				return "ERROR: invalid dataSetType";
+			}
+			DataSetUploadResult result=dataSetService.uploadDataSet(dataSetName, dataSetTypeE, req.getInputStream());
 			if (result.isOk()) return "OK";
 			return "ERROR: "+result.getErrorMessage();
 		} catch (Exception e) {
@@ -53,9 +56,16 @@ public class DataSetApi {
 	}
 	
 
-	@RequestMapping(method = RequestMethod.POST, path = "/form_upload_set/{dataSetName}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = "application/json;charset=UTF-8")
-    public DataSetUploadResult formUploadSet(HttpServletRequest req, @PathVariable String dataSetName) throws Exception {
+	@RequestMapping(method = RequestMethod.POST, path = "/form_upload/{dataSetType}/{dataSetName}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }, produces = "application/json;charset=UTF-8")
+    public DataSetUploadResult formUploadSet(HttpServletRequest req, 
+    		@PathVariable String dataSetType, 
+    		@PathVariable String dataSetName) throws Exception {
 		DataSetUploadResult result=new DataSetUploadResult();
+		DataSetType dataSetTypeE=DataSetType.fromString(dataSetType);
+		if (dataSetTypeE==null) {
+			result.setErrorMessage("ERROR: invalid dataSetType");
+			return result;
+		}
 		try {
 			Collection<Part> parts = req.getParts();
 			if (parts.isEmpty()) {
@@ -64,7 +74,7 @@ public class DataSetApi {
 	        }
 			Part part = parts.iterator().next();
 			try (InputStream in = part.getInputStream()) {
-				return dataSetService.uploadSet(dataSetName, in);
+				return dataSetService.uploadDataSet(dataSetName, dataSetTypeE, in);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

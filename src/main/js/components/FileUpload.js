@@ -20,7 +20,9 @@ export class FileUpload  extends React.Component {
 		this.setState({
 			...this.state,
 			errorMessage: "",
-			mode: mode
+			mode: mode,
+			selectedDataSetName: null,
+			newDataSetName: null
 		});
 	}
 
@@ -57,7 +59,7 @@ export class FileUpload  extends React.Component {
 	doUpload(event) {
 		var dataSetName=this.state.selectedDataSetName==null?this.state.newDataSetName:this.state.selectedDataSetName;
 		if (dataSetName=="") dataSetName=null;
-		if (this.state.mode=="SET" || this.state.mode=="LOOKUP") {
+		if (this.state.mode=="LIST" || this.state.mode=="LOOKUP") {
 			if (dataSetName==null) {
 				this.setState({
 					...this.state,
@@ -80,8 +82,8 @@ export class FileUpload  extends React.Component {
 				this.props.selectVersion(data.restEndpoint, data.ruleSetId);
 				this.props.loadEndpoints();
 			});
-		} else if (this.state.mode=="SET") {
-			this.uploadFile("dataset/form_upload_set/"+dataSetName, fd, () => {
+		} else if (this.state.mode=="LIST" || this.state.mode=="LOOKUP") {
+			this.uploadFile("dataset/form_upload/"+this.state.mode+"/"+encodeURIComponent(dataSetName), fd, () => {
 				this.props.loadDataSets();
 				this.setState({
 					...this.state,
@@ -92,8 +94,6 @@ export class FileUpload  extends React.Component {
 					inProgress:false
 				});
 			});
-		} else if (this.state.mode=="LOOKUP") {
-			this.uploadFile(fd);
 		}
 	}
 
@@ -145,20 +145,20 @@ export class FileUpload  extends React.Component {
 				<i className="far fa-file-excel"></i> &nbsp;
 				<i>The Excel contains the complete RuleSet definitions.</i>
 				<br /><br />
-				<Button type="neutral" onClick={() => this.setMode("SET")} icon="new" iconAlign="left" label="2. Dataset Text File" />
+				<Button type="neutral" onClick={() => this.setMode("LIST")} icon="new" iconAlign="left" label="2. Dataset LIST Text File" />
 				<br />
 				<i className="fas fa-bars"></i> &nbsp;
 				<i>
-					A Dataset is a 1 column text file with unique values which can be used in a Rule Condition.<br />
+					A Dataset List is a 1 column text file with unique values that can be used in a Rule Condition.<br />
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No header row is required.
 				</i>
 				<br /><br />
-				<Button type="neutral" onClick={() => this.setMode("LOOKUP")} icon="new" iconAlign="left" label="3. Dataset Lookup Text File" />
+				<Button type="neutral" onClick={() => this.setMode("LOOKUP")} icon="new" iconAlign="left" label="3. Dataset LOOKUP Text File" />
 				<br />
 				<i className="fas fa-th-list"></i> &nbsp;
 				<i>
-					A Dataset Lookup is a multi column text file where the first column contains the key, and the other columns parameter values.<br />
-				 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A header row is required. The first header should be "KEY". The other columns headers should match the exact parameters names as defined in the Rulesets.
+					A Dataset Lookup is a multi column text file where the first column contains the key.<br />
+				 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A header row is required. The header names should match the exact parameters names as defined in the Rulesets.
 				</i>
 			</div>
 			}
@@ -174,7 +174,7 @@ export class FileUpload  extends React.Component {
 					<i className="far fa-file-excel"></i> &nbsp; <b>Upload Excel File</b><br /><br />
 				</div>
 			}
-			{this.state.mode=="SET" &&
+			{this.state.mode=="LIST" &&
 				<div>
 					<h2><b>Data Set Text File Upload</b></h2>
 					<br /><br />
@@ -188,7 +188,7 @@ export class FileUpload  extends React.Component {
 					  menuStyle={{maxHeight: "20rem", overflowY: "auto"}}
 					>
 							<PicklistItem key="" label="New Data Set" value="" />
-						{this.props.dataSets.filter(ds => ds.type=="SET").map((dataSet, index) => (
+						{this.props.dataSets.filter(ds => ds.type=="LIST").map((dataSet, index) => (
 							<PicklistItem key={dataSet.name} label={dataSet.name} value={dataSet.name} />
 						))}
 					</Picklist>
@@ -207,9 +207,29 @@ export class FileUpload  extends React.Component {
 				<div>
 					<h2><b>Lookup Text File Upload</b></h2>
 					<br /><br />
-					<i className="fas fa-th-list"></i> &nbsp; <b>Upload Lookup Text File</b><br /><br />
-					TODO: Input Dataset Name
-					TODO: Checkbox "Incremental"
+					<i className="fas fa-th-list"></i> &nbsp; <b>Upload Text File</b><br /><br />
+					<Picklist
+						label="Select Data Set"
+						selectedText=""
+						value={this.state.selectedDataSetName==null?"":this.state.selectedDataSetName}
+						onValueChange={(value) => this.selectDataSet(value)}
+						menuSize="small"
+						menuStyle={{maxHeight: "20rem", overflowY: "auto"}}
+					>
+							<PicklistItem key="" label="New Data Set" value="" />
+						{this.props.dataSets.filter(ds => ds.type=="LOOKUP").map((dataSet, index) => (
+							<PicklistItem key={dataSet.name} label={dataSet.name} value={dataSet.name} />
+						))}
+					</Picklist>
+					{!this.state.selectedDataSetName &&
+						<div style={{display: "inline-block", width: "250px", paddingTop:"20px"}}>
+							<Input
+								value={this.state.newDataSetName==null?"":this.state.newDataSetName}
+								label="New Data Set Name"
+								onChange={(event) => this.setNewDataSetName(event.target.value)}/>
+						</div>
+					}
+					<br />
 				</div>
 			}
 			{this.state.mode &&

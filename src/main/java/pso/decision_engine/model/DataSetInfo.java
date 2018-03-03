@@ -5,6 +5,7 @@ import pso.decision_engine.model.enums.DataSetType;
 
 @Data
 public class DataSetInfo {
+	final String id;
 	final String name;
 	final DataSetType type;
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -31,20 +32,26 @@ public class DataSetDaoImpl implements DataSetDao {
     }
 	
 	@Override
-	public String getOrCreateDataSetId(String dataSetName, DataSetType dataSetType) {
+	public DataSetInfo getDataSetInfo(String dataSetName) {
 		MapSqlParameterSource params=new MapSqlParameterSource()
-		.addValue("dataSetName", dataSetName)
-		.addValue("dataSetType", dataSetType.toString());
+		.addValue("dataSetName", dataSetName);
 		try {
 			return jdbcTemplate.queryForObject(
-				"select dataSetId from DataSet where name=:dataSetName and type=:dataSetType", 
+				"SELECT dataSetId, name, type from DataSet where name=:dataSetName limit 1", 
 				params, 
-				String.class);
-		} catch(EmptyResultDataAccessException emty) {
+				dataSetInfoRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
 		}
+	}
+	 
+	@Override
+	public String createDataSet(String dataSetName, DataSetType dataSetType) {
 		String dataSetId=idService.createShortUniqueId();
-		
-		params.addValue("dataSetId", dataSetId);
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("dataSetId", dataSetId)
+		.addValue("dataSetName", dataSetName)
+		.addValue("dataSetType", dataSetType.toString());
 		jdbcTemplate.update("insert into DataSet (dataSetId, name, type) values (:dataSetId, :dataSetName, :dataSetType)", params) ;
 		return dataSetId;
 	}
@@ -78,7 +85,7 @@ public class DataSetDaoImpl implements DataSetDao {
 			return jdbcTemplate.queryForObject(
 				"SELECT a.dataSetVersionId from ActiveDataSetVersion as a "+ 
 				"left join DataSet as d on a.dataSetId=d.dataSetId "+
-				"where d.name=:dataSetName", 
+				"where d.name=:dataSetName limit 1", 
 				params, 
 				String.class);
 		} catch(EmptyResultDataAccessException emty) {
@@ -90,13 +97,15 @@ public class DataSetDaoImpl implements DataSetDao {
 	public List<DataSetInfo> getDataSetNames() {
 		MapSqlParameterSource params=new MapSqlParameterSource();
 		return jdbcTemplate.query(
-			"SELECT name, type from DataSet order by name", 
+			"SELECT dataSetId, name, type from DataSet order by name", 
 			params, 
-			(ResultSet rs, int rowNumber) -> {
-				DataSetType type="LOOKUP".equals(rs.getString(2))?DataSetType.LOOKUP:DataSetType.SET;
-				return new DataSetInfo(rs.getString(1), type);
-			});
+			dataSetInfoRowMapper);
 	}
+	
+	private RowMapper<DataSetInfo> dataSetInfoRowMapper=(ResultSet rs, int rowNumber) -> {
+		DataSetType type=DataSetType.fromString(rs.getString(3));
+		return new DataSetInfo(rs.getString(1), rs.getString(2), type);
+	};
 
 	@Override
 	public void deleteDataSet(String dataSetName) {
@@ -140,7 +149,7 @@ public class DataSetDaoImpl implements DataSetDao {
 			"  SELECT a.dataSetVersionId from ActiveDataSetVersion as a "+ 
 			"  left join DataSet as d on a.dataSetId=d.dataSetId "+
 			"  where d.name=:dataSetName) "+
-			"and dataSetId=(select d2.dataSetId from DataSet as d2 where d2.name=:dataSetName)",
+			"and dataSetId in (select d2.dataSetId from DataSet as d2 where d2.name=:dataSetName)",
 			params
 		);
 	}
