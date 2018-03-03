@@ -11,6 +11,6 @@ public class BigFileSortCommand {
 	String outputFileExtension;
 	boolean keepFirstLine;
 	boolean removeTabs;
-	boolean onlySortOnFirstTab;
 	boolean removeEmptyLines=true;
+	boolean keepFirstTabUnique;
 }

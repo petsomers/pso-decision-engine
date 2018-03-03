@@ -180,7 +180,7 @@ export class FileUpload  extends React.Component {
 					<br /><br />
 					<i className="fas fa-bars"></i> &nbsp; <b>Upload Text File</b><br /><br />
 					<Picklist
-					  label="Select Data Set"
+					  label="Select LIST Data Set"
 					  selectedText=""
 						value={this.state.selectedDataSetName==null?"":this.state.selectedDataSetName}
 					  onValueChange={(value) => this.selectDataSet(value)}
@@ -209,7 +209,7 @@ export class FileUpload  extends React.Component {
 					<br /><br />
 					<i className="fas fa-th-list"></i> &nbsp; <b>Upload Text File</b><br /><br />
 					<Picklist
-						label="Select Data Set"
+						label="Select LOOKUP Data Set"
 						selectedText=""
 						value={this.state.selectedDataSetName==null?"":this.state.selectedDataSetName}
 						onValueChange={(value) => this.selectDataSet(value)}

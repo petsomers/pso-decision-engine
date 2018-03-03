@@ -46,7 +46,7 @@ public class DataSetServiceImpl implements DataSetService {
 		}
 		
 		String versionId=dataSetDao.createDataSetVersion(dataSetInfo.getId());
-		Path rawOutputFile=Paths.get(appConfig.getDataDirectory()+"/datasets/sets/", dataSetName, versionId+"_raw.txt");
+		Path rawOutputFile=Paths.get(appConfig.getDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, versionId+"_raw.txt");
 		rawOutputFile.toFile().getParentFile().mkdirs();
 		try (OutputStream out=Files.newOutputStream(rawOutputFile)) {
 			StreamUtils.copy(in, out);
@@ -56,9 +56,9 @@ public class DataSetServiceImpl implements DataSetService {
 		c.setInputFile(rawOutputFile);
 		c.setOutputFileName(versionId+"_temp");
 		c.setOutputFileExtension("txt");
-		c.setKeepFirstLine(false);
-		c.setOnlySortOnFirstTab(false);
-		c.setRemoveTabs(false);
+		c.setKeepFirstLine(dataSetType==DataSetType.LOOKUP);
+		c.setKeepFirstTabUnique(dataSetType==DataSetType.LOOKUP);
+		c.setRemoveTabs(dataSetType==DataSetType.LIST);
 		c.setRemoveEmptyLines(true);
 		Path tempOutFile=BigFileSort.sortAndRemoveDuplicates(c);
 		
@@ -97,11 +97,10 @@ public class DataSetServiceImpl implements DataSetService {
 			}
 		}
 */
-		Path outputFile=Paths.get(appConfig.getDataDirectory()+"/datasets/sets/", dataSetName, versionId+".txt");
-		
+		Path outputFile=Paths.get(appConfig.getDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, versionId+".txt");
 		
 		Files.move(tempOutFile, outputFile);
-		setActiveDataSet(dataSetName, versionId);
+		setActiveDataSet(dataSetName, dataSetType, versionId);
 
 		dataSetDao.uploadSet(versionId, Flux.fromStream(Files.lines(outputFile)));
 		dataSetDao.setActiveDataSetVersion(dataSetInfo.getId(), versionId);
@@ -112,8 +111,8 @@ public class DataSetServiceImpl implements DataSetService {
 		return result;
 	}
 	
-	private void setActiveDataSet(String dataSetName, String id) throws IOException {
-		Path activeIndicatorFile=Paths.get(appConfig.getDataDirectory()+"/datasets/sets/", dataSetName, "active.txt");
+	private void setActiveDataSet(String dataSetName, DataSetType dataSetType, String id) throws IOException {
+		Path activeIndicatorFile=Paths.get(appConfig.getDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, "active.txt");
 		Files.deleteIfExists(activeIndicatorFile);
 		Files.write(activeIndicatorFile, id.getBytes("UTF-8"));
 	}

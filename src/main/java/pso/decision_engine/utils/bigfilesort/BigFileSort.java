@@ -24,11 +24,11 @@ public class BigFileSort {
 	static public Path sortAndRemoveDuplicates(BigFileSortCommand c) throws IOException {
 		Path tempDir=Paths.get(c.getInputFile().getParent().toString(), "temp");
 		tempDir.toFile().mkdirs();
-		List<Path> files=split(c);
+		SplitFilesResult splitFilesResult=split(c);
 		ArrayList<BufferedReader> readers=new ArrayList<>();
 		ArrayList<LastLineStatus> lastLines=new ArrayList<>();
 		try {
-			for (Path f:files) {
+			for (Path f:splitFilesResult.getFiles()) {
 				BufferedReader reader=Files.newBufferedReader(f);
 				readers.add(reader);
 				LastLineStatus lls=new LastLineStatus();
@@ -38,6 +38,11 @@ public class BigFileSort {
 			}
 			Path outputFile=Paths.get(c.getInputFile().getParent().toString(), c.getOutputFileName()+"."+c.getOutputFileExtension());
 			try(BufferedWriter writer = Files.newBufferedWriter(outputFile, Charset.forName("UTF-8"))) {
+				if (splitFilesResult.getFirstLine()!=null) {
+					writer.write(splitFilesResult.getFirstLine());
+					writer.write("\r\n");
+				}
+				
 				String lastText=null;
 				MAINLOOP: while (true) {
 					getLastLines(lastLines);
@@ -58,11 +63,18 @@ public class BigFileSort {
 						break MAINLOOP;
 					}
 					lastLines.get(lowestIndex).setNeedNewLine(true);
-					if (lastText==null || !lastText.equals(lowestString)) {
+					
+					boolean duplicate=lastText!=null && lastText.equals(lowestString);
+					
+					if (!duplicate && lastText!=null && c.isKeepFirstTabUnique()) {
+						duplicate=areFirstTabsTheSame(lastText, lowestString);	
+					}
+					if (!duplicate) {
 						// remove duplicates
 						writer.write(lowestString);
 						writer.write("\r\n");
 					}
+					
 					lastText=lowestString;
 				}
 			}
@@ -102,32 +114,42 @@ public class BigFileSort {
  		}
 	}
 	
-	static private List<Path> split(BigFileSortCommand c) throws IOException {
+	@Data
+	static private class SplitFilesResult {
+		private List<Path> files;
+		private String firstLine=null;
+	}
+	static private SplitFilesResult split(BigFileSortCommand c) throws IOException {
+		SplitFilesResult result=new SplitFilesResult();
 		final SplitFileProgress sfp=new SplitFileProgress();
 		try (Stream<String> stream = Files.lines(c.getInputFile())) {
 			stream.forEach(line -> {
 				try {
-					if (sfp.getLineNumber()>0 && sfp.getLineNumber()%100000==0) {
-						Path outputFile=Paths.get(c.getInputFile().getParent().toString(), "temp", c.getOutputFileName()+"_"+sfp.getFileNumber()+"."+c.getOutputFileExtension());
-						if (sfp.getFileNumber()==0) {
-							outputFile.toFile().getParentFile().mkdirs();	
+					if (c.keepFirstLine && result.getFirstLine()==null) {
+						result.setFirstLine(line.trim());
+					} else {
+						if (sfp.getLineNumber()>0 && sfp.getLineNumber()%100000==0) {
+							Path outputFile=Paths.get(c.getInputFile().getParent().toString(), "temp", c.getOutputFileName()+"_"+sfp.getFileNumber()+"."+c.getOutputFileExtension());
+							if (sfp.getFileNumber()==0) {
+								outputFile.toFile().getParentFile().mkdirs();	
+							}
+							sfp.getFiles().add(outputFile);
+							sortAndWriteLinesToFile(c, outputFile, sfp.getLines());
+							sfp.setFileNumber(sfp.getFileNumber()+1);
+							sfp.setLines(new ArrayList<>());
 						}
-						sfp.getFiles().add(outputFile);
-						sortAndWriteLinesToFile(outputFile, sfp.getLines());
-						sfp.setFileNumber(sfp.getFileNumber()+1);
-						sfp.setLines(new ArrayList<>());
-					}
-					String l=line;
-					if (c.isRemoveTabs()) {
-						int tabIndex=line.indexOf('\t');
-						if (tabIndex>=0) {
-							l=l.substring(0, tabIndex);
+						String l=line;
+						if (c.isRemoveTabs()) {
+							int tabIndex=line.indexOf('\t');
+							if (tabIndex>=0) {
+								l=l.substring(0, tabIndex);
+							}
 						}
-					}
-					l=l.trim();
-					if (l.length()>0 || !c.isRemoveEmptyLines()) {
-						sfp.setLineNumber(sfp.getLineNumber()+1);
-						sfp.getLines().add(l);	
+						l=l.trim();
+						if (l.length()>0 || !c.isRemoveEmptyLines()) {
+							sfp.setLineNumber(sfp.getLineNumber()+1);
+							sfp.getLines().add(l);	
+						}
 					}
 				} catch (IOException ioe) {
 					throw new RuntimeException(ioe);
@@ -139,11 +161,12 @@ public class BigFileSort {
 			outputFile.toFile().getParentFile().mkdirs();	
 		}
 		sfp.getFiles().add(outputFile);
-		sortAndWriteLinesToFile(outputFile, sfp.getLines());
-		return sfp.getFiles();
+		sortAndWriteLinesToFile(c, outputFile, sfp.getLines());
+		result.setFiles(sfp.getFiles());
+		return result;
 	}
 	
-	static private void sortAndWriteLinesToFile(Path outputFile, List<String> lines) throws IOException {
+	static private void sortAndWriteLinesToFile(BigFileSortCommand c, Path outputFile, List<String> lines) throws IOException {
 		Collections.sort(lines);
 		try(final BufferedWriter writer = Files.newBufferedWriter(outputFile, Charset.forName("UTF-8"))) {
 			lines.stream().forEach(sortedline -> {
@@ -159,6 +182,18 @@ public class BigFileSort {
 	}
 	
 	
+	static private boolean areFirstTabsTheSame(String s1, String s2) {
+		int tabIndex1=s1.indexOf('\t');
+		if (tabIndex1>=0) {
+			s1=s1.substring(0, tabIndex1);
+		}
+		int tabIndex2=s2.indexOf('\t');
+		if (tabIndex2>=0) {
+			s2=s2.substring(0, tabIndex2);
+		}
+		return s1.equals(s2);
+	}
+	
 	static public void main(String[] args) throws IOException {
 		Path inputFile=Paths.get("C:/temp/decision_engine/testbigsort/partsfile-1.txt");
 		BigFileSortCommand c=new BigFileSortCommand();
@@ -166,7 +201,7 @@ public class BigFileSort {
 		c.setOutputFileName("partsfile-1-output");
 		c.setOutputFileExtension("txt");
 		c.setKeepFirstLine(false);
-		c.setOnlySortOnFirstTab(false);
+		c.setKeepFirstTabUnique(true);
 		c.setRemoveTabs(false);
 		c.setRemoveEmptyLines(true);
 		BigFileSort.sortAndRemoveDuplicates(c);
