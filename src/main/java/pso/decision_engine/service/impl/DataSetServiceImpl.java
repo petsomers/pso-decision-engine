@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import pso.decision_engine.persistence.DataSetDao;
 import pso.decision_engine.service.DataSetService;
 import pso.decision_engine.utils.bigfilesort.BigFileSort;
 import pso.decision_engine.utils.bigfilesort.BigFileSortCommand;
+import pso.decision_engine.utils.bigfilesort.BigFileSortResult;
 import reactor.core.publisher.Flux;
 
 @Service
@@ -56,11 +58,12 @@ public class DataSetServiceImpl implements DataSetService {
 		c.setInputFile(rawOutputFile);
 		c.setOutputFileName(versionId+"_temp");
 		c.setOutputFileExtension("txt");
-		c.setKeepFirstLine(dataSetType==DataSetType.LOOKUP);
+		c.setExtractHeaderLine(dataSetType==DataSetType.LOOKUP);
 		c.setKeepFirstTabUnique(dataSetType==DataSetType.LOOKUP);
 		c.setRemoveTabs(dataSetType==DataSetType.LIST);
 		c.setRemoveEmptyLines(true);
-		Path tempOutFile=BigFileSort.sortAndRemoveDuplicates(c);
+		BigFileSortResult bfsr=BigFileSort.sortAndRemoveDuplicates(c);
+		Path tempOutFile=bfsr.getOutputFile();
 		
 /*		
 		Path tempOutFile=Paths.get(appConfig.getDataDirectory()+"/datasets/sets/", dataSetName, versionId+"_temp.txt");
@@ -101,7 +104,15 @@ public class DataSetServiceImpl implements DataSetService {
 		
 		Files.move(tempOutFile, outputFile);
 		setActiveDataSet(dataSetName, dataSetType, versionId);
-
+		if (dataSetType==DataSetType.LOOKUP && bfsr.getHeaderLine()==null) {
+			result.setOk(false);
+			result.setErrorMessage("Empty file.");
+			return result;
+		}
+		if (bfsr.getHeaderLine()!=null) {
+			writeHeaderLine(dataSetName, dataSetType, versionId, bfsr.getHeaderLine());
+			dataSetDao.saveDataSetParameterNames(versionId, Arrays.asList(bfsr.getHeaderLine().split("\t")));
+		}		
 		dataSetDao.uploadDataSetKeys(versionId, Flux.fromStream(Files.lines(outputFile)));
 		dataSetDao.setActiveDataSetVersion(dataSetInfo.getId(), versionId);
 		dataSetDao.deleteInactiveDataSetVersions(dataSetName);
@@ -111,10 +122,15 @@ public class DataSetServiceImpl implements DataSetService {
 		return result;
 	}
 	
-	private void setActiveDataSet(String dataSetName, DataSetType dataSetType, String id) throws IOException {
+	private void setActiveDataSet(String dataSetName, DataSetType dataSetType, String versionId) throws IOException {
 		Path activeIndicatorFile=Paths.get(appConfig.getDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, "active.txt");
 		Files.deleteIfExists(activeIndicatorFile);
-		Files.write(activeIndicatorFile, id.getBytes("UTF-8"));
+		Files.write(activeIndicatorFile, versionId.getBytes("UTF-8"));
+	}
+	
+	private void writeHeaderLine(String dataSetName, DataSetType dataSetType, String versionId, String headerLine) throws IOException {
+		Path activeIndicatorFile=Paths.get(appConfig.getDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, versionId+"_header.txt");
+		Files.write(activeIndicatorFile, headerLine.getBytes("UTF-8"));
 	}
 
 	

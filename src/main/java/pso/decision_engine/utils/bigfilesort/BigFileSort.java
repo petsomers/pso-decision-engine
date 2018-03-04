@@ -21,7 +21,8 @@ import lombok.Data;
  */
 public class BigFileSort {
 	
-	static public Path sortAndRemoveDuplicates(BigFileSortCommand c) throws IOException {
+	static public BigFileSortResult sortAndRemoveDuplicates(BigFileSortCommand c) throws IOException {
+		final BigFileSortResult result=new BigFileSortResult();
 		Path tempDir=Paths.get(c.getInputFile().getParent().toString(), "temp");
 		tempDir.toFile().mkdirs();
 		SplitFilesResult splitFilesResult=split(c);
@@ -38,9 +39,8 @@ public class BigFileSort {
 			}
 			Path outputFile=Paths.get(c.getInputFile().getParent().toString(), c.getOutputFileName()+"."+c.getOutputFileExtension());
 			try(BufferedWriter writer = Files.newBufferedWriter(outputFile, Charset.forName("UTF-8"))) {
-				if (splitFilesResult.getFirstLine()!=null) {
-					writer.write(splitFilesResult.getFirstLine());
-					writer.write("\r\n");
+				if (c.isExtractHeaderLine() && splitFilesResult.getFirstLine()!=null) {
+					result.setHeaderLine(splitFilesResult.getFirstLine());
 				}
 				
 				String lastText=null;
@@ -78,7 +78,8 @@ public class BigFileSort {
 					lastText=lowestString;
 				}
 			}
-			return outputFile;
+			result.setOutputFile(outputFile);
+			return result;
 		} finally {
 			for (BufferedReader r:readers) {
 				try {r.close();} catch(Exception e) {;}
@@ -125,7 +126,7 @@ public class BigFileSort {
 		try (Stream<String> stream = Files.lines(c.getInputFile())) {
 			stream.forEach(line -> {
 				try {
-					if (c.keepFirstLine && result.getFirstLine()==null) {
+					if (c.extractHeaderLine && result.getFirstLine()==null) {
 						result.setFirstLine(line.trim());
 					} else {
 						if (sfp.getLineNumber()>0 && sfp.getLineNumber()%100000==0) {
@@ -200,7 +201,7 @@ public class BigFileSort {
 		c.setInputFile(inputFile);
 		c.setOutputFileName("partsfile-1-output");
 		c.setOutputFileExtension("txt");
-		c.setKeepFirstLine(false);
+		c.setExtractHeaderLine(false);
 		c.setKeepFirstTabUnique(true);
 		c.setRemoveTabs(false);
 		c.setRemoveEmptyLines(true);

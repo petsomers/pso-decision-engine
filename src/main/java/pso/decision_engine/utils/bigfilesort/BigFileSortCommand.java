@@ -9,7 +9,7 @@ public class BigFileSortCommand {
 	Path inputFile;
 	String outputFileName; 
 	String outputFileExtension;
-	boolean keepFirstLine;
+	boolean extractHeaderLine;
 	boolean removeTabs;
 	boolean removeEmptyLines=true;
 	boolean keepFirstTabUnique;
