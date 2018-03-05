@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.List;
+import java.util.StringJoiner;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -89,7 +90,7 @@ public class DataSetApi {
 		return dataSetService.getKeysFromActiveDataSet(dataSetName, fromKey, 70);
 	}
 	
-	@RequestMapping(value = "/download/{dataSetName}",method = RequestMethod.GET, produces = "application/octetstream")
+	@RequestMapping(value = "/download/LIST/{dataSetName}",method = RequestMethod.GET, produces = "application/octetstream")
 	public void downloadDataSet(@PathVariable String dataSetName, HttpServletResponse resp) throws IOException {
 		Flux<String> f=dataSetService.streamKeysFromActiveDataSet(dataSetName);
 		if (f==null) {
@@ -107,6 +108,35 @@ public class DataSetApi {
 			StringBuilder batch=new StringBuilder();
 			values.forEach(value -> {
 				batch.append(value);
+				batch.append("\r\n");
+			});
+			try {
+				ow.write(batch.toString());
+			} catch (IOException e) { // user cancelled the download => stop db query
+				throw new RuntimeException(e);
+			}
+		});
+		ow.flush();
+	}
+	
+	@RequestMapping(value = "/download/LOOKUP/{dataSetName}",method = RequestMethod.GET, produces = "application/octetstream")
+	public void downloadLookupDataSet(@PathVariable String dataSetName, HttpServletResponse resp) throws IOException {
+		Flux<String[]> f=dataSetService.streamRowsFromActiveLookupDataSet(dataSetName);
+		if (f==null) {
+			resp.sendError(404);
+			return;
+		}
+		resp.setHeader("pragma", "no-cache");
+		resp.setHeader( "Cache-Control","no-cache" );
+		resp.setHeader( "Cache-Control","no-store" );
+		resp.setDateHeader( "Expires", 0 );
+		resp.setContentType("application/octetstream");
+		resp.setHeader("Content-Disposition", "attachment; filename=\""+ dataSetName+".txt\"");
+		OutputStreamWriter ow=new OutputStreamWriter(resp.getOutputStream(), "UTF-8");
+		f.buffer(100).subscribe( values -> {
+			StringBuilder batch=new StringBuilder();
+			values.forEach(value -> {
+				batch.append(String.join("\t", value));
 				batch.append("\r\n");
 			});
 			try {

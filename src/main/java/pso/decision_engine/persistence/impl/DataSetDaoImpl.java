@@ -300,4 +300,35 @@ public class DataSetDaoImpl implements DataSetDao {
 		}
 		return result;
 	}
+
+	@Override
+	public Flux<String[]> streamDataSetRows(String dataSetVersionId, int valuesPerRow) {
+		return Flux.<String[]>create(emitter -> {
+			MapSqlParameterSource params=new MapSqlParameterSource()
+			.addValue("dataSetVersionId", dataSetVersionId);
+			int[] currentKeyId= {-1};
+			String[][] currentRow= { null };
+			jdbcTemplate.query(
+				"select keyId, valueId, value from DataSetValues where dataSetVersionId=:dataSetVersionId order by keyId, valueId",
+				params,
+				(ResultSet rs) -> {
+					int keyId=rs.getInt(1);
+					if (keyId!=currentKeyId[0]) {
+						if (currentRow[0]!=null) {
+							emitter.next(currentRow[0]);
+						}
+						currentKeyId[0]=keyId;
+						currentRow[0]=new String[valuesPerRow];
+					}
+					int valueId=rs.getInt(2);
+					if (valueId<valuesPerRow) {
+						currentRow[0][valueId]=rs.getString(3);
+					}
+				});
+			if (currentRow[0]!=null) {
+				emitter.next(currentRow[0]);
+			}
+			emitter.complete();
+		});
+	}
 }

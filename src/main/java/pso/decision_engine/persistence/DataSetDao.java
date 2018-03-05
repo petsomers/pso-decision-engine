@@ -45,5 +45,6 @@ public interface DataSetDao {
 
 	public List<String[]> getDataSetValues(String versionId, int valuesPerRow, String fromKey, int max);
 
+	public Flux<String[]> streamDataSetRows(String dataSetVersionId, int valuesPerRow);
 
 }

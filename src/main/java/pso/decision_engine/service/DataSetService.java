@@ -37,4 +37,6 @@ public interface DataSetService {
 	
 	public ScrollItems<String[]> getRowsForActiveLookupDataSet(String dataSetName, String fromKey, int max);
 
+	public Flux<String[]> streamRowsFromActiveLookupDataSet(String dataSetName);
+
 }

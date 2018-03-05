@@ -234,5 +234,16 @@ public class DataSetServiceImpl implements DataSetService {
 		}
 		return result;
 	}
+	
+	@Override
+	public Flux<String[]> streamRowsFromActiveLookupDataSet(String dataSetName) {
+		String dataSetVersionId=dataSetDao.getActiveDataSetVersionForDataSetName(dataSetName);
+		if (dataSetVersionId==null) return null;
+		int columnCount=dataSetDao.getDataSetParameterNames(dataSetVersionId).size();
+		if (columnCount==0) {
+			return null;
+		}
+		return dataSetDao.streamDataSetRows(dataSetVersionId, columnCount);
+	}
 
 }
