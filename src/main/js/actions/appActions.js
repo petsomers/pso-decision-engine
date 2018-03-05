@@ -117,16 +117,31 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		selectDataSet: (dataSetInfo) => {
 			dispatch({type: "SELECT_DATA_SET", payload: dataSetInfo});
-      dispatch({
-				type: "LOAD_DATA_SET_DATA",
-				payload: axios.get("dataset/keys/"+encodeURIComponent(dataSetInfo.name))
-			});
+			if (dataSetInfo.type=="LOOKUP") {
+				dispatch({
+					type: "LOAD_DATA_SET_DATA",
+					payload: axios.get("dataset/data/LOOKUP/"+encodeURIComponent(dataSetInfo.name))
+				});
+			} else {
+				// type = LIST
+				dispatch({
+					type: "LOAD_DATA_SET_KEYS",
+					payload: axios.get("dataset/keys/"+encodeURIComponent(dataSetInfo.name))
+				});
+			}
 		},
     loadMoreDataSetData: (dataSetInfo, fromKey) => {
-      dispatch({
-				type: "LOAD_MORE_DATA_SET_DATA",
-				payload: axios.get("dataset/keys/"+encodeURIComponent(dataSetInfo.name)+"?fromKey="+encodeURIComponent(fromKey))
-			});
+			if (dataSetInfo.type=="LOOKUP") {
+	      dispatch({
+					type: "LOAD_MORE_DATA_SET_DATA",
+					payload: axios.get("dataset/data/LOOKUP/"+encodeURIComponent(dataSetInfo.name)+"?fromKey="+encodeURIComponent(fromKey))
+				});
+			} else {
+				dispatch({
+					type: "LOAD_MORE_DATA_SET_KEYS",
+					payload: axios.get("dataset/keys/"+encodeURIComponent(dataSetInfo.name)+"?fromKey="+encodeURIComponent(fromKey))
+				});
+			}
     }
 	}
 };

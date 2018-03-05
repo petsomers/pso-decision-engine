@@ -170,7 +170,6 @@ public class DataSetDaoImpl implements DataSetDao {
 						.addValue("valueId", valueId[0]++)
 						.addValue("value", value));
 					}
-					valueId[0]++;
 				});
 		
 			});
@@ -178,39 +177,6 @@ public class DataSetDaoImpl implements DataSetDao {
 			jdbcTemplate.batchUpdate("INSERT INTO DataSetValues (dataSetVersionId, keyId, valueId, value) values (:dataSetVersionId, :keyId, :valueId, :value)", dbparams.toArray(new MapSqlParameterSource[0]));
 		});
 	}
-
-	/*
-	@Override
-	public void uploadDataSetKeysAndValues(String dataSetVersionId, int valuesPerRow, Flux<String> in) {
-		int[] keyId= {0};
-		in.buffer(1000/valuesPerRow).subscribe( lines -> {
-			ArrayList<MapSqlParameterSource> keyData=new ArrayList<>();
-			ArrayList<MapSqlParameterSource> valueData=new ArrayList<>();
-			
-			lines.forEach(line -> {
-				String[] lineItems=line.split("\t");
-				if (lineItems.length>0) {
-					String key=lineItems[0];
-					keyData.add(new MapSqlParameterSource()
-						.addValue("dataSetVersionId", dataSetVersionId)
-						.addValue("keyId", keyId[0])
-						.addValue("key", key));
-					
-					for (int i=0;i<valuesPerRow;i++) {
-						String value=i<lineItems.length?lineItems[i]:"";
-						valueData.add(new MapSqlParameterSource()
-							.addValue("dataSetVersionId", dataSetVersionId)
-							.addValue("keyId", keyId[0])
-							.addValue("valueId", i)
-							.addValue("value", value));
-					}
-					keyId[0]++;
-				}
-			});
-			jdbcTemplate.batchUpdate("INSERT INTO DataSetKeys (dataSetVersionId, keyId, key) values (:dataSetVersionId, :keyId, :key)", keyData.toArray(new MapSqlParameterSource[0]));
-		});
-	}
-	*/
 
 	@Override
 	public void deleteInactiveDataSetVersions(String dataSetName) {
@@ -278,14 +244,29 @@ public class DataSetDaoImpl implements DataSetDao {
 
 	@Override
 	public List<String[]> getDataSetValues(String dataSetVersionId, int valuesPerRow, String fromKey, int max) {
+		int fromKeyId=-1;
+		if (fromKey!=null) {
+			MapSqlParameterSource params=new MapSqlParameterSource()
+			.addValue("dataSetVersionId", dataSetVersionId)
+			.addValue("fromKey", fromKey);
+			try {
+				fromKeyId=jdbcTemplate.queryForObject("select keyId from DataSetKeys where dataSetVersionId=:dataSetVersionId and key=:fromKey", params, Integer.class);
+			} catch(EmptyResultDataAccessException ee) {
+				fromKeyId=-1;
+			}
+		}
+		
 		MapSqlParameterSource params=new MapSqlParameterSource()
 		.addValue("dataSetVersionId", dataSetVersionId)
-		.addValue("fromKey", fromKey)
+		.addValue("fromKeyId", fromKeyId)
 		.addValue("max", max);
 		ArrayList<String[]> result=new ArrayList<>();
 		int[] currentKeyId= { -1 };
 		String[][] currentRow= { null };
 		jdbcTemplate.query(
+			fromKeyId>=0?
+			"select keyId, valueId, value from DataSetValues where dataSetVersionId=:dataSetVersionId and keyId>:fromKeyId order by keyId, valueId limit :max"
+			:
 			"select keyId, valueId, value from DataSetValues where dataSetVersionId=:dataSetVersionId order by keyId, valueId limit :max",
 			params,
 			(ResultSet rs) -> {

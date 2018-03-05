@@ -183,7 +183,19 @@ const appReducer = (state = {
       mainScreen: "dataSetDetails"
     }
   break;
+  case "LOAD_DATA_SET_KEYS_PENDING":
   case "LOAD_DATA_SET_DATA_PENDING":
+    state = {
+      ...state,
+      dataSetData: {
+        ... state.dataSetData,
+        rows:[],
+        hasMore:false,
+        loading: true
+      }
+    }
+  break;
+  case "LOAD_MORE_DATA_SET_KEYS_PENDING":
   case "LOAD_MORE_DATA_SET_DATA_PENDING":
     state = {
       ...state,
@@ -193,6 +205,30 @@ const appReducer = (state = {
       }
     }
   break;
+  case "LOAD_DATA_SET_KEYS_FULFILLED":
+    state = {
+      ...state,
+      dataSetData: {
+        rows: action.payload.data.items,
+        hasMore: action.payload.data.hasMore,
+        loading: false
+      }
+    }
+  break;
+  case "LOAD_MORE_DATA_SET_KEYS_FULFILLED":
+    var incomingRows=action.payload.data.items;
+    state = {
+      ...state,
+      dataSetData: {
+        ... state.dataSetData,
+        hasMore: action.payload.data.hasMore,
+        loading: false,
+        rows: state.dataSetData.rows.concat(incomingRows)
+      }
+    }
+  break;
+
+
   case "LOAD_DATA_SET_DATA_FULFILLED":
     state = {
       ...state,
@@ -215,6 +251,7 @@ const appReducer = (state = {
       }
     }
   break;
+
   case "WINDOW_RESIZE":
     if (action.payload.height!=state.layout.windowHeight
       || action.payload.width!=state.layout.windowWidth) {

@@ -153,4 +153,16 @@ public class DataSetApi {
 		});
 		ow.flush();
 	}
+	
+	@RequestMapping(value = "/headers/LOOKUP/{dataSetName}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public List<String> headers(@PathVariable String dataSetName) {
+		return dataSetService.getParameterNamesForActiveDataSet(dataSetName);
+	}
+	
+	@RequestMapping(value = "/data/LOOKUP/{dataSetName}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public ScrollItems<String[]> dataForLookupDataSet(@PathVariable String dataSetName, @RequestParam(required=false) String fromKey) {
+		if (fromKey!=null && fromKey.trim().length()==0) fromKey=null;
+		return dataSetService.getRowsForActiveLookupDataSet(dataSetName, fromKey, 70);
+	}
+
 }
