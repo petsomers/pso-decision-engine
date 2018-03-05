@@ -59,29 +59,32 @@ export const DataSetDetails = ({selectedDataSetInfo, dataSetData, loadMoreDataSe
 				<div>
 				{dataSetData &&
 					<div>
+					<Table bordered>
 					{dataSetData.rows &&
-						<div>
+						<TableBody>
 							{dataSetData.rows.map((row, index) => (
-								<div key={index}>{row}</div>
+								<TableRow key={"key"+index}>
+									<TableRowColumn>{row}</TableRowColumn>
+								</TableRow>
 							))}
-							</div>
+						</TableBody>
 						}
+					</Table>
 					</div>
-					}
-
-					{dataSetData.hasMore && !dataSetData.loading &&
-						<div style={{padding: "20px"}}>
-							<Button type="neutral" onClick={() => loadMoreDataSetData(selectedDataSetInfo, dataSetData.rows[dataSetData.rows.length-1])} icon="more" iconAlign="left" label="Load More" />
-						</div>
-					}
-				</div>
 				}
-				{dataSetData.loading &&
+
+				{dataSetData.hasMore && !dataSetData.loading &&
 					<div style={{padding: "20px"}}>
-						<i className="fas fa-spinner fa-spin"></i>
+						<Button type="neutral" onClick={() => loadMoreDataSetData(selectedDataSetInfo, dataSetData.rows[dataSetData.rows.length-1])} icon="more" iconAlign="left" label="Load More" />
 					</div>
 				}
-
+				</div>
+			}
+			{dataSetData.loading &&
+				<div style={{padding: "20px"}}>
+					<i className="fas fa-spinner fa-spin"></i>
+				</div>
+			}
   	</div>
    );
 }
