@@ -30,7 +30,7 @@ class App extends React.Component {
 	}
 
 	downloadDataSet(dataSetInfo) {
-		window.location.href="dataset/download/"+encodeURIComponent(dataSetInfo.name);
+		window.location.href="dataset/download/"+dataSetInfo.type+"/"+encodeURIComponent(dataSetInfo.name);
 	}
 
 	handleResize = ({ width, height }) => this.props.onWindowResize(width, height);

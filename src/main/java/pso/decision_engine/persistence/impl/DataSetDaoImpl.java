@@ -154,6 +154,13 @@ public class DataSetDaoImpl implements DataSetDao {
 					.addValue("keyId", row.getKeyId())
 					.addValue("key", row.getKey());
 				
+				// key is also the first value of a row
+				dbparams.add(new MapSqlParameterSource()
+					.addValue("dataSetVersionId", dataSetVersionId)
+					.addValue("keyId", row.getKeyId())
+					.addValue("valueId", 0)
+					.addValue("value", row.getKey()));
+				
 				int[] valueId= {1}; // start from 1.
 				row.getValues().forEach(value -> {
 					if (value!=null && !value.isEmpty()) {

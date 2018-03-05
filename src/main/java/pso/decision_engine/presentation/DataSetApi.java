@@ -126,17 +126,23 @@ public class DataSetApi {
 			resp.sendError(404);
 			return;
 		}
+		List<String> columnHeaders=dataSetService.getParameterNamesForActiveDataSet(dataSetName);
 		resp.setHeader("pragma", "no-cache");
 		resp.setHeader( "Cache-Control","no-cache" );
 		resp.setHeader( "Cache-Control","no-store" );
 		resp.setDateHeader( "Expires", 0 );
 		resp.setContentType("application/octetstream");
 		resp.setHeader("Content-Disposition", "attachment; filename=\""+ dataSetName+".txt\"");
+		
+		// write header row
 		OutputStreamWriter ow=new OutputStreamWriter(resp.getOutputStream(), "UTF-8");
-		f.buffer(100).subscribe( values -> {
+		ow.write(String.join("\t", columnHeaders));
+		ow.write("\r\n");
+
+		f.buffer(100).subscribe( rows -> {
 			StringBuilder batch=new StringBuilder();
-			values.forEach(value -> {
-				batch.append(String.join("\t", value));
+			rows.forEach(row -> {
+				batch.append(String.join("\t", row));
 				batch.append("\r\n");
 			});
 			try {
