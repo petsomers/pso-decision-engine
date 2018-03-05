@@ -119,6 +119,10 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({type: "SELECT_DATA_SET", payload: dataSetInfo});
 			if (dataSetInfo.type=="LOOKUP") {
 				dispatch({
+					type: "LOAD_DATA_SET_DATA_HEADERS",
+					payload: axios.get("dataset/headers/LOOKUP/"+encodeURIComponent(dataSetInfo.name))
+				});
+				dispatch({
 					type: "LOAD_DATA_SET_DATA",
 					payload: axios.get("dataset/data/LOOKUP/"+encodeURIComponent(dataSetInfo.name))
 				});

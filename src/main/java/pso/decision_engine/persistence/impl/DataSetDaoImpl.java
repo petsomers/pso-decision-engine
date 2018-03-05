@@ -259,15 +259,16 @@ public class DataSetDaoImpl implements DataSetDao {
 		MapSqlParameterSource params=new MapSqlParameterSource()
 		.addValue("dataSetVersionId", dataSetVersionId)
 		.addValue("fromKeyId", fromKeyId)
-		.addValue("max", max);
+		.addValue("max", max*valuesPerRow)
+		.addValue("valuesPerRow", valuesPerRow);
 		ArrayList<String[]> result=new ArrayList<>();
 		int[] currentKeyId= { -1 };
 		String[][] currentRow= { null };
 		jdbcTemplate.query(
 			fromKeyId>=0?
-			"select keyId, valueId, value from DataSetValues where dataSetVersionId=:dataSetVersionId and keyId>:fromKeyId order by keyId, valueId limit :max"
+			"select keyId, valueId, value from DataSetValues where dataSetVersionId=:dataSetVersionId and keyId>:fromKeyId and valueId<:valuesPerRow order by keyId, valueId limit :max"
 			:
-			"select keyId, valueId, value from DataSetValues where dataSetVersionId=:dataSetVersionId order by keyId, valueId limit :max",
+			"select keyId, valueId, value from DataSetValues where dataSetVersionId=:dataSetVersionId and valueId<:valuesPerRow order by keyId, valueId limit :max",
 			params,
 			(ResultSet rs) -> {
 				int keyId=rs.getInt(1);

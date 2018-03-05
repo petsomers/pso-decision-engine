@@ -21,6 +21,7 @@ const appReducer = (state = {
   dataSets: [],
   selectedDataSetInfo: null,
   dataSetData: {
+    headers: [],
     rows: [],
     hasMore: false,
     loading: false
@@ -189,6 +190,7 @@ const appReducer = (state = {
       ...state,
       dataSetData: {
         ... state.dataSetData,
+        headers: [],
         rows:[],
         hasMore:false,
         loading: true
@@ -227,12 +229,21 @@ const appReducer = (state = {
       }
     }
   break;
-
+  case "LOAD_DATA_SET_DATA_HEADERS_FULFILLED":
+  state = {
+    ...state,
+    dataSetData: {
+      ... state.dataSetData,
+      headers: action.payload.data
+    }
+  }
+  break;
 
   case "LOAD_DATA_SET_DATA_FULFILLED":
     state = {
       ...state,
       dataSetData: {
+        ... state.dataSetData,
         rows: action.payload.data.items,
         hasMore: action.payload.data.hasMore,
         loading: false
