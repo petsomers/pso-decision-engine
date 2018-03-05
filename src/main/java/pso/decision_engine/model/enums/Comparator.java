@@ -13,5 +13,6 @@ public enum Comparator {
 	STARTS_WITH, 
 	CONTAINS, 
 	ENDS_WITH,
-	ALWAYS
+	ALWAYS,
+	LOOKUP
 }
