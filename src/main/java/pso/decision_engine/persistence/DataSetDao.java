@@ -37,7 +37,7 @@ public interface DataSetDao {
 
 	public void saveDataSetParameterNames(String dataSetVersionId, List<String> parameterNames);
 	
-	public List<String> getDataSetParameterNames(String dataSetVersionId, List<String> parameterNames);
+	public List<String> getDataSetParameterNames(String dataSetVersionId);
 	
 	// public void uploadDataSetKeysAndValues(String dataSetVersionId, int valuesPerRow, Flux<String> in);
 	

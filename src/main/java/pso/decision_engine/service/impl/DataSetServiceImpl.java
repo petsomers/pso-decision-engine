@@ -130,6 +130,7 @@ public class DataSetServiceImpl implements DataSetService {
 					ParameterValuesRow row=new ParameterValuesRow();
 					row.setKeyId(keyId[0]++);
 					row.setKey(key);
+					row.setValues(values);
 					return row;
 				})
 			);
@@ -198,6 +199,40 @@ public class DataSetServiceImpl implements DataSetService {
 		String dataSetVersionId=dataSetDao.getActiveDataSetVersionForDataSetName(dataSetName);
 		if (dataSetVersionId==null) return null;
 		return dataSetDao.streamDataSetKeys(dataSetVersionId);
+	}
+	
+	@Override
+	public List<String> getParameterNamesForActiveDataSet(String dataSetName)  {
+		String versionId=dataSetDao.getActiveDataSetVersionForDataSetName(dataSetName);
+		if (versionId==null) {
+			return new ArrayList<>();
+		}
+		return dataSetDao.getDataSetParameterNames(versionId);
+	}
+	
+	@Override
+	public ScrollItems<String[]> getRowsForActiveLookupDataSet(String dataSetName, String fromKey, int max) {
+		ScrollItems<String[]> result=new ScrollItems<>();
+		String versionId=dataSetDao.getActiveDataSetVersionForDataSetName(dataSetName);
+		if (versionId==null) {
+			result.setItems(new ArrayList<>());
+			result.setHasMore(false);
+			return result;
+		}
+		int columnCount=dataSetDao.getDataSetParameterNames(versionId).size();
+		if (columnCount==0) {
+			result.setItems(new ArrayList<>());
+			result.setHasMore(false);
+			return result;
+		}
+		List<String[]> rows=dataSetDao.getDataSetValues(versionId, columnCount, fromKey, max+1);
+		
+		result.setItems(rows);
+		if (result.getItems().size()>max) {
+			result.setHasMore(true);
+			result.getItems().remove(result.getItems().size()-1);
+		}
+		return result;
 	}
 
 }

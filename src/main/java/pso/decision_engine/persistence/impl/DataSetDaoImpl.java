@@ -260,7 +260,7 @@ public class DataSetDaoImpl implements DataSetDao {
 	}
 	
 	@Override
-	public List<String> getDataSetParameterNames(String dataSetVersionId, List<String> parameterNames) {
+	public List<String> getDataSetParameterNames(String dataSetVersionId) {
 		MapSqlParameterSource params=new MapSqlParameterSource()
 		.addValue("dataSetVersionId", dataSetVersionId);
 		return jdbcTemplate.query(

@@ -33,4 +33,8 @@ public interface DataSetService {
 	
 	public Flux<String> streamKeysFromActiveDataSet(String dataSetName);
 
+	public List<String> getParameterNamesForActiveDataSet(String dataSetName);
+	
+	public ScrollItems<String[]> getRowsForActiveLookupDataSet(String dataSetName, String fromKey, int max);
+
 }
