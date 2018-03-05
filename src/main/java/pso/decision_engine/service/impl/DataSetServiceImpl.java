@@ -17,6 +17,7 @@ import org.springframework.util.StreamUtils;
 import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.DataSetInfo;
 import pso.decision_engine.model.DataSetUploadResult;
+import pso.decision_engine.model.ParameterValuesRow;
 import pso.decision_engine.model.ScrollItems;
 import pso.decision_engine.model.enums.DataSetType;
 import pso.decision_engine.persistence.DataSetDao;
@@ -111,9 +112,33 @@ public class DataSetServiceImpl implements DataSetService {
 		}
 		if (bfsr.getHeaderLine()!=null) {
 			writeHeaderLine(dataSetName, dataSetType, versionId, bfsr.getHeaderLine());
-			dataSetDao.saveDataSetParameterNames(versionId, Arrays.asList(bfsr.getHeaderLine().split("\t")));
-		}		
-		dataSetDao.uploadDataSetKeys(versionId, Flux.fromStream(Files.lines(outputFile)));
+			List<String> parameterNames=Arrays.asList(bfsr.getHeaderLine().split("\t"));
+			dataSetDao.saveDataSetParameterNames(versionId, parameterNames);
+			int[] keyId= {0};
+			dataSetDao.uploadDataSetKeysAndValues(versionId, 
+				Flux
+				.fromStream(Files.lines(outputFile))
+				.map(line -> {
+					String[]lineItems=line.split("\t");
+					if (lineItems.length==0)
+						return null;
+					String key=lineItems[0];
+					ArrayList<String> values=new ArrayList<>(lineItems.length-1);
+					for (int i=1;i<lineItems.length;i++) {
+						values.add(lineItems[i]);
+					}
+					ParameterValuesRow row=new ParameterValuesRow();
+					row.setKeyId(keyId[0]++);
+					row.setKey(key);
+					return row;
+				})
+			);
+			
+		} else {
+			dataSetDao.uploadDataSetKeys(versionId, Flux.fromStream(Files.lines(outputFile)));	
+		}
+		
+		
 		dataSetDao.setActiveDataSetVersion(dataSetInfo.getId(), versionId);
 		dataSetDao.deleteInactiveDataSetVersions(dataSetName);
 		result.setOk(true);
@@ -170,9 +195,9 @@ public class DataSetServiceImpl implements DataSetService {
 
 	@Override
 	public Flux<String> streamKeysFromActiveDataSet(String dataSetName) {
-		String versionId=dataSetDao.getActiveDataSetVersionForDataSetName(dataSetName);
-		if (versionId==null) return null;
-		return dataSetDao.streamKeysFromActiveDataSet(versionId);
+		String dataSetVersionId=dataSetDao.getActiveDataSetVersionForDataSetName(dataSetName);
+		if (dataSetVersionId==null) return null;
+		return dataSetDao.streamDataSetKeys(dataSetVersionId);
 	}
 
 }

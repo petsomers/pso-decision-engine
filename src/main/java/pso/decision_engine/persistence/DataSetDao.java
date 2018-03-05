@@ -28,14 +28,22 @@ public interface DataSetDao {
 	
 	public void uploadDataSetKeys(String dataSetVersionId, Flux<String> in);
 	
+	
 	public void deleteInactiveDataSetVersions(String dataSetName);
 
 	public List<String> getKeyListFrom(String dataSetVersionId, String fromKey, int max);
 
-	public Flux<String> streamKeysFromActiveDataSet(String versionId);
+	public Flux<String> streamDataSetKeys(String dataSetVersionId);
 
 	public void saveDataSetParameterNames(String dataSetVersionId, List<String> parameterNames);
 	
-	public void uploadDataSetValues(String dataSetVersionId, Flux<ParameterValuesRow> in);
+	public List<String> getDataSetParameterNames(String dataSetVersionId, List<String> parameterNames);
+	
+	// public void uploadDataSetKeysAndValues(String dataSetVersionId, int valuesPerRow, Flux<String> in);
+	
+	public void uploadDataSetKeysAndValues(String dataSetVersionId, Flux<ParameterValuesRow> in);
+
+	public List<String[]> getDataSetValues(String versionId, int valuesPerRow, String fromKey, int max);
+
 
 }
