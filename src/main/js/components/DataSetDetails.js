@@ -61,26 +61,27 @@ export class  DataSetDetails extends React.Component {
 			</div>
 			{selectedDataSetInfo.type=="LOOKUP" && dataSetData.headers.length>0 &&
 				<div>
+				{dataSetData.rows && dataSetData.rows.length>0 &&
 				<Table bordered>
-					<TableHeader>
+					<TableBody>
 						<TableRow>
-							{dataSetData.headers.map((headerName, indexh) => (
-								<TableHeaderColumn key={"column"+indexh}><b>{headerName}</b></TableHeaderColumn>
+						{dataSetData.headers.map((headerName, indexh) => (
+							<TableRowColumn key={"column"+indexh}><b>{headerName}</b></TableRowColumn>
+						))}
+						</TableRow>
+					{dataSetData.rows.map((row, index) => (
+						<TableRow key={"key"+index}>
+							{row.map((colvalue, index2) => (
+							<TableRowColumn key={"val_"+index+"_"+index2}>{colvalue}</TableRowColumn>
 							))}
 						</TableRow>
-					</TableHeader>
-					{dataSetData.rows && dataSetData.rows.length>0 &&
-					<TableBody>
-						{dataSetData.rows.map((row, index) => (
-							<TableRow key={"key"+index}>
-								{row.map((colvalue, index2) => (
-								<TableRowColumn key={"val_"+index+"_"+index2}>{colvalue}</TableRowColumn>
-							))}
-							</TableRow>
-						))}
+					))}
 					</TableBody>
-					}
 				</Table>
+				}
+				{selectedDataSetInfo.type=="LOOKUP" && dataSetData.headers.length>0 &&
+					<div><i>No data.</i></div>
+				}
 				{dataSetData.hasMore && !dataSetData.loading &&
 					<div style={{padding: "20px"}}>
 						<Button type="neutral" onClick={() => this.props.loadMoreDataSetData(selectedDataSetInfo, dataSetData.rows[dataSetData.rows.length-1][0])} icon="more" iconAlign="left" label="Load More" />

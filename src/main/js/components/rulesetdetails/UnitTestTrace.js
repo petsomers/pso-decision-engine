@@ -45,6 +45,15 @@ export const UnitTestTrace = ({runData}) => {
               }
             </td>
           </tr>
+          {t.info && t.info.length>0 &&
+            <tr>
+              <td colSpan="2">
+                {t.info.map((info, infoIndex) => (
+                  <div style={{paddingLeft: "20px"}} key={"tr"+tracenr+"info"+infoIndex}><i>{info}</i></div>
+                ))}
+              </td>
+            </tr>
+          }
           <tr>
             {t.result==t.rule.positiveResult?(
               <td style={tdResultMatchStyle}>
