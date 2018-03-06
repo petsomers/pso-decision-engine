@@ -339,8 +339,8 @@ public class DataSetDaoImpl implements DataSetDao {
 			"where "+
 			"dv.datasetversionid=:dataSetVersionId "+
 			"and dk.key=:key "+
-			"and valueId>0 "+
-			"order by valueId",
+			"and dv.valueId>0 "+
+			"order by dv.valueId",
 			params,
 			(ResultSet rs) -> {
 				result.put(rs.getString(1), rs.getString(2));
