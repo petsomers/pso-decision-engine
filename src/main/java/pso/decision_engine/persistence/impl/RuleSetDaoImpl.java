@@ -10,6 +10,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -183,6 +184,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		}
 	}
 	
+	@Cacheable(value="ruleSets", key="#ruleSetId")
 	@Override
 	public RuleSet getRuleSet(String ruleSetId) {
 		RuleSet ruleSet=null;
@@ -231,6 +233,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		}
 	}
 	
+	@Cacheable(value="ruleSetParameters", key="#ruleSetId")
 	@Override
 	public Hashtable<String, InputParameterInfo> getRuleSetInputParameters(String ruleSetId) {
 		final Hashtable<String, InputParameterInfo> result=new Hashtable<>();
@@ -281,6 +284,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		return result;
 	}
 	
+	@Cacheable(value="ruleSetUnitTests", key="#ruleSetId")
 	@Override
 	public List<UnitTest> getRuleSetUnitTests(String ruleSetId) {
 		final int[] currentUnitTestId=new int[] {-1};

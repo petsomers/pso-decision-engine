@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -233,6 +234,7 @@ public class DataSetDaoImpl implements DataSetDao {
 		jdbcTemplate.batchUpdate("INSERT INTO DataSetValueNames (dataSetVersionId, valueId, name) values (:dataSetVersionId, :valueId, :name)", items);
 	}
 	
+	@Cacheable(value="dataSetParameterNames", key="#dataSetVersionId")
 	@Override
 	public List<String> getDataSetParameterNames(String dataSetVersionId) {
 		MapSqlParameterSource params=new MapSqlParameterSource()

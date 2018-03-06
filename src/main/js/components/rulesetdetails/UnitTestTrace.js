@@ -49,7 +49,7 @@ export const UnitTestTrace = ({runData}) => {
             <tr>
               <td colSpan="2">
                 {t.info.map((info, infoIndex) => (
-                  <div style={{paddingLeft: "20px"}} key={"tr"+tracenr+"info"+infoIndex}><i>{info}</i></div>
+                  <div style={{paddingLeft: "40px"}} key={"tr"+tracenr+"info"+infoIndex}><i>{info}</i></div>
                 ))}
               </td>
             </tr>
