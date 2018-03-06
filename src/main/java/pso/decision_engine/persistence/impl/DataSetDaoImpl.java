@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -319,5 +320,31 @@ public class DataSetDaoImpl implements DataSetDao {
 			}
 			emitter.complete();
 		});
+	}
+	
+	@Override
+	public HashMap<String, String> getDataSetLookupRow(String dataSetVersionId, String key) {
+		final HashMap<String, String> result=new HashMap<>();
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("dataSetVersionId", dataSetVersionId)
+		.addValue("key", key);
+		jdbcTemplate.query(
+			"SELECT name, value from DataSetValues as dv "+
+			"left join  DataSetKeys as dk "+
+			"on dk.datasetversionid=dv.datasetversionid "+
+			"and dk.keyId=dv.keyId "+
+			"left join DataSetValueNames dn "+
+			"on dv.datasetversionid=dv.datasetversionid "+
+			"and dv.valueId=dn.valueId "+
+			"where "+
+			"dv.datasetversionid=:dataSetVersionId "+
+			"and dk.key=:key "+
+			"and valueId>0 "+
+			"order by valueId",
+			params,
+			(ResultSet rs) -> {
+				result.put(rs.getString(1), rs.getString(2));
+			});
+		return result;
 	}
 }

@@ -1,5 +1,6 @@
 package pso.decision_engine.persistence;
 
+import java.util.HashMap;
 import java.util.List;
 
 import pso.decision_engine.model.DataSetInfo;
@@ -46,5 +47,7 @@ public interface DataSetDao {
 	public List<String[]> getDataSetValues(String versionId, int valuesPerRow, String fromKey, int max);
 
 	public Flux<String[]> streamDataSetRows(String dataSetVersionId, int valuesPerRow);
+
+	public HashMap<String, String> getDataSetLookupRow(String dataSetVersionId, String key);
 
 }

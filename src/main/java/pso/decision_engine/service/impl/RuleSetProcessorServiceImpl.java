@@ -146,7 +146,8 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 	
 	private DecimalFormat df=new DecimalFormat("#.###");
 	private Boolean evaluateRule(RuleSet rs, Rule r, HashMap<String, Object> parameters, DecisionTraceElement dte) {
-		if (Comparator.ALWAYS==r.getComparator()) {
+		Comparator c=r.getComparator();
+		if (Comparator.ALWAYS==c) {
 			return true;
 		}
 		InputParameterInfo inputParameterInfo=rs.getInputParameters().get(r.getParameterName());
@@ -162,24 +163,20 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 		Object parameterValue=parameters.get(r.getParameterName());
 		dte.setParameterValue(String.valueOf(parameterValue));
 		Boolean evalResult=null;
-		if (r.getComparator()==Comparator.IN_LIST) {
+		if (c==Comparator.IN_LIST || c==Comparator.NOT_IN_LIST) {
 			String strparameterValue=
 				type==ParameterType.TEXT?(String)parameterValue:
 					type==ParameterType.INTEGER?
 						String.valueOf(parameterValue):
 							df.format((Double)parameterValue);
-			return setupApiService.isInList(rs, r.getValue1(), strparameterValue);
+			boolean inList=setupApiService.isInList(rs, r.getValue1(), strparameterValue);
+			return c==Comparator.IN_LIST?inList:!inList;
 		}
-		if (r.getComparator()==Comparator.NOT_IN_LIST) {
-			String strparameterValue=
-					type==ParameterType.TEXT?(String)parameterValue:
-						type==ParameterType.INTEGER?
-							String.valueOf(parameterValue):
-								df.format((Double)parameterValue);
-			return !setupApiService.isInList(rs, r.getValue1(), strparameterValue);
+		if (c==Comparator.LOOKUP) {
+			
 		}
 		switch(type) {
-			case TEXT: evalResult=compare(rs, (String)parameterValue, r.getComparator(), r.getValue1(), r.getValue2());break;
+			case TEXT: evalResult=compare(rs, (String)parameterValue, c, r.getValue1(), r.getValue2());break;
 			case INTEGER: 
 				Integer ivalue1=null;
 				Integer ivalue2=null;
@@ -187,7 +184,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 					ivalue1=Integer.parseInt(r.getValue1());
 					ivalue2=Integer.parseInt(r.getValue2());
 				} catch (NumberFormatException nfe) {};
-				evalResult=compare(rs, (Integer)parameterValue, r.getComparator(), ivalue1, ivalue2);break;
+				evalResult=compare(rs, (Integer)parameterValue, c, ivalue1, ivalue2);break;
 			case DECIMAL: 
 				Double dvalue1=null;
 				Double dvalue2=null;
@@ -195,7 +192,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 					dvalue1=Double.parseDouble(r.getValue1());
 					dvalue2=Double.parseDouble(r.getValue2());
 				} catch (NumberFormatException nfe) {};
-				evalResult=compare(rs, (Double)parameterValue, r.getComparator(), dvalue1, dvalue2);break;
+				evalResult=compare(rs, (Double)parameterValue, c, dvalue1, dvalue2);break;
 		}
 		return evalResult;
 	}

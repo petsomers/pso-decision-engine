@@ -21,6 +21,7 @@ public class ComparatorHelper {
 			case "CONTAINS": return Comparator.CONTAINS;
 			case "ENDS WITH": return Comparator.ENDS_WITH;
 			case "ALWAYS": return Comparator.ALWAYS;
+			case "LOOKUP": return Comparator.LOOKUP;
 			default: return null;
 			
 		}
@@ -42,6 +43,7 @@ public class ComparatorHelper {
 			case CONTAINS: return "CONTAINS";
 			case ENDS_WITH: return "ENDS WITH";
 			case ALWAYS: return "ALWAYS";
+			case LOOKUP: return "LOOKUP";
 			default: return null;
 		}
 	}

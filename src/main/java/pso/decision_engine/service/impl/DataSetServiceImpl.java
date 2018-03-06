@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.util.StreamUtils;
 
 import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.DataSetInfo;
+import pso.decision_engine.model.DataSetLookupResult;
 import pso.decision_engine.model.DataSetUploadResult;
 import pso.decision_engine.model.ParameterValuesRow;
 import pso.decision_engine.model.ScrollItems;
@@ -244,6 +246,16 @@ public class DataSetServiceImpl implements DataSetService {
 			return null;
 		}
 		return dataSetDao.streamDataSetRows(dataSetVersionId, columnCount);
+	}
+	
+	public DataSetLookupResult lookup(String dataSetName, String key) {
+		String dataSetVersionId=dataSetDao.getActiveDataSetVersionForDataSetName(dataSetName);
+		DataSetLookupResult result=new DataSetLookupResult();
+		if (dataSetVersionId==null) return result;
+		result.setDataSetFound(true);
+		result.setValues(dataSetDao.getDataSetLookupRow(dataSetVersionId, key));
+		result.setKeyFound(result.getValues().size()>0);
+		return result;
 	}
 
 }
