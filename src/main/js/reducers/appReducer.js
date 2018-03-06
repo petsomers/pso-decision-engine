@@ -262,7 +262,35 @@ const appReducer = (state = {
       }
     }
   break;
+  case "DELETE_DATA_SET_PENDING":
+    state = {
+      ...state,
+      dataSetData: {
+        headers: [], rows: [], hasMore: false, loading: true
+      }
+    }
+  break;
+  case "DELETE_DATA_SET_FULFILLED":
+    // remove version from versionlist
+    var pos=-1;
+    state.dataSets.map((dataSet, index) => {
+      if (state.selectedDataSetInfo.name==dataSet.name) {
+        pos=index;
+      }
+    })
+    if (pos>-1) {
+      state.dataSets.splice(pos,1);
+    }
+    state = {
+      ...state,
+      mainScreen: "welcome",
+      selectedDataSetInfo: null,
+      dataSetData: {
+        headers: [], rows: [], hasMore: false, loading: false
+      }
+    }
 
+  break;
   case "WINDOW_RESIZE":
     if (action.payload.height!=state.layout.windowHeight
       || action.payload.width!=state.layout.windowWidth) {

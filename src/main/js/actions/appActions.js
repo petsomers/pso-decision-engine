@@ -146,7 +146,13 @@ const mapDispatchToProps = (dispatch) => {
 					payload: axios.get("dataset/keys/"+encodeURIComponent(dataSetInfo.name)+"?fromKey="+encodeURIComponent(fromKey))
 				});
 			}
-    }
+    },
+		deleteDataSet: (dataSetInfo) => {
+			dispatch({
+				type: "DELETE_DATA_SET",
+				payload: axios.get("dataset/delete/"+encodeURIComponent(dataSetInfo.name))
+			});
+		}
 	}
 };
 

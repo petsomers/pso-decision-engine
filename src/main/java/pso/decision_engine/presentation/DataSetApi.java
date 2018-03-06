@@ -164,5 +164,12 @@ public class DataSetApi {
 		if (fromKey!=null && fromKey.trim().length()==0) fromKey=null;
 		return dataSetService.getRowsForActiveLookupDataSet(dataSetName, fromKey, 70);
 	}
+	
+	
+	@RequestMapping(value = "/delete/{dataSetName}",method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	public void delete(@PathVariable String dataSetName) {
+		dataSetService.deleteDataSet(dataSetName);
+	}
+
 
 }

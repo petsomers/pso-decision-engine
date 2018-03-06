@@ -92,6 +92,7 @@ class App extends React.Component {
 							dataSetData={this.props.dataSetData}
 							loadMoreDataSetData={(dataSetInfo, fromKey) => this.props.loadMoreDataSetData(dataSetInfo, fromKey)}
 							downloadDataSet={(dataSetInfo) => this.downloadDataSet(dataSetInfo)}
+							deleteDataSet={(dataSetInfo) => this.props.deleteDataSet(dataSetInfo)}
 						/>
 					}
 					{this.props.inProgress &&
@@ -142,7 +143,8 @@ const mapStateToProps = (state) => {
 		errorMessage: state.appReducer.errorMessage,
 		infoMessage: state.appReducer.infoMessage,
 		dataSetData: state.appReducer.dataSetData,
-		loadMoreDataSetData: state.appReducer.loadMoreDataSetData
+		loadMoreDataSetData: state.appReducer.loadMoreDataSetData,
+		deleteDataSet: state.appReducer.deleteDataSet
   };
 };
 
