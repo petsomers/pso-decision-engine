@@ -5,10 +5,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pso.decision_engine.model.DataSetLookupResult;
 import pso.decision_engine.model.DecisionResult;
 import pso.decision_engine.model.DecisionTrace;
 import pso.decision_engine.model.DecisionTraceElement;
@@ -19,6 +21,7 @@ import pso.decision_engine.model.UnitTestResult;
 import pso.decision_engine.model.UnitTestRunnerResult;
 import pso.decision_engine.model.enums.Comparator;
 import pso.decision_engine.model.enums.ParameterType;
+import pso.decision_engine.service.DataSetService;
 import pso.decision_engine.service.RuleSetProcessorService;
 import pso.decision_engine.service.SetupApiService;
 
@@ -29,6 +32,9 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 	
 	@Autowired
 	private SetupApiService setupApiService;
+	
+	@Autowired
+	private DataSetService dataSetService;
 	
 	@Override
 	public DecisionResult runRuleSetWithParameters(RuleSet rs, HashMap<String, String> parameters) {
@@ -104,6 +110,42 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 		return result;
 	}
 	
+	private List<String> convertValuesFromLookupAndReplaceInRuleSet(final RuleSet rs, final HashMap<String, Object> runParameters, final HashMap<String, String> parameters) {
+		final List<String> info=new ArrayList<>();
+		
+		parameters.forEach((parameterName, parameterValue) -> {
+			InputParameterInfo pinfo=rs.getInputParameters().get(parameterName);
+			if (pinfo==null) {
+				info.add("Parameter '"+parameterName+"' is not defined in the Rule Set -> skipping.");
+			} else {
+				switch(pinfo.getType()) {
+					case TEXT: 
+						runParameters.put(parameterName, parameterValue); 
+						info.add("Using dataset value '"+parameterValue+"' for "+parameterName);
+						break;
+					case INTEGER: 
+						try {
+							int intValue=Integer.parseInt(parameterValue);
+							runParameters.put(parameterName, intValue);
+						} catch (NumberFormatException nfe) {
+							info.add("Dataset value '"+parameterValue+"' for "+parameterName+" is an invalid INTEGER value  -> skipping.");
+						}
+						break;
+					case DECIMAL: 
+						try {
+							double doubleValue=Integer.parseInt(parameterValue);
+							runParameters.put(parameterName, doubleValue);
+						} catch (NumberFormatException nfe) {
+							info.add("Dataset value '"+parameterValue+"' for "+parameterName+" is an invalid DECIMAL value  -> skipping.");
+						}
+						break;
+				}
+			}
+		});
+
+		return info;
+	}
+	
 	private HashMap<String, Object> toTypedParameters(RuleSet rs, HashMap<String, String> parameters, DecisionTrace trace) {
 		final HashMap<String, Object> typedParameters=new HashMap<>();
 		for (String parameterName:rs.getInputParameters().keySet()) {
@@ -164,16 +206,22 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 		dte.setParameterValue(String.valueOf(parameterValue));
 		Boolean evalResult=null;
 		if (c==Comparator.IN_LIST || c==Comparator.NOT_IN_LIST) {
-			String strparameterValue=
-				type==ParameterType.TEXT?(String)parameterValue:
-					type==ParameterType.INTEGER?
-						String.valueOf(parameterValue):
-							df.format((Double)parameterValue);
+			String strparameterValue=getStringValue(parameterValue, type);
 			boolean inList=setupApiService.isInList(rs, r.getValue1(), strparameterValue);
 			return c==Comparator.IN_LIST?inList:!inList;
 		}
 		if (c==Comparator.LOOKUP) {
-			
+			String strparameterValue=getStringValue(parameterValue, type);
+			DataSetLookupResult dslr=dataSetService.lookup(r.getValue1(), strparameterValue);
+			if (dslr.isKeyFound()) {
+				dte.getInfo().add("Using DataSet values "+dslr.getValues());
+				dte.getInfo().addAll(convertValuesFromLookupAndReplaceInRuleSet(rs, parameters, dslr.getValues()));
+			} else if (!dslr.isDataSetFound()) {
+				dte.getInfo().add("DataSet not found in "+r.getValue1());
+			} else if (!dslr.isKeyFound()) {
+				dte.getInfo().add("Data not found for key: "+strparameterValue);
+			}
+			return dslr.isKeyFound();
 		}
 		switch(type) {
 			case TEXT: evalResult=compare(rs, (String)parameterValue, c, r.getValue1(), r.getValue2());break;
@@ -195,6 +243,15 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 				evalResult=compare(rs, (Double)parameterValue, c, dvalue1, dvalue2);break;
 		}
 		return evalResult;
+	}
+	
+	private String getStringValue(Object value, ParameterType type) {
+		String strparameterValue=
+				type==ParameterType.TEXT?(String)value:
+					type==ParameterType.INTEGER?
+						String.valueOf(value):
+							df.format((Double)value);
+		return strparameterValue;
 	}
 	
 	private Boolean compare(RuleSet rs, String parameterValue, Comparator comparator, String value1, String value2) {

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import pso.decision_engine.model.DataSetInfo;
+import pso.decision_engine.model.DataSetLookupResult;
 import pso.decision_engine.model.DataSetUploadResult;
 import pso.decision_engine.model.ScrollItems;
 import pso.decision_engine.model.enums.DataSetType;
@@ -38,5 +39,7 @@ public interface DataSetService {
 	public ScrollItems<String[]> getRowsForActiveLookupDataSet(String dataSetName, String fromKey, int max);
 
 	public Flux<String[]> streamRowsFromActiveLookupDataSet(String dataSetName);
+
+	public DataSetLookupResult lookup(String dataSetName, String key);
 
 }

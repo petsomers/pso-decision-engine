@@ -248,6 +248,7 @@ public class DataSetServiceImpl implements DataSetService {
 		return dataSetDao.streamDataSetRows(dataSetVersionId, columnCount);
 	}
 	
+	@Override
 	public DataSetLookupResult lookup(String dataSetName, String key) {
 		String dataSetVersionId=dataSetDao.getActiveDataSetVersionForDataSetName(dataSetName);
 		DataSetLookupResult result=new DataSetLookupResult();

@@ -48,6 +48,10 @@ public class JsonToTextOutput {
 			pw.println("Positive Result: "+rule.getPositiveResult());
 			pw.println("Negative Result: "+rule.getNegativeResult());
 			pw.println("Result: "+te.getResult());
+			if (te.getInfo()!=null && te.getInfo().size()>0) {
+				pw.println("Info: ");
+				te.getInfo().forEach((s) -> pw.println(s));
+			}
 		}
 		
 	}
