@@ -1,5 +1,7 @@
 package pso.decision_engine.persistence;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -45,5 +47,9 @@ public interface RuleSetDao {
 	public void deleteRuleSetsWithEndpoint(String restEndpoint);
 
 	public void deleteRuleSetsWithEndpointSkipId(String restEndpoint, String activeId);
+
+	public void saveRuleSetSource(String ruleSetId, int contentLength, InputStream inputStream);
+
+	public void streamRuleSetSource(String ruleSetId, OutputStream outputStream);
 
 }

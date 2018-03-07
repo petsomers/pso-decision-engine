@@ -104,6 +104,13 @@ public class CreateTables {
 		"PRIMARY KEY (ruleSetId, unitTestId, parameterName), "+
 		"FOREIGN KEY (ruleSetId, unitTestId) REFERENCES RuleSetUnitTests (ruleSetId, unitTestId) ON DELETE CASCADE)",
 		
+		"CREATE TABLE IF NOT EXISTS RuleSetSource ("+
+		"ruleSetId VARCHAR(20) NOT NULL, "+
+		"size INTEGER NOT NULL, "+
+		"data bytea NOT NULL, "+
+		"PRIMARY KEY (ruleSetId), "+
+		"FOREIGN KEY (ruleSetId) REFERENCES RuleSet (ruleSetId) ON DELETE CASCADE)",
+		
 		"CREATE TABLE IF NOT EXISTS DataSet ("+
 		"dataSetId VARCHAR(20) NOT NULL, "+
 		"name VARCHAR(100), "+

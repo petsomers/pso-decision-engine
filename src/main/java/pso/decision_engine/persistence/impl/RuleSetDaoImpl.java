@@ -1,7 +1,11 @@
 package pso.decision_engine.persistence.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +19,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.support.SqlLobValue;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
 
 import pso.decision_engine.model.AppConfig;
 import pso.decision_engine.model.InputParameterInfo;
@@ -401,5 +407,29 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		.addValue("activeId", activeId);
 		jdbcTemplate.update("DELETE FROM RuleSet WHERE restEndpoint=:restEndpoint and ruleSetId<>:activeId" , params);
 	}
+	
+	@Override
+    public void saveRuleSetSource(String ruleSetId, int contentLength, InputStream inputStream) {
+    	MapSqlParameterSource params=new MapSqlParameterSource()
+    	.addValue("ruleSetId", ruleSetId)
+    	.addValue("size", contentLength)
+    	.addValue("data", new SqlLobValue(inputStream, (int)contentLength),Types.BLOB);
+    	jdbcTemplate.update("INSERT INTO RuleSetSource (ruleSetId, size, data) values (:ruleSetId, :size, :data)", params); 
+    }
+	
+	@Override
+	public void streamRuleSetSource(String ruleSetId, OutputStream outputStream) {
+		MapSqlParameterSource params=new MapSqlParameterSource()
+		.addValue("ruleSetId", ruleSetId);
+		jdbcTemplate.query("SELECT data from RuleSetSource where ruleSetId=:ruleSetId", params,
+			(ResultSet rs) -> {
+				try {
+					StreamUtils.copy(rs.getBinaryStream(1), outputStream);
+				} catch (IOException e) {
+					throw new RuntimeException("Error getting Excel file from database "+ruleSetId, e);
+				}
+			});
+	}
+
 
 }

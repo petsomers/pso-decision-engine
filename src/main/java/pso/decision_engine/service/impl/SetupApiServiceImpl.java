@@ -68,6 +68,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 		ExcelParseResult result=new ExcelParseResult();
 		result.setRuleSetId(id);
 		RuleSet rs=null;
+		Path excelFileLocation=null;
 		try {
 			rs=excelParserService.parseExcel(id, outputFile.toFile());
 			result.setOk(true);
@@ -82,6 +83,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 			Path moveToFile=Paths.get(appConfig.getDataDirectory(), result.getRestEndpoint(), id+".xlsx");
 			moveToFile.toFile().getParentFile().mkdirs();
 			Files.move(outputFile, moveToFile);
+			excelFileLocation=moveToFile;
 			Path jsonFile=Paths.get(appConfig.getDataDirectory(), result.getRestEndpoint(), id+".json");
 			mapper.writeValue(jsonFile.toFile(), rs);
 			ruleSetDao.saveRuleSet(rs);
@@ -89,13 +91,23 @@ public class SetupApiServiceImpl implements SetupApiService {
 			Path moveToFile=Paths.get(appConfig.getDataDirectory(), "error", id+".xlsx");
 			moveToFile.toFile().getParentFile().mkdirs();
 			Files.move(outputFile, moveToFile);
+			excelFileLocation=moveToFile;
 		}
-		
+		if (excelFileLocation!=null) {
+			File f=excelFileLocation.toFile();
+			if (f.exists()) {
+				try (FileInputStream inputStream=new FileInputStream(f)) {
+					ruleSetDao.saveRuleSetSource(result.getRuleSetId(), (int)f.length(), inputStream);
+				}
+			}
+		}
 		return result;
 	}
 	
 	@Override
 	public void downloadExcel(String restEndpoint, String ruleSetId, OutputStream out) throws IOException {
+		ruleSetDao.streamRuleSetSource(ruleSetId, out);
+		/*
 		Path file=Paths.get(appConfig.getDataDirectory(), restEndpoint, ruleSetId+".xlsx");
 		File f=file.toFile();
 		if (!f.exists()) {
@@ -104,6 +116,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 		try (FileInputStream i=new FileInputStream(f)) {
 			FileCopyUtils.copy(i, out);
 		}
+		*/
 	}
 	
 	@Override
