@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
-import pso.decision_engine.model.AppConfig;
+import pso.decision_engine.config.AppConfig;
 import pso.decision_engine.model.DataSetInfo;
 import pso.decision_engine.model.DataSetLookupResult;
 import pso.decision_engine.model.DataSetUploadResult;

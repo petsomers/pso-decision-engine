@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import pso.decision_engine.model.AppConfig;
+import pso.decision_engine.config.AppConfig;
 
 @Component
 public class CreateTables {

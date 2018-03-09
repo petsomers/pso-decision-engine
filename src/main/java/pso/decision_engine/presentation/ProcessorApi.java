@@ -20,6 +20,7 @@ import pso.decision_engine.service.RuleSetProcessorService;
 import pso.decision_engine.service.SetupApiService;
 
 @RestController
+@RequestMapping("/processor")
 public class ProcessorApi {
 
 	@Autowired

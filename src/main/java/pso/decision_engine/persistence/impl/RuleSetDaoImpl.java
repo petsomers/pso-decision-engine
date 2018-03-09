@@ -23,7 +23,7 @@ import org.springframework.jdbc.core.support.SqlLobValue;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 
-import pso.decision_engine.model.AppConfig;
+import pso.decision_engine.config.AppConfig;
 import pso.decision_engine.model.InputParameterInfo;
 import pso.decision_engine.model.Rule;
 import pso.decision_engine.model.RuleSet;

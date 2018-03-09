@@ -64,7 +64,7 @@ const mapDispatchToProps = (dispatch) => {
 			//dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "RUN_UNIT_TESTS",
-  			payload: axios.get("run_unittests/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId))
+  			payload: axios.get("processor/run_unittests/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId))
 			});
 		},
 		setRunNowParameterValue: (name, value) => {
@@ -81,7 +81,7 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
 				type: "RUN_NOW",
-				payload: axios.get("json/run/"+endpoint+"/"+versionId+"?trace=Y&"+parameterStr)
+				payload: axios.get("processor/json/run/"+endpoint+"/"+versionId+"?trace=Y&"+parameterStr)
 			});
 		},
 		runNowClearResult: () => {

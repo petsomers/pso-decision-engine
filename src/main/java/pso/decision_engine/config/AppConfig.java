@@ -1,4 +1,4 @@
-package pso.decision_engine.model;
+package pso.decision_engine.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -13,4 +13,11 @@ public class AppConfig {
 	private int maxInMemoryListSize;
 	
 	private boolean createTables;
+	
+	private String adminUserId;
+	private String adminPassword;
+	
+	private String processorUserId;
+	private String processorPassword;
+
 }

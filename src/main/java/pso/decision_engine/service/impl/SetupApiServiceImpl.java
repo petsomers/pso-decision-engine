@@ -19,7 +19,7 @@ import org.springframework.util.StreamUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import pso.decision_engine.model.AppConfig;
+import pso.decision_engine.config.AppConfig;
 import pso.decision_engine.model.ExcelParseResult;
 import pso.decision_engine.model.ExcelParserException;
 import pso.decision_engine.model.Rule;
