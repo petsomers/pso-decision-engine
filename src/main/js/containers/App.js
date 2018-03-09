@@ -2,7 +2,7 @@ import React from "react";
 import {connect} from "react-redux";
 import { Route } from 'react-router-dom';
 import ResizeAware from 'react-resize-aware';
-import { Spinner, Notification } from "react-lightning-design-system";
+import { util, Spinner, Notification } from "react-lightning-design-system";
 import mapDispatchToProps from "../actions/appActions"
 import { NavigationBar } from '../components/NavigationBar'
 import { RuleSetSelection } from '../components/RuleSetSelection'
@@ -18,6 +18,7 @@ class App extends React.Component {
 		super();
 		this.state={
 		}
+		util.setAssetRoot("assets/");
 	}
 
 	componentDidMount() {
