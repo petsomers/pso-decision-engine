@@ -1,0 +1,1 @@
+mvn clean package -Dspring.config.location=file:appconfig/pso-decision-engine/ -P release-jar

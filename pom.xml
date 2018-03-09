@@ -6,10 +6,10 @@
 	<groupId>pso</groupId>
 	<artifactId>decision_engine</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>${project.packaging}</packaging>
 
-	<name>decision_engine</name>
-	<description>Demo project for Spring Boot</description>
+	<name>pso decision_engine</name>
+	<description>pso decision engine</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -121,7 +121,54 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<project.packaging>jar</project.packaging>
+			</properties>
+			<dependencies>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>release-jar</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<project.packaging>jar</project.packaging>
+			</properties>
+			<dependencies>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>release-war</id>
+			<properties>
+				<project.packaging>war</project.packaging>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-web</artifactId>
+					<exclusions>
+						<exclusion>
+							<artifactId>spring-boot-starter-tomcat</artifactId>
+							<groupId>org.springframework.boot</groupId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>javax.servlet</groupId>
+					<artifactId>javax.servlet-api</artifactId>
+					<version>3.1.0</version>
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 	<build>
 		<plugins>
 			<plugin>
