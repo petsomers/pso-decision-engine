@@ -5,14 +5,17 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.List;
-import java.util.StringJoiner;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import org.apache.commons.collections4.map.HashedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,6 +32,8 @@ import reactor.core.publisher.Flux;
 @RestController
 @RequestMapping("/dataset")
 public class DataSetApi {
+	
+	private static final Logger logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 
 	@Autowired
 	private DataSetService dataSetService;
@@ -171,5 +176,15 @@ public class DataSetApi {
 		dataSetService.deleteDataSet(dataSetName);
 	}
 
+	
+	@ExceptionHandler(Exception.class)
+	public HashedMap<String, Object> handleException(Exception ex) {
+		logger.error(ex.getMessage(),ex);
+		HashedMap<String, Object> result=new HashedMap<>();
+		result.put("ok", false);
+		result.put("error", true);
+		result.put("errorMessage", "GENERAL ERROR");
+		return result;
+	}
 
 }

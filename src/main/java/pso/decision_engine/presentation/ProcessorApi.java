@@ -6,7 +6,11 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections4.map.HashedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +26,8 @@ import pso.decision_engine.service.SetupApiService;
 @RestController
 @RequestMapping("/processor")
 public class ProcessorApi {
+	
+	private static final Logger logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 
 	@Autowired
 	private SetupApiService setupService;
@@ -109,5 +115,15 @@ public class ProcessorApi {
 		}
 		return ruleSetProcessorService.runUnitTests(ruleSet);
     }
+	
+	@ExceptionHandler(Exception.class)
+	public HashedMap<String, Object> handleException(Exception ex) {
+		logger.error(ex.getMessage(),ex);
+		HashedMap<String, Object> result=new HashedMap<>();
+		result.put("ok", false);
+		result.put("error", true);
+		result.put("errorMessage", "GENERAL ERROR");
+		return result;
+	}
 	
 }
