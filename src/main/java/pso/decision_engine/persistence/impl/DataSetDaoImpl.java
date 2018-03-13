@@ -336,7 +336,7 @@ public class DataSetDaoImpl implements DataSetDao {
 			"on dk.datasetversionid=dv.datasetversionid "+
 			"and dk.keyId=dv.keyId "+
 			"left join DataSetValueNames dn "+
-			"on dv.datasetversionid=dv.datasetversionid "+
+			"on dv.datasetversionid=dn.datasetversionid "+
 			"and dv.valueId=dn.valueId "+
 			"where "+
 			"dv.datasetversionid=:dataSetVersionId "+
