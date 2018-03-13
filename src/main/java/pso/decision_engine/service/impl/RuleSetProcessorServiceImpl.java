@@ -100,6 +100,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 				ruleNumber=toRuleNumber;
 				continue;
 			}
+			if (action.startsWith("return ")) action=action.substring(7);
 			result.setDecision(action);
 			break;
 		}
@@ -121,7 +122,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 				switch(pinfo.getType()) {
 					case TEXT: 
 						runParameters.put(parameterName, parameterValue); 
-						info.add("Using dataset value '"+parameterValue+"' for "+parameterName);
+						//info.add("Using dataset value '"+parameterValue+"' for "+parameterName);
 						break;
 					case INTEGER: 
 						try {

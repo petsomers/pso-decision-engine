@@ -144,7 +144,12 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 			rule.setSheetName(sheetName);
 			rule.setLabel(getCellValueNoNull(row.getCell(0)));
 			rule.setParameterName(getCellValueNoNull(row.getCell(1)));
-			if (rule.getParameterName().isEmpty()) continue;
+			
+			Comparator comparator=ComparatorHelper.shortStringToComparator(getCellValueNoNull(row.getCell(2)));
+			rule.setComparator(comparator);
+			
+			if (rule.getParameterName().isEmpty() && Comparator.ALWAYS!=comparator) continue;
+			
 			rs.getRules().add(rule);
 			
 			if (!rule.getLabel().isEmpty()) {
@@ -153,9 +158,6 @@ public class ExcelParserServiceImpl implements ExcelParserService {
 				}
 				rs.getRowLabels().put(rule.getLabel(), rs.getRules().size()-1);
 			}
-			
-			Comparator comparator=ComparatorHelper.shortStringToComparator(getCellValueNoNull(row.getCell(2)));
-			rule.setComparator(comparator);
 			
 			String value1=getCellValueNoNull(row.getCell(3));
 			String value2="";
