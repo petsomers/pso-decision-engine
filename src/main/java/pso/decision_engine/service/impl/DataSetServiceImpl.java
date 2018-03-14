@@ -257,5 +257,15 @@ public class DataSetServiceImpl implements DataSetService {
 		result.setKeyFound(result.getValues().size()>0);
 		return result;
 	}
+	
+	static public void main(String args[]) {
+		String line="100 EXPOSURE BACK 90		PV	A";
+		String[]lineItems=line.split("\t");
+		System.out.println("lenght:" +lineItems.length);
+		System.out.println();
+		for (String s:lineItems) {
+			System.out.println(s);
+		}
+	}
 
 }

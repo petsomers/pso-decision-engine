@@ -165,13 +165,11 @@ public class DataSetDaoImpl implements DataSetDao {
 				
 				int[] valueId= {1}; // start from 1.
 				row.getValues().forEach(value -> {
-					if (value!=null && !value.isEmpty()) {
-						dbparams.add(new MapSqlParameterSource()
-						.addValue("dataSetVersionId", dataSetVersionId)
-						.addValue("keyId", row.getKeyId())
-						.addValue("valueId", valueId[0]++)
-						.addValue("value", value));
-					}
+					dbparams.add(new MapSqlParameterSource()
+					.addValue("dataSetVersionId", dataSetVersionId)
+					.addValue("keyId", row.getKeyId())
+					.addValue("valueId", valueId[0]++)
+					.addValue("value", value));
 				});
 		
 			});
