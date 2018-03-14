@@ -19,5 +19,8 @@ public class AppConfig {
 	
 	private String processorUserId;
 	private String processorPassword;
+	
+	private boolean enableBatcProcessing;
+	private String batchInputDirectory;
 
 }
