@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StreamUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -107,16 +106,6 @@ public class SetupApiServiceImpl implements SetupApiService {
 	@Override
 	public void downloadExcel(String restEndpoint, String ruleSetId, OutputStream out) throws IOException {
 		ruleSetDao.streamRuleSetSource(ruleSetId, out);
-		/*
-		Path file=Paths.get(appConfig.getDataDirectory(), restEndpoint, ruleSetId+".xlsx");
-		File f=file.toFile();
-		if (!f.exists()) {
-			return;
-		}
-		try (FileInputStream i=new FileInputStream(f)) {
-			FileCopyUtils.copy(i, out);
-		}
-		*/
 	}
 	
 	@Override

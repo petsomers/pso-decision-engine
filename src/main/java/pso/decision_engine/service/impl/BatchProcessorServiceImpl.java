@@ -1,6 +1,9 @@
 package pso.decision_engine.service.impl;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,6 +12,7 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pso.decision_engine.config.AppConfig;
+import pso.decision_engine.model.DecisionResult;
+import pso.decision_engine.model.RuleSet;
+import pso.decision_engine.service.RuleSetProcessorService;
+import pso.decision_engine.service.SetupApiService;
 
 @Service
 public class BatchProcessorServiceImpl {
@@ -24,7 +32,13 @@ public class BatchProcessorServiceImpl {
 	@Autowired
 	AppConfig appConfig;
 	
-	final LinkedBlockingQueue<String> filesToProcess=new LinkedBlockingQueue<>();
+	@Autowired
+	private SetupApiService setupService;
+	
+	@Autowired
+	private RuleSetProcessorService ruleSetProcessorService;
+	
+	final LinkedBlockingQueue<Path> filesToProcess=new LinkedBlockingQueue<>();
 	
 	@PostConstruct
 	public void init() {
@@ -44,14 +58,14 @@ public class BatchProcessorServiceImpl {
 		try {
 			Thread.sleep(5000); // wait 10 seconds initially
 			WatchService watchService = FileSystems.getDefault().newWatchService();
-			Path path = Paths.get(appConfig.getBatchInputDirectory());
+			final Path path = Paths.get(appConfig.getBatchInputDirectory());
 			
 			// first add existing files to the quey
 			Files.list(path)
 			.filter(Files::isRegularFile)
 			.forEach(file -> {
 				try {
-					filesToProcess.put(file.toAbsolutePath().toString());
+					filesToProcess.put(file.toAbsolutePath());
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -62,7 +76,9 @@ public class BatchProcessorServiceImpl {
 	        while ((key = watchService.take()) != null) {
 	            for (WatchEvent<?> event : key.pollEvents()) {
 	                System.out.println("Event kind:" + event.kind() + ". File affected: " + event.context() + "   "+event.context().getClass().getName());
-	                filesToProcess.put(event.context().toString());
+	                if (event.kind()==StandardWatchEventKinds.ENTRY_CREATE) {
+	                	filesToProcess.put(path.resolve((Path)event.context()));	
+	                }
 	            }
 	            key.reset();
 	        }
@@ -76,13 +92,79 @@ public class BatchProcessorServiceImpl {
 		// watch queue, and process
 		while (true) {
 			try {
-				String p=filesToProcess.take();
+				Path p=filesToProcess.take();
 				System.out.println("PROCESSING "+p);
+				File file=p.toFile();
+				if (!file.exists()) {
+					System.out.println(" -> file does not exist anymore. Skipping.");
+					continue;
+				}
+				System.out.println("Moving file to in_progress.");
+				Path newPath=Paths.get(p.getParent().toString(),"in_progress",p.getFileName().toString());
+				
+				String outputFileName=p.getFileName().toString();
+				int pointLoc=outputFileName.lastIndexOf(".");
+				if (pointLoc>1) {
+					outputFileName=outputFileName.substring(0, pointLoc)+"_output"+outputFileName.substring(pointLoc);
+				} else {
+					outputFileName+="_output";
+				}
+				Files.move(p, newPath);
+				
+				System.out.println("Start Processing.");
+				Path outputPath=Paths.get(p.getParent().toString(),"in_progress",outputFileName);
+				try (BufferedWriter out=Files.newBufferedWriter(outputPath)) {
+					Files.lines(newPath, Charset.forName("UTF-8"))
+					.parallel()
+					.map(line -> processLine(line))
+					.forEachOrdered(result -> {
+						try {
+							out.write(result);
+							out.write("\r\n");
+						} catch (IOException e) {
+							e.printStackTrace();
+							throw new RuntimeException();
+						}
+					});
+					out.flush();
+				}
+				System.out.println("Done.");
 				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
+	
+	public String processLine(String s) {
+		StringBuilder r=new StringBuilder();
+		int i=s.indexOf('?');
+		if (i<=0) {
+			return "No endPoint.";
+		}
+		String endPoint=s.substring(0, i);
+		String ruleSetId=setupService.getActiveRuleSetId(endPoint);
+		RuleSet ruleSet=setupService.getRuleSet(endPoint, ruleSetId, false, false);
+		String parametersStr=s.substring(i+1);
+		HashMap<String, String> parameters=new HashMap<>();
+		for (String parameterSection:parametersStr.split("&")) {
+			parameterSection=parameterSection.trim();
+			if (parameterSection.isEmpty()) continue;
+			int e=parameterSection.indexOf('=');
+			if (e<0) {
+				parameters.put(parameterSection, "");
+			} else {
+				parameters.put(parameterSection.substring(0, e),parameterSection.substring(e+1));
+			}
+			
+		}
+		r.append(s);
+		r.append(" => ");
+		
+		DecisionResult result=ruleSetProcessorService.runRuleSetWithParameters(ruleSet, parameters);
+		r.append(result.getDecision());
+		return r.toString();
+	}
+	
 	
 }

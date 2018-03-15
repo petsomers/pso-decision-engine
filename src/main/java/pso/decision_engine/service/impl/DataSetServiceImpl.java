@@ -67,41 +67,6 @@ public class DataSetServiceImpl implements DataSetService {
 		BigFileSortResult bfsr=BigFileSort.sortAndRemoveDuplicates(c);
 		Path tempOutFile=bfsr.getOutputFile();
 		
-/*		
-		Path tempOutFile=Paths.get(appConfig.getDataDirectory()+"/datasets/sets/", dataSetName, versionId+"_temp.txt");
-		
-		try(BufferedWriter writer = Files.newBufferedWriter(tempOutFile, Charset.forName("UTF-8"))) {
-			try (Stream<String> stream = Files.lines(rawOutputFile)) {
-				stream
-				.map(line -> line.trim())
-				.map(line -> {
-					// remove tabs, a set only has 1 column
-					int tabpos=line.indexOf('\t');
-					if (tabpos>=0) {
-						return line.substring(0, tabpos).trim();
-					}
-					return line;
-				})
-				.filter(line -> !line.isEmpty())
-				.distinct()
-				.sorted()
-				.forEach(line -> {
-					try {
-						writer.write(line);
-						writer.write("\r\n");
-					} catch (IOException e) {
-						throw new RuntimeException("Error during list processing: "+e.getMessage(),e);
-					}
-				});
-				writer.flush();
-			} catch (Exception e) {
-				result.setOk(false);
-				result.setErrorMessage(e.getMessage());
-				e.printStackTrace();
-				return result;
-			}
-		}
-*/
 		Path outputFile=Paths.get(appConfig.getDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, versionId+".txt");
 		
 		Files.move(tempOutFile, outputFile);
