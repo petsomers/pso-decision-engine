@@ -28,6 +28,9 @@ import pso.decision_engine.service.SetupApiService;
 
 @Service
 public class BatchProcessorServiceImpl {
+	/*
+	 * TODO: better error handling
+	 */
 
 	@Autowired
 	AppConfig appConfig;
