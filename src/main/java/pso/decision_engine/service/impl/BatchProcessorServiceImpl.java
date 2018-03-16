@@ -1,5 +1,6 @@
 package pso.decision_engine.service.impl;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +14,11 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.StringJoiner;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Function;
 
 import javax.annotation.PostConstruct;
 
@@ -97,11 +101,10 @@ public class BatchProcessorServiceImpl {
 	@Data
 	private static class BatchFileSettings {
 		// first line of file: resEndPoint<tab>inputParameters,<tab>outputParameters,
-		private	String endPoint;
-		private String ruleSetId;
 		private String[] inputParameters;
 		private String[] outputParameters;
 		private boolean headerOk;
+		private RuleSet ruleSet;
 		private String headerError;
 	}
 	
@@ -176,41 +179,93 @@ public class BatchProcessorServiceImpl {
 		}
 	}
 	
-	private BatchFileSettings processHeaderLine(Path p) {
+	private BatchFileSettings processHeaderLine(Path p) throws IOException {
 		BatchFileSettings r=new BatchFileSettings();
+		String headerLine=null;
+		try (BufferedReader bfr=Files.newBufferedReader(p)) {
+			headerLine=bfr.readLine();
+		}
+		if (headerLine==null) {
+			r.setHeaderError("Empty file.");
+			return r;
+		}
+		String[] h=headerLine.split("\t", 3);
+		if (h.length<3) {
+			r.setHeaderError("Invalid header. Format: restEndpoint<tab>inputParameters,<tab>RESULT,outputParameters,");
+			return r;
+		}
+		String restEndpoint=h[0];
+		String inputParameters=h[1];
+		String outputParameters=h[2];
+		String ruleSetId=setupService.getActiveRuleSetId(restEndpoint);
+		if (ruleSetId==null) {
+			r.setHeaderError("Invalid header. Ruleset not found for restEndpoint "+restEndpoint);
+			return r;
+		}
+		RuleSet ruleSet=setupService.getRuleSet(restEndpoint, ruleSetId, false, false);
+		if (ruleSet==null) {
+			r.setHeaderError("Invalid header. Ruleset not found for restEndpoint "+restEndpoint);
+			return r;
+		}
 		
 		
+		r.setRuleSet(ruleSet);
+		
+		Function<String, String[]> toArray=
+			(ip) -> Arrays.stream(ip.split(",",100))
+			.map(s -> s.trim())
+			.filter(s -> !s.isEmpty())
+			.toArray(String[]::new);
+		
+		r.setInputParameters(toArray.apply(inputParameters));
+		r.setOutputParameters(toArray.apply(outputParameters));
+		
+		for (String ih:r.getInputParameters()) {
+			if (ruleSet.getInputParameters().get(ih)==null) {
+				r.setHeaderError("Invalid header: this is not a valid input parameter: "+ih);
+				return r;
+			}
+		}
+		boolean hasResultHeader=false;
+		for (String oh:r.getOutputParameters()) {
+			if (ruleSet.getInputParameters().get(oh)==null) {
+				if (oh.equals("RESULT")) {
+					hasResultHeader=true;
+				} else {
+					r.setHeaderError("Invalid header: this is not a valid output parameter: "+oh);
+					return r;
+				}
+			}
+		}
+		if(!hasResultHeader) {
+			r.setHeaderError("Invalid header: the output parameter list should contain a RESULT parameter");
+			return r;
+		}
 		r.setHeaderOk(true);
 		return r;
 	}
 	
 	public String processLine(BatchFileSettings bfs, String s) {
-		StringBuilder r=new StringBuilder();
-		int i=s.indexOf('?');
-		if (i<=0) {
-			return "No endPoint.";
-		}
-		String endPoint=s.substring(0, i);
-		String ruleSetId=setupService.getActiveRuleSetId(endPoint);
-		RuleSet ruleSet=setupService.getRuleSet(endPoint, ruleSetId, false, false);
-		String parametersStr=s.substring(i+1);
+		String values[]=s.split(";", bfs.getInputParameters().length);
+		
 		HashMap<String, String> parameters=new HashMap<>();
-		for (String parameterSection:parametersStr.split("&")) {
-			parameterSection=parameterSection.trim();
-			if (parameterSection.isEmpty()) continue;
-			int e=parameterSection.indexOf('=');
-			if (e<0) {
-				parameters.put(parameterSection, "");
-			} else {
-				parameters.put(parameterSection.substring(0, e),parameterSection.substring(e+1));
+		int i=0;
+		for (String parameterName:bfs.getInputParameters()) {
+			if (i<values.length) {
+				parameters.put(parameterName, values[i++].trim());	
 			}
 		}
-		r.append(s);
-		r.append(" => ");
-		
-		DecisionResult result=ruleSetProcessorService.runRuleSetWithParameters(ruleSet, parameters);
-		r.append(result.getDecision());
-		return r.toString();
+		DecisionResult result=ruleSetProcessorService.runRuleSetWithParameters(bfs.getRuleSet(), parameters);
+		String[] output=new String[bfs.getOutputParameters().length];
+		i=0;
+		for (String parameterName:bfs.getOutputParameters()) {
+			if ("RESULT".equals(parameterName)) {
+				output[i++]=result.getDecision();
+			} else {
+				output[i++]=parameters.get(parameterName);
+			}
+		}
+		return String.join("\t", output);
 	}
 	
 	
