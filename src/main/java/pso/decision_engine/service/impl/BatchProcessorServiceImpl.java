@@ -17,9 +17,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.Data;
 import pso.decision_engine.config.AppConfig;
 import pso.decision_engine.model.DecisionResult;
 import pso.decision_engine.model.RuleSet;
@@ -28,10 +31,9 @@ import pso.decision_engine.service.SetupApiService;
 
 @Service
 public class BatchProcessorServiceImpl {
-	/*
-	 * TODO: better error handling
-	 */
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+	
 	@Autowired
 	AppConfig appConfig;
 	
@@ -91,17 +93,28 @@ public class BatchProcessorServiceImpl {
 		
 	}
 	
+	@Data
+	private static class BatchFileSettings {
+		// first line of file: resEndPoint<tab>inputParameters,<tab>outputParameters,
+		private	String endPoint;
+		private String ruleSetId;
+		private String[] inputParameters;
+		private String[] outputParameters;
+	}
+	
 	public void process() {
 		// watch queue, and process
 		while (true) {
+			Path p=null;
 			try {
-				Path p=filesToProcess.take();
-				System.out.println("PROCESSING "+p);
+				p=filesToProcess.take();
+				System.out.println("BATCH File: "+p);
 				File file=p.toFile();
 				if (!file.exists()) {
 					System.out.println(" -> file does not exist anymore. Skipping.");
 					continue;
 				}
+				logger.info("BATCH File: "+p);
 				System.out.println("Moving file to in_progress.");
 				Path newPath=Paths.get(p.getParent().toString(),"in_progress",p.getFileName().toString());
 				
@@ -116,12 +129,15 @@ public class BatchProcessorServiceImpl {
 				
 				System.out.println("Start Processing.");
 				Path outputPath=Paths.get(p.getParent().toString(),"in_progress",outputFileName);
+				long startnano=System.nanoTime();
+				int[] count= {0};
 				try (BufferedWriter out=Files.newBufferedWriter(outputPath)) {
 					Files.lines(newPath, Charset.forName("UTF-8"))
 					.parallel()
 					.map(line -> processLine(line))
 					.forEachOrdered(result -> {
 						try {
+							count[0]++;
 							out.write(result);
 							out.write("\r\n");
 						} catch (IOException e) {
@@ -131,10 +147,13 @@ public class BatchProcessorServiceImpl {
 					});
 					out.flush();
 				}
-				System.out.println("Done.");
+				long stopnano=System.nanoTime();
+				double ms=(stopnano - startnano)/1000000d;
+				logger.info("BATCH File: "+p+"DONE. "+count[0]+" lines in "+ms+"ms");
+				System.out.println("BATCH File: "+p+" DONE IN "+ms+"ms");
 				
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("BATCH File: "+p+" ERROR: "+e.getMessage(),e);
 			}
 		}
 	}

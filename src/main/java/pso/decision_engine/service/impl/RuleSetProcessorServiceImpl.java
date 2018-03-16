@@ -28,8 +28,6 @@ import pso.decision_engine.service.SetupApiService;
 @Service
 public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 
-	//private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.ms");
-	
 	@Autowired
 	private SetupApiService setupApiService;
 	
