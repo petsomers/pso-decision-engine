@@ -8,6 +8,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -100,12 +101,16 @@ public class BatchProcessorServiceImpl {
 		private String ruleSetId;
 		private String[] inputParameters;
 		private String[] outputParameters;
+		private boolean headerOk;
+		private String headerError;
 	}
 	
 	public void process() {
 		// watch queue, and process
-		while (true) {
+		PROCESS_LOOP:while (true) {
 			Path p=null;
+			Path outputPath=null;
+			int[] lineNumber= {0};
 			try {
 				p=filesToProcess.take();
 				System.out.println("BATCH File: "+p);
@@ -128,16 +133,25 @@ public class BatchProcessorServiceImpl {
 				Files.move(p, newPath);
 				
 				System.out.println("Start Processing.");
-				Path outputPath=Paths.get(p.getParent().toString(),"in_progress",outputFileName);
+				outputPath=Paths.get(p.getParent().toString(),"in_progress",outputFileName);
 				long startnano=System.nanoTime();
-				int[] count= {0};
+				lineNumber[0]= 0;
 				try (BufferedWriter out=Files.newBufferedWriter(outputPath)) {
+
+					final BatchFileSettings bfs=processHeaderLine(newPath);
+					if (!bfs.isHeaderOk()) {
+						out.write("ERROR "+bfs.getHeaderError());
+						logger.error("BATCH File: "+p+" error parsing header: "+bfs.getHeaderError());
+						continue PROCESS_LOOP;
+					}
 					Files.lines(newPath, Charset.forName("UTF-8"))
-					.parallel()
-					.map(line -> processLine(line))
-					.forEachOrdered(result -> {
+					.skip(1) // skip header row
+					.parallel() // multi-core
+					.map(line -> processLine(bfs, line)) // process
+					.forEachOrdered(result -> { // output
 						try {
-							count[0]++;
+							bfs.getClass();
+							lineNumber[0]++;
 							out.write(result);
 							out.write("\r\n");
 						} catch (IOException e) {
@@ -149,16 +163,28 @@ public class BatchProcessorServiceImpl {
 				}
 				long stopnano=System.nanoTime();
 				double ms=(stopnano - startnano)/1000000d;
-				logger.info("BATCH File: "+p+"DONE. "+count[0]+" lines in "+ms+"ms");
+				logger.info("BATCH File: "+p+"DONE. "+lineNumber[0]+" lines in "+ms+"ms");
 				System.out.println("BATCH File: "+p+" DONE IN "+ms+"ms");
 				
 			} catch (Exception e) {
-				logger.error("BATCH File: "+p+" ERROR: "+e.getMessage(),e);
+				String error="ERROR on line "+lineNumber[0]+": "+e.getMessage();
+				logger.error("BATCH File: "+p+" "+error,e);
+				try {
+					Files.write(outputPath, error.getBytes(), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
+				} catch (IOException e1) {e1.printStackTrace();}
 			}
 		}
 	}
 	
-	public String processLine(String s) {
+	private BatchFileSettings processHeaderLine(Path p) {
+		BatchFileSettings r=new BatchFileSettings();
+		
+		
+		r.setHeaderOk(true);
+		return r;
+	}
+	
+	public String processLine(BatchFileSettings bfs, String s) {
 		StringBuilder r=new StringBuilder();
 		int i=s.indexOf('?');
 		if (i<=0) {
@@ -178,7 +204,6 @@ public class BatchProcessorServiceImpl {
 			} else {
 				parameters.put(parameterSection.substring(0, e),parameterSection.substring(e+1));
 			}
-			
 		}
 		r.append(s);
 		r.append(" => ");
