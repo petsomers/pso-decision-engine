@@ -98,7 +98,7 @@ export class FileUpload  extends React.Component {
 	}
 
 	uploadFile(url, fd, onsuccess) {
-		axios.post(url, fd)
+		axios.post(url, fd, axiosConfig)
 			.then(result => {
 				console.log("File upload response", result)
 				if (!result.data.ok) {

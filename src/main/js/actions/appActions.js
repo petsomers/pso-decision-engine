@@ -28,7 +28,7 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "GET_ENDPOINTS",
-  			payload: axios.get("setup/endpoints")
+  			payload: axios.get("setup/endpoints", axiosConfig)
 			});
 		},
 		loadDataSets: () => {
@@ -36,7 +36,7 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "GET_DATASETS",
-  			payload: axios.get("dataset/all")
+  			payload: axios.get("dataset/all", axiosConfig)
 			});
 		},
 		selectEndpoint: (endpoint) => {
@@ -48,7 +48,7 @@ const mapDispatchToProps = (dispatch) => {
 			//dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "GET_VERSIONS",
-  			payload: axios.get("setup/versions/"+endpoint)
+  			payload: axios.get("setup/versions/"+endpoint, axiosConfig)
 			});
 		},
 		selectVersion: (endpoint, versionId) => {
@@ -56,7 +56,7 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "GET_RULESET",
-  			payload: axios.get("setup/source/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId))
+  			payload: axios.get("setup/source/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId), axiosConfig)
 			});
 		},
 		runUnitTests: (endpoint, versionId) => {
@@ -64,7 +64,7 @@ const mapDispatchToProps = (dispatch) => {
 			//dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "RUN_UNIT_TESTS",
-  			payload: axios.get("processor/run_unittests/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId))
+  			payload: axios.get("processor/run_unittests/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId), axiosConfig)
 			});
 		},
 		setRunNowParameterValue: (name, value) => {
@@ -81,7 +81,7 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
 				type: "RUN_NOW",
-				payload: axios.get("processor/json/run/"+endpoint+"/"+versionId+"?trace=Y&"+parameterStr)
+				payload: axios.get("processor/json/run/"+endpoint+"/"+versionId+"?trace=Y&"+parameterStr, axiosConfig)
 			});
 		},
 		runNowClearResult: () => {
@@ -91,28 +91,28 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
 				type: "SET_ACTIVE",
-				payload: axios.get("setup/setactive/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId))
+				payload: axios.get("setup/setactive/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId), axiosConfig)
 			});
 		},
 		deleteInactive: (endpoint) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
 				type: "DELETE_INACTIVE",
-				payload: axios.get("setup/delete/inactive/"+encodeURIComponent(endpoint))
+				payload: axios.get("setup/delete/inactive/"+encodeURIComponent(endpoint), axiosConfig)
 			});
 		},
 		deleteEndpoint: (endpoint) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
 				type: "DELETE_ENDPOINT",
-				payload: axios.get("setup/delete/endpoint/"+encodeURIComponent(endpoint))
+				payload: axios.get("setup/delete/endpoint/"+encodeURIComponent(endpoint), axiosConfig)
 			});
 		},
 		deleteRuleSet: (endpoint, versionId) => {
 			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
 				type: "DELETE_RULESET",
-				payload: axios.get("setup/delete/ruleset/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId))
+				payload: axios.get("setup/delete/ruleset/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId), axiosConfig)
 			});
 		},
 		selectDataSet: (dataSetInfo) => {
@@ -120,17 +120,17 @@ const mapDispatchToProps = (dispatch) => {
 			if (dataSetInfo.type=="LOOKUP") {
 				dispatch({
 					type: "LOAD_DATA_SET_DATA_HEADERS",
-					payload: axios.get("dataset/headers/LOOKUP/"+encodeURIComponent(dataSetInfo.name))
+					payload: axios.get("dataset/headers/LOOKUP/"+encodeURIComponent(dataSetInfo.name), axiosConfig)
 				});
 				dispatch({
 					type: "LOAD_DATA_SET_DATA",
-					payload: axios.get("dataset/data/LOOKUP/"+encodeURIComponent(dataSetInfo.name))
+					payload: axios.get("dataset/data/LOOKUP/"+encodeURIComponent(dataSetInfo.name), axiosConfig)
 				});
 			} else {
 				// type = LIST
 				dispatch({
 					type: "LOAD_DATA_SET_KEYS",
-					payload: axios.get("dataset/keys/"+encodeURIComponent(dataSetInfo.name))
+					payload: axios.get("dataset/keys/"+encodeURIComponent(dataSetInfo.name), axiosConfig)
 				});
 			}
 		},
@@ -138,19 +138,19 @@ const mapDispatchToProps = (dispatch) => {
 			if (dataSetInfo.type=="LOOKUP") {
 	      dispatch({
 					type: "LOAD_MORE_DATA_SET_DATA",
-					payload: axios.get("dataset/data/LOOKUP/"+encodeURIComponent(dataSetInfo.name)+"?fromKey="+encodeURIComponent(fromKey))
+					payload: axios.get("dataset/data/LOOKUP/"+encodeURIComponent(dataSetInfo.name)+"?fromKey="+encodeURIComponent(fromKey), axiosConfig)
 				});
 			} else {
 				dispatch({
 					type: "LOAD_MORE_DATA_SET_KEYS",
-					payload: axios.get("dataset/keys/"+encodeURIComponent(dataSetInfo.name)+"?fromKey="+encodeURIComponent(fromKey))
+					payload: axios.get("dataset/keys/"+encodeURIComponent(dataSetInfo.name)+"?fromKey="+encodeURIComponent(fromKey), axiosConfig)
 				});
 			}
     },
 		deleteDataSet: (dataSetInfo) => {
 			dispatch({
 				type: "DELETE_DATA_SET",
-				payload: axios.get("dataset/delete/"+encodeURIComponent(dataSetInfo.name))
+				payload: axios.get("dataset/delete/"+encodeURIComponent(dataSetInfo.name), axiosConfig)
 			});
 		}
 	}

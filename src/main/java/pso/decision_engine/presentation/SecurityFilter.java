@@ -12,12 +12,21 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+
+import pso.decision_engine.service.JwtService;
+
 public class SecurityFilter implements Filter {
 
+
+	private final JwtService jwtService;
 	
 	private String adminUserAuthHeader;
 	private String processorAuthHeader;
 
+	
+	public SecurityFilter(JwtService jwtService) {
+		this.jwtService=jwtService;
+	}
 	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -37,23 +46,36 @@ public class SecurityFilter implements Filter {
 		// other API's: only session with XSRF token in header will be allowed
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 	    HttpServletResponse response = (HttpServletResponse) servletResponse;
-		if (request.getSession(false)!=null && request.getSession(false).getAttribute("adminUserId")!=null) {
-			chain.doFilter(request, response);
-			return;
-		}
-		String header = request.getHeader("Authorization");
-		if (header!=null && header.equals(adminUserAuthHeader)) {
-			chain.doFilter(request, response);
-			return;
-		}
-		if (request.getServletPath()!=null && request.getServletPath().startsWith("/processor")) {
+	    String header = request.getHeader("Authorization");
+	    if (request.getServletPath()!=null && request.getServletPath().startsWith("/processor")) {
 			if (header!=null && header.equals(processorAuthHeader)) {
 				chain.doFilter(request, response);
 				return;
 			}
 		}
-		response.setHeader("WWW-Authenticate", "Basic realm=\"Decision Engine\"");
-		response.setStatus(401);
+	    if (request.getServletPath()!=null && request.getServletPath().startsWith("/admin")) {
+			if (header!=null && header.equals(adminUserAuthHeader)) {
+				chain.doFilter(request, response);
+				return;
+			} else {
+				response.setHeader("WWW-Authenticate", "Basic realm=\"Decision Engine\"");
+				response.setStatus(401);
+				return;
+			}
+		}
+	    
+	    if (request.getServletPath()!=null && 
+	    	(request.getServletPath().startsWith("/processor") 
+	    	|| request.getServletPath().startsWith("/dataset")
+	    	|| request.getServletPath().startsWith("/setup"))) {
+	    	String jwt=request.getHeader("X-jwt");
+		    if (jwt==null || jwtService.verifyJwt(jwt)==null) {
+		    	response.sendError(HttpServletResponse.SC_FORBIDDEN);
+		    	return;
+		    }
+	    }
+	    
+	    chain.doFilter(request, response);
 	}
 
 	@Override

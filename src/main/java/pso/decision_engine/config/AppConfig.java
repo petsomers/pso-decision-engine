@@ -23,4 +23,7 @@ public class AppConfig {
 	private boolean enableBatcProcessing;
 	private String batchInputDirectory;
 
+	private String publicKey;
+	private String privateKey;
+	
 }
