@@ -9,6 +9,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -64,18 +65,64 @@ public class SecurityFilter implements Filter {
 			}
 		}
 	    
+	    
+	    if (request.getServletPath()!=null && 
+	    	(request.getServletPath().startsWith("/dataset/download")
+	    	|| request.getServletPath().startsWith("/setup/download_excel"))) {
+	    	if (!checkJwtCookieOnly(request)) {
+		    	response.sendError(HttpServletResponse.SC_FORBIDDEN);
+		    	return;
+		    } else {
+		    	chain.doFilter(request, response);
+		    	return;
+		    }
+	    }
+    			
 	    if (request.getServletPath()!=null && 
 	    	(request.getServletPath().startsWith("/processor") 
 	    	|| request.getServletPath().startsWith("/dataset")
 	    	|| request.getServletPath().startsWith("/setup"))) {
-	    	String jwt=request.getHeader("X-jwt");
-		    if (jwt==null || jwtService.verifyJwt(jwt)==null) {
+		    if (!checkJwtHeaderAndCookie(request)) {
 		    	response.sendError(HttpServletResponse.SC_FORBIDDEN);
+		    	return;
+		    } else {
+		    	chain.doFilter(request, response);
 		    	return;
 		    }
 	    }
 	    
 	    chain.doFilter(request, response);
+	    
+	}
+	
+	private boolean checkJwtHeaderAndCookie(HttpServletRequest request) {
+		String jwt=request.getHeader("X-jwt");
+		if (jwt==null) return false;
+	    Cookie[] cookies=request.getCookies();
+	    if (cookies==null) return false;
+	    boolean cookieTokenOk=false;
+	    for (Cookie c:cookies) {
+	    	if ("token".equals(c.getName()) && jwt.equals(c.getValue())) {
+	    		cookieTokenOk=true;
+	    		break;
+	    	}
+	    }
+	    if (!cookieTokenOk) return false;
+	    if ( jwtService.verifyJwt(jwt)==null) {
+	    	return false;
+	    }
+	    return true;
+	}
+	
+	private boolean checkJwtCookieOnly(HttpServletRequest request) {
+		Cookie[] cookies=request.getCookies();
+	    if (cookies==null) return false;
+	    for (Cookie c:cookies) {
+	    	if ("token".equals(c.getName())) {
+	    		return jwtService.verifyJwt(c.getValue())!=null;
+	    	}
+	    }
+	    return false;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package pso.decision_engine.presentation;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,6 +21,9 @@ public class AdminController {
 	public String index(HttpServletRequest req, HttpServletResponse resp, Model model) {
 		String jwt=jwtService.generateJwt("admin");
 		model.addAttribute("jwt", jwt);
+		Cookie tokenCookie=new Cookie("token", jwt);
+		tokenCookie.setHttpOnly(true);
+		resp.addCookie(tokenCookie);
 		return "app";
 	}
 }
