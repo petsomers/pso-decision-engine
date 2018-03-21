@@ -60,6 +60,16 @@ public class JwtServiceImpl implements JwtService {
                 .sign(Algorithm.RSA256(null, privateKey));
         return signed;
 	}
+	
+	@Override
+	public String getJwtPayload(String jwt) {
+		if (jwt==null || jwt.isEmpty()) return null;
+		int i=jwt.indexOf('.');
+		if (i<=0) return null;
+		i=jwt.indexOf('.', i+1);
+		if (i<=0) return null;
+		return jwt.substring(0, i);
+	}
 
 	@Override
 	public String verifyJwt(String jwt) {

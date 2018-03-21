@@ -20,7 +20,7 @@ public class AdminController {
 	@RequestMapping(value = "/admin")
 	public String index(HttpServletRequest req, HttpServletResponse resp, Model model) {
 		String jwt=jwtService.generateJwt("admin");
-		model.addAttribute("jwt", jwt);
+		model.addAttribute("jwt", jwtService.getJwtPayload(jwt));
 		Cookie tokenCookie=new Cookie("token", jwt);
 		tokenCookie.setHttpOnly(true);
 		resp.addCookie(tokenCookie);

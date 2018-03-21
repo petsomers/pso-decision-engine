@@ -11,5 +11,6 @@ public interface JwtService {
 	 */
 	public String verifyJwt(String jwt);
 
-			
+	public String getJwtPayload(String jwt);
+
 }

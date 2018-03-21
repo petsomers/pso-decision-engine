@@ -96,23 +96,30 @@ public class SecurityFilter implements Filter {
 	}
 	
 	private boolean checkJwtHeaderAndCookie(HttpServletRequest request) {
-		String jwt=request.getHeader("X-jwt");
-		if (jwt==null) return false;
+		String jwtFromHeader=request.getHeader("X-jwt");
+		if (jwtFromHeader==null) return false;
 	    Cookie[] cookies=request.getCookies();
 	    if (cookies==null) return false;
+	    String jwtFromCookie=null;
 	    boolean cookieTokenOk=false;
 	    for (Cookie c:cookies) {
-	    	if ("token".equals(c.getName()) && jwt.equals(c.getValue())) {
-	    		cookieTokenOk=true;
-	    		break;
+	    	if ("token".equals(c.getName())) {
+	    		jwtFromCookie=c.getValue();
+	    		String jwtWithoutSignature=jwtService.getJwtPayload(jwtFromCookie);
+	    		if (jwtWithoutSignature!=null && jwtWithoutSignature.equals(jwtFromHeader)) {
+	    			cookieTokenOk=true;
+	    			break;
+	    		}
 	    	}
 	    }
 	    if (!cookieTokenOk) return false;
-	    if ( jwtService.verifyJwt(jwt)==null) {
+	    if (jwtService.verifyJwt(jwtFromCookie)==null) {
 	    	return false;
 	    }
 	    return true;
 	}
+	
+	
 	
 	private boolean checkJwtCookieOnly(HttpServletRequest request) {
 		Cookie[] cookies=request.getCookies();
