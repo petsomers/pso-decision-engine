@@ -49,7 +49,7 @@ public class SecurityFilter implements Filter {
 	    HttpServletResponse response = (HttpServletResponse) servletResponse;
 	    String header = request.getHeader("Authorization");
 	    if (request.getServletPath()!=null && (request.getServletPath().startsWith("/processor") || request.getServletPath().startsWith("/dataset/upload"))) {
-			if (header!=null && header.equals(processorAuthHeader)) {
+			if (header!=null && (header.equals(processorAuthHeader) || header.equals(adminUserAuthHeader))) {
 				chain.doFilter(request, response);
 				return;
 			}
