@@ -36,7 +36,10 @@ public class JwtServiceImpl implements JwtService {
 	private RSAPublicKey publicKey;
     private RSAPrivateKey privateKey;
     
+    private RSAPublicKey sqeUMPublicKey;
+    
     private JWTVerifier jwtVerifier;
+    private JWTVerifier sqeUMJwtVerifier;
 
 	@PostConstruct
 	public void init() throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -46,8 +49,12 @@ public class JwtServiceImpl implements JwtService {
 
         X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(appConfig.getPublicKey()));
         publicKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+        
+        keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(appConfig.getSqeUMPublicKey()));
+        sqeUMPublicKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
 
         jwtVerifier=JWT.require(Algorithm.RSA256(publicKey, null)).build();
+        sqeUMJwtVerifier=JWT.require(Algorithm.RSA256(sqeUMPublicKey, null)).build();
 	}
     
 	@Override
@@ -82,6 +89,7 @@ public class JwtServiceImpl implements JwtService {
     	}
 	}
 	
+	
 	private static Date createExpireDate(long seconds) {
         return new Date(System.currentTimeMillis() + seconds * 1000l);
     }
@@ -105,6 +113,16 @@ public class JwtServiceImpl implements JwtService {
 			e.printStackTrace();
 		}
 		
+	}
+
+	@Override
+	public String verifySqeUMJwt(String jwt) {
+		try {
+			DecodedJWT decodedJWT = sqeUMJwtVerifier.verify(jwt);
+			return decodedJWT.getClaim("user").asString();
+		} catch (JWTVerificationException e) {
+    		return null;
+    	}
 	}
 
 }

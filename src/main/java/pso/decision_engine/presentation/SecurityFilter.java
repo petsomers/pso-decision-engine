@@ -55,6 +55,20 @@ public class SecurityFilter implements Filter {
 			}
 		}
 	    if (request.getServletPath()!=null && request.getServletPath().startsWith("/admin")) {
+	    	if ("POST".equals(request.getMethod())) {
+	    		String jwt=request.getParameter("jwt");
+	    		String userId=jwtService.verifySqeUMJwt(jwt);
+	    		if (userId==null) {
+	    			response.setHeader("WWW-Authenticate", "Basic realm=\"Decision Engine\"");
+					response.setStatus(401);
+					return;
+	    		} else {
+	    			request.setAttribute("userId", userId);
+	    			chain.doFilter(request, response);
+					return;
+	    		}
+	    		
+	    	}
 			if (header!=null && header.equals(adminUserAuthHeader)) {
 				chain.doFilter(request, response);
 				return;

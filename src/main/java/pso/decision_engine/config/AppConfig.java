@@ -26,4 +26,6 @@ public class AppConfig {
 	private String publicKey;
 	private String privateKey;
 	
+	private String sqeUMPublicKey;
+	
 }

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import pso.decision_engine.service.JwtService;
 
@@ -17,7 +19,7 @@ public class AdminController {
 	@Autowired
 	private JwtService jwtService;
 
-	@RequestMapping(value = "/admin")
+	@RequestMapping(value = "/admin", method = RequestMethod.GET)
 	public String index(HttpServletRequest req, HttpServletResponse resp, Model model) {
 		String jwt=jwtService.generateJwt("admin");
 		model.addAttribute("jwt", jwtService.getJwtPayload(jwt));
@@ -25,5 +27,11 @@ public class AdminController {
 		tokenCookie.setHttpOnly(true);
 		resp.addCookie(tokenCookie);
 		return "app";
+	}
+	
+	@RequestMapping(value = "/admin", method = RequestMethod.POST)
+	public String startWithJwt(HttpServletRequest req, HttpServletResponse resp, Model model, @RequestParam(name="jwt") String jwt) {
+		
+		return index(req, resp, model);
 	}
 }

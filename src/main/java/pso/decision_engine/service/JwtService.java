@@ -10,6 +10,8 @@ public interface JwtService {
 	 * @return user or null
 	 */
 	public String verifyJwt(String jwt);
+	
+	public String verifySqeUMJwt(String jwt);
 
 	public String getJwtPayload(String jwt);
 
