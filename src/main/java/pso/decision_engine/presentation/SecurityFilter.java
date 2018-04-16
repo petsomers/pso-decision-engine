@@ -64,6 +64,7 @@ public class SecurityFilter implements Filter {
 					return;
 	    		} else {
 	    			request.setAttribute("userId", userId);
+	    			request.setAttribute("fromUM", "YES");
 	    			chain.doFilter(request, response);
 					return;
 	    		}

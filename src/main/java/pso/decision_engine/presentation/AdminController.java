@@ -23,6 +23,11 @@ public class AdminController {
 	public String index(HttpServletRequest req, HttpServletResponse resp, Model model) {
 		String jwt=jwtService.generateJwt("admin");
 		model.addAttribute("jwt", jwtService.getJwtPayload(jwt));
+		if ("YES".equals(req.getAttribute("fromUM"))) {
+			model.addAttribute("showHeader", "false");
+		} else {
+			model.addAttribute("showHeader", "true");
+		}
 		Cookie tokenCookie=new Cookie("token", jwt);
 		tokenCookie.setHttpOnly(true);
 		resp.addCookie(tokenCookie);

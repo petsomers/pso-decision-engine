@@ -11,6 +11,7 @@
 var axiosConfig = {
   headers: {'X-jwt': '${jwt}'}
 };
+var showHeader=${showHeader};
 </script>
 </head>
 <body>

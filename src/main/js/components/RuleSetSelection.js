@@ -5,7 +5,7 @@ export const RuleSetSelection = ({restEndpoints, dataSets, layout, openFileUploa
 	const restEndpointsHeight=(layout.windowHeight-160)/2;
 	const globalListsHeight=restEndpointsHeight;
 
-	const restEndpointTitlePosition=60;
+	const restEndpointTitlePosition=showHeader?60:10;
 	const globalListTitlePosition=restEndpointTitlePosition+restEndpointsHeight+25;
 
 	const uploadStyle={

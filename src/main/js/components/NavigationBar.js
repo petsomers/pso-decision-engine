@@ -8,7 +8,9 @@ export const NavigationBar = ({message, showLogout=true}) => {
 	}
   return (
   	<div style={logoStyle}>
-			<img src="logo-small-white.png" />
+			{showHeader && (
+				<img src="logo-small-white.png" />
+			)}
   	</div>
   );
 }
