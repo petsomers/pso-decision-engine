@@ -16,6 +16,6 @@ set MAVEN_OPTS=-Xms512m ^
 -Dlogfiles.location=c:/cse/logfiles ^
 -Dorg.apache.jasper.compiler.Parser.STRICT_QUOTE_ESCAPING=false
 
-mvn spring-boot:run -P dev
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 REM -Drun.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8001"
