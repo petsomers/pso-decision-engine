@@ -79,7 +79,7 @@ export class  DataSetDetails extends React.Component {
 					</TableBody>
 				</Table>
 				}
-				{selectedDataSetInfo.type=="LOOKUP" && dataSetData.headers.length>0 &&
+				{selectedDataSetInfo.type=="LOOKUP" && dataSetData.headers.length>0 && dataSetData.rows>0 &&
 					<div><i>No data.</i></div>
 				}
 				{dataSetData.hasMore && !dataSetData.loading &&

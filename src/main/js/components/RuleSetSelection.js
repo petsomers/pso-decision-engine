@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "react-lightning-design-system";
 
 export const RuleSetSelection = ({restEndpoints, dataSets, layout, openFileUpload, selectEndpoint, selectedEndpoint, selectedDataSetInfo, selectDataSet}) => {
-	const restEndpointsHeight=(layout.windowHeight-160)/2;
+	const restEndpointsHeight=showHeader?(layout.windowHeight-160)/2:(layout.windowHeight-110)/2;
 	const globalListsHeight=restEndpointsHeight;
 
 	const restEndpointTitlePosition=showHeader?60:10;
