@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 public class AppConfig {
 	private String dataDirectory;
+	private String databaseEngine="POSTRESQL";
 	private int maxInMemoryListSize;
 	
 	private boolean createTables;
