@@ -58,7 +58,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
     		throw new RuntimeException(e);
     	}
     }
-    
+	
 	private void doSaveRuleSet(RuleSet ruleSet) {
 		MapSqlParameterSource parameters=new MapSqlParameterSource()
 		.addValue("ruleSetId", ruleSet.getId())

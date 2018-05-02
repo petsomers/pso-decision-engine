@@ -53,7 +53,14 @@ public class SecurityFilter implements Filter {
 				chain.doFilter(request, response);
 				return;
 			}
+			if (request.getHeader("X-jwt")==null) {
+				// not coming from UI
+				response.setHeader("WWW-Authenticate", "Basic realm=\"Decision Engine\"");
+				response.setStatus(401);
+				return;
+			}
 		}
+	    
 	    if (request.getServletPath()!=null && request.getServletPath().startsWith("/admin")) {
 	    	if ("POST".equals(request.getMethod())) {
 	    		String jwt=request.getParameter("jwt");

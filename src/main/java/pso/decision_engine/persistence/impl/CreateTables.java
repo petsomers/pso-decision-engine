@@ -159,6 +159,43 @@ public class CreateTables {
 			"value VARCHAR(100), "+
 			"PRIMARY KEY (dataSetVersionId, keyId, valueId), "+
 			"FOREIGN KEY (dataSetVersionId) REFERENCES DataSetVersion (dataSetVersionId) ON DELETE CASCADE)",
+			
+			
+			/*
+			// experimenting with using key/value instead of relational data
+			"CREATE TABLE IF NOT EXISTS JsonRuleSet ("+
+			"ruleSetId VARCHAR(20) NOT NULL, "+
+			"jsonvalue json NOT NULL,"+
+			"PRIMARY KEY (ruleSetId), "+
+			"FOREIGN KEY (ruleSetId) REFERENCES RuleSet (ruleSetId) ON DELETE CASCADE)",
+			
+			"CREATE TABLE IF NOT EXISTS JsonRuleSetListValues ("+
+			"ruleSetId VARCHAR(20) NOT NULL, "+
+			"listId INTEGER, "+
+			"value VARCHAR(100), "+
+			"PRIMARY KEY (ruleSetId, listId, value), "+
+			"FOREIGN KEY (ruleSetId) REFERENCES JsonRuleSet (ruleSetId) ON DELETE CASCADE)",
+			
+			"CREATE TABLE IF NOT EXISTS JsonRuleSetEndPoint ("+
+			"ruleSetId VARCHAR(20) NOT NULL, "+
+			"restEndpoint VARCHAR(50) NOT NULL, "+
+			"PRIMARY KEY (ruleSetId), "+
+			"FOREIGN KEY (ruleSetId) REFERENCES RuleSet (ruleSetId) ON DELETE CASCADE)",
+			
+			"CREATE TABLE IF NOT EXISTS JsonActiveRuleSet ("+
+			"restEndpoint VARCHAR(50) NOT NULL, "+
+			"ruleSetId VARCHAR(20) NOT NULL, "+
+			"PRIMARY KEY (restEndpoint), "+
+			"FOREIGN KEY (ruleSetId) REFERENCES RuleSet (ruleSetId) ON DELETE CASCADE)",
+					
+			/*
+			"CREATE TABLE IF NOT EXISTS JsonDataSetValues ("+
+			"dataSetVersionId VARCHAR(20) NOT NULL, "+
+			"keyId INTEGER NOT NULL, "+
+			"jsonvalue json NOT NULL, "+
+			"PRIMARY KEY (dataSetVersionId, keyId), "+
+			"FOREIGN KEY (dataSetVersionId) REFERENCES DataSetVersion (dataSetVersionId) ON DELETE CASCADE)"
+			*/
     	};
     }
     
