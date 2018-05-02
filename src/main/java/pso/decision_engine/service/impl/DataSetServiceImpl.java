@@ -70,7 +70,7 @@ public class DataSetServiceImpl implements DataSetService {
 		Path outputFile=Paths.get(appConfig.getDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, versionId+".txt");
 		
 		Files.move(tempOutFile, outputFile);
-		setActiveDataSet(dataSetName, dataSetType, versionId);
+		setActiveDataSetFile(dataSetName, dataSetType, versionId);
 		if (dataSetType==DataSetType.LOOKUP && bfsr.getHeaderLine()==null) {
 			result.setOk(false);
 			result.setErrorMessage("Empty file.");
@@ -114,7 +114,7 @@ public class DataSetServiceImpl implements DataSetService {
 		return result;
 	}
 	
-	private void setActiveDataSet(String dataSetName, DataSetType dataSetType, String versionId) throws IOException {
+	private void setActiveDataSetFile(String dataSetName, DataSetType dataSetType, String versionId) throws IOException {
 		Path activeIndicatorFile=Paths.get(appConfig.getDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, "active.txt");
 		Files.deleteIfExists(activeIndicatorFile);
 		Files.write(activeIndicatorFile, versionId.getBytes("UTF-8"));
