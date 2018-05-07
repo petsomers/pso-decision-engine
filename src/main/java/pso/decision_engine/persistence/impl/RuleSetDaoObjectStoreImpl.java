@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -116,7 +117,7 @@ public class RuleSetDaoObjectStoreImpl implements RuleSetDao {
 		
 		for (String listName:ruleSet.getLists().keySet()) {
 			int listId=rsdto.getLists().get(listName);
-			HashSet<String> values=ruleSet.getLists().get(listName);
+			Set<String> values=ruleSet.getLists().get(listName);
 			Flux.fromIterable(values).buffer(1000).subscribe( valueList -> {
 				MapSqlParameterSource[] batch=new MapSqlParameterSource[valueList.size()];
 				int[] j= {0};
@@ -162,7 +163,7 @@ public class RuleSetDaoObjectStoreImpl implements RuleSetDao {
 	}
 
 	@Override
-	public HashMap<String, HashSet<String>> getRuleSetLists(String ruleSetId, boolean loadAll) {
+	public HashMap<String, Set<String>> getRuleSetLists(String ruleSetId, boolean loadAll) {
 		// TODO Auto-generated method stub
 		return null;
 	}

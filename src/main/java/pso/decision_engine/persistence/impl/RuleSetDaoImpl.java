@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -124,7 +125,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 			jdbcTemplate.update(
 				"INSERT INTO RuleSetLists (ruleSetId, listId, listName) "+
 				"values (:ruleSetId, :listId, :listName)", parameters);
-			HashSet<String> values=ruleSet.getLists().get(listName);
+			Set<String> values=ruleSet.getLists().get(listName);
 			saveList(ruleSet.getId(), i, values);
 			i++;
 		}
@@ -162,7 +163,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 		unitTests=null;
 	}
 	
-	private void saveList(String ruleSetId, int listId, HashSet<String> values) {
+	private void saveList(String ruleSetId, int listId, Set<String> values) {
 		Flux.fromIterable(values).buffer(1000).subscribe( valueList -> {
 			MapSqlParameterSource[] batch=new MapSqlParameterSource[valueList.size()];
 			int[] j= {0};
@@ -256,8 +257,8 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	}
 	
 	@Override
-	public HashMap<String, HashSet<String>> getRuleSetLists(String ruleSetId, boolean loadAll) {
-		final HashMap<String, HashSet<String>> result=new HashMap<>();
+	public HashMap<String, Set<String>> getRuleSetLists(String ruleSetId, boolean loadAll) {
+		final HashMap<String, Set<String>> result=new HashMap<>();
 		jdbcTemplate.query(
 			loadAll?
 			"select listName, listValue from RuleSetLists as rsl "+
@@ -280,7 +281,7 @@ public class RuleSetDaoImpl implements RuleSetDao {
 			new MapSqlParameterSource().addValue("ruleSetId", ruleSetId).addValue("maxInMemoryListSize", appConfig.getMaxInMemoryListSize()), 
 			(ResultSet rs) -> {
 				String listName=rs.getString("listName");
-				HashSet<String> values=result.get(listName);
+				Set<String> values=result.get(listName);
 				if (values==null) {
 					values=new HashSet<>();
 					result.put(listName, values);

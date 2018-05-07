@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import pso.decision_engine.model.InputParameterInfo;
 import pso.decision_engine.model.RuleSet;
@@ -30,7 +31,7 @@ public interface RuleSetDao {
 	 * @param loadAll: don't use the maxInMemoryListSize into account
 	 * @return
 	 */
-	public HashMap<String, HashSet<String>> getRuleSetLists(String ruleSetId, boolean loadAll);
+	public HashMap<String, Set<String>> getRuleSetLists(String ruleSetId, boolean loadAll);
 
 	public List<String> getAllEndpoints();
 	

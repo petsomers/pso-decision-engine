@@ -1,5 +1,7 @@
 package pso.decision_engine.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -9,7 +11,10 @@ import pso.decision_engine.utils.JsonSerializerUtils.JsonComparatorDeSerializer;
 import pso.decision_engine.utils.JsonSerializerUtils.JsonComparatorSerializer;
 
 @Data
-public class Rule {
+public class Rule  implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
 	private String sheetName;
 	private int rowNumber;
 	private String label;

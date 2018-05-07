@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -142,7 +143,11 @@ public class SetupApiServiceImpl implements SetupApiService {
 		if (rs==null) return null;
 		if (!restEndpoint.equals(rs.getRestEndpoint())) return null;
 		rs.setLists(ruleSetDao.getRuleSetLists(rs.getId(), loadAllLists));
-		rs.setInputParameters(ruleSetDao.getRuleSetInputParameters(rs.getId()));
+		
+		if (rs.getInputParameters()==null || rs.getInputParameters().size()==0) {		
+			rs.setInputParameters(ruleSetDao.getRuleSetInputParameters(rs.getId()));
+		}
+		
 		int i=0;
 		for (Rule r:rs.getRules()) {
 			if (r.getLabel()!=null && !r.getLabel().isEmpty()) {
@@ -150,7 +155,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 			}
 			i++;
 		}
-		if (loadUnitTests) {
+		if (loadUnitTests && (rs.getUnitTests()==null || rs.getUnitTests().size()==0)) {
 			rs.setUnitTests(ruleSetDao.getRuleSetUnitTests(rs.getId()));
 		}
 		return rs;
@@ -181,7 +186,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 	
 	@Override
 	public boolean isInList(RuleSet ruleSet, String listName, String value) {
-		HashSet<String> memoryList=ruleSet.getLists().get(listName);
+		Set<String> memoryList=ruleSet.getLists().get(listName);
 		if (memoryList!=null) {
 			return memoryList.contains(value);
 		}
