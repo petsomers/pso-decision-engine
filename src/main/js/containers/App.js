@@ -79,6 +79,8 @@ class App extends React.Component {
 							downloadExcel={() => this.downloadExcel(this.props.ruleSetDetails.restEndpoint, this.props.ruleSetDetails.id)}
 							runUnitTests={(endpoint, versionId) => this.props.runUnitTests(endpoint, versionId)}
 							unitTestsResult={this.props.unitTestsResult}
+							selectUnitTest={(unitTestNumber) => this.props.selectUnitTest(unitTestNumber)}
+							selectedUnitTest={this.props.selectedUnitTest}
 							setRunNowParameterValue={(name, value) => this.props.setRunNowParameterValue(name, value)}
 							runNowData={this.props.runNowData}
 							runNow={(endpoint, versionId, parameters) => this.props.runNow(endpoint, versionId, parameters)}
@@ -138,6 +140,7 @@ const mapStateToProps = (state) => {
 		selectedDataSetInfo:  state.appReducer.selectedDataSetInfo,
 		ruleSetDetails: state.appReducer.ruleSetDetails,
 		unitTestsResult: state.appReducer.unitTestsResult,
+		selectedUnitTest: state.appReducer.selectedUnitTest,
 		runNowData: state.appReducer.runNowData,
 		layout: state.appReducer.layout,
 		mainScreen: state.appReducer.mainScreen,

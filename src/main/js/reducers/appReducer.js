@@ -14,6 +14,7 @@ const appReducer = (state = {
   selectedVersion: "",
   ruleSetDetails: null,
   unitTestsResult: null,
+  selectedUnitTest:-1,
   runNowData: {
     parameterValues: {},
     result: null
@@ -103,6 +104,7 @@ const appReducer = (state = {
       selectedVersion:ruleSetResp.id,
       ruleSetDetails:ruleSetResp,
       unitTestsResult: null,
+      selectedUnitTest:-1,
       runNowData: {
         parameterValues: {},
         result: null
@@ -116,6 +118,13 @@ const appReducer = (state = {
       ...state,
       inProgress: false,
       unitTestsResult: unitTestsResult,
+      selectedUnitTest:-1,
+    }
+  break;
+  case "SELECT_UNIT_TEST":
+    state = {
+      ...state,
+      selectedUnitTest:action.payload
     }
   break;
   case "SET_RUNNOW_PARAMETER_VALUE":
@@ -289,7 +298,6 @@ const appReducer = (state = {
         headers: [], rows: [], hasMore: false, loading: false
       }
     }
-
   break;
   case "WINDOW_RESIZE":
     if (action.payload.height!=state.layout.windowHeight

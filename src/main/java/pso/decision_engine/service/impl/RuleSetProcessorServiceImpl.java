@@ -323,6 +323,7 @@ public class RuleSetProcessorServiceImpl implements RuleSetProcessorService {
 			utr.setName(unitTest.getName());
 			utr.setExpectedResult(unitTest.getExpectedResult());
 			utr.setRun(dr.getRun());
+			utr.setResult(dr.getDecision());
 			if (dr.isError()) {
 				result.setAllTestsPassed(false);
 				utr.setPassed(false);

@@ -137,7 +137,10 @@ export class  RuleSetDetails extends React.Component {
 					<UnitTests
 						unitTests={d.unitTests}
 						unitTestsResult={this.props.unitTestsResult}
-						runUnitTests={() => this.runUnitTests()} />
+						runUnitTests={() => this.runUnitTests()}
+						selectUnitTest={(unitTestNumber) => this.props.selectUnitTest(unitTestNumber)}
+						selectedUnitTest={this.props.selectedUnitTest}
+						/>
  				}
 				{(activeTab=="runNow") &&
 					<RunRuleSet

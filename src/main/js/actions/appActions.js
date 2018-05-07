@@ -61,10 +61,16 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		runUnitTests: (endpoint, versionId) => {
 			console.log("RUNNING UNIT TESTS for "+endpoint+"/"+versionId);
-			//dispatch({type: "SET_INPROGRESS"});
+			dispatch({type: "SET_INPROGRESS"});
 			dispatch({
   			type: "RUN_UNIT_TESTS",
   			payload: axios.get("processor/run_unittests/"+encodeURIComponent(endpoint)+"/"+encodeURIComponent(versionId), axiosConfig)
+			});
+		},
+		selectUnitTest: (unitTestNumber) => {
+			dispatch({
+  			type: "SELECT_UNIT_TEST",
+  			payload: unitTestNumber
 			});
 		},
 		setRunNowParameterValue: (name, value) => {
