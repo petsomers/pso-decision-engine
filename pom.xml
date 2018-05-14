@@ -5,7 +5,7 @@
 
 	<groupId>pso</groupId>
 	<artifactId>decision_engine</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>${project.packaging}</packaging>
 
 	<name>pso decision_engine</name>
@@ -70,7 +70,7 @@
     		<groupId>org.apache.ignite</groupId>
     		<artifactId>ignite-core</artifactId>
     		<version>${ignite.version}</version>
-			<scope>provided</scope>
+			<scope>provided</scope><!-- for now, until implementation is complete -->
 		</dependency>
 		<dependency>
 			<groupId>org.apache.ignite</groupId>
