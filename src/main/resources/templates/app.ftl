@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Decision Engine</title>
-<script src="//cdn.polyfill.io/v2/polyfill.min.js"></script>
+<script src="js/polyfill/v2/polyfill.min.js"></script>
 <link rel="stylesheet" href="assets/styles/salesforce-lightning-design-system.min.css">
 <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
 <script type="text/javascript" charset="UTF-8">

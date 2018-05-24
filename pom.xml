@@ -5,7 +5,7 @@
 
 	<groupId>pso</groupId>
 	<artifactId>decision_engine</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<packaging>${project.packaging}</packaging>
 
 	<name>pso decision_engine</name>
