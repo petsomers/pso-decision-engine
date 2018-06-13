@@ -1,5 +1,6 @@
 package pso.decision_engine.config;
 
+/*
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.Ignition;
@@ -8,6 +9,7 @@ import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.DataRegionConfiguration;
 import org.apache.ignite.configuration.DataStorageConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
+*/
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -93,6 +95,7 @@ public class IgniteConfig {
     }
     */
     
+	/*
     @Bean(destroyMethod = "close")
     Ignite ignite() throws IgniteException {
     	Ignition.setClientMode(true);
@@ -100,5 +103,6 @@ public class IgniteConfig {
         ignite.active(true);
         return ignite;
     }
+	*/
 
 }

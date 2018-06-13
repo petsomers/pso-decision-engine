@@ -8,7 +8,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.ignite.cache.query.annotations.QuerySqlField;
+//import org.apache.ignite.cache.query.annotations.QuerySqlField;
 
 import lombok.Data;
 import pso.decision_engine.model.InputParameterInfo;
@@ -21,25 +21,25 @@ public class RuleSetDto implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@QuerySqlField(index = true)
+	//@QuerySqlField(index = true)
 	private String id;
 	
-	@QuerySqlField(index = true)
+	//@QuerySqlField(index = true)
 	private String restEndpoint;
 	
-	@QuerySqlField
+	//@QuerySqlField
 	private String name;
 	
-	@QuerySqlField
+	//@QuerySqlField
 	private String createdBy;
 	
-	@QuerySqlField
+	//@QuerySqlField
 	private String version;
 	
-	@QuerySqlField
+	//@QuerySqlField
 	private String remark;
 
-	@QuerySqlField
+	//@QuerySqlField
 	private LocalDateTime uploadDate;
 	
 	private Hashtable<String, InputParameterInfo> inputParameters=new Hashtable<>();

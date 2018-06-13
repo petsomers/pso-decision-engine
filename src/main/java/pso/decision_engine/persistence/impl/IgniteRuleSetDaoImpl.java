@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+/*
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteSet;
@@ -19,6 +20,7 @@ import org.apache.ignite.cache.query.QueryCursor;
 import org.apache.ignite.cache.query.SqlFieldsQuery;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.CollectionConfiguration;
+*/
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -30,8 +32,9 @@ import pso.decision_engine.model.ignitedto.RuleSetDto;
 import pso.decision_engine.persistence.RuleSetDao;
 
 //@Repository("igniteRuleSetDao")
-public class IgniteRuleSetDaoImpl implements RuleSetDao {
-	
+public class IgniteRuleSetDaoImpl {
+	// implements RuleSetDao {
+	/*
 	@Autowired
 	private Ignite ignite;
 	
@@ -215,5 +218,6 @@ public class IgniteRuleSetDaoImpl implements RuleSetDao {
 		// TODO Auto-generated method stub
 
 	}
+	*/
 
 }
