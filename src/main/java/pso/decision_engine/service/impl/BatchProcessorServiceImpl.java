@@ -16,7 +16,6 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.StringJoiner;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 
@@ -52,7 +51,7 @@ public class BatchProcessorServiceImpl {
 	
 	@PostConstruct
 	public void init() {
-		if (!appConfig.isEnableBatcProcessing()) return;
+		if (!appConfig.isEnableBatchProcessing()) return;
 		File f=new File(appConfig.getBatchInputDirectory());
 		if (!f.exists() || !f.isDirectory()) {
 			throw new RuntimeException("BatchProcessorService Error: this is not a directory: "+appConfig.getBatchInputDirectory());

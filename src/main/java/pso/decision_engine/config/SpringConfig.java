@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import pso.decision_engine.presentation.SecurityFilter;
 import pso.decision_engine.service.JwtService;
 
@@ -30,4 +30,13 @@ public class SpringConfig {
 		registration.setOrder(1);
 		return registration;
 	}
+
+	@Bean
+	public FreeMarkerConfigurer freeMarkerConfigurer() {
+		FreeMarkerConfigurer cfg = new FreeMarkerConfigurer();
+		cfg.setTemplateLoaderPaths("classpath:/static/engine-interface/");
+		cfg.setDefaultEncoding("UTF-8");
+		return cfg;
+	}
+
 }

@@ -1,7 +1,10 @@
 import React from "react";
 import { Button } from "react-lightning-design-system";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faDotCircle, faTable, faListAlt} from "@fortawesome/free-solid-svg-icons";
 
 export const RuleSetSelection = ({restEndpoints, dataSets, layout, openFileUpload, selectEndpoint, selectedEndpoint, selectedDataSetInfo, selectDataSet}) => {
+	const showHeader = window.showHeader;
 	const restEndpointsHeight=showHeader?(layout.windowHeight-160)/2:(layout.windowHeight-110)/2;
 	const globalListsHeight=restEndpointsHeight;
 
@@ -43,7 +46,7 @@ export const RuleSetSelection = ({restEndpoints, dataSets, layout, openFileUploa
 				<div style={restEndpointsStyle} className='slds-table slds-table--bordered'>
 					{restEndpoints.map((endpoint, index) => (
 						<div key={endpoint} style={(selectedEndpoint==endpoint)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>
-							<i className="far fa-dot-circle"></i> &nbsp;
+							<FontAwesomeIcon icon={faDotCircle}/> &nbsp;
 							<a onClick={() => selectEndpoint(endpoint)}>
 								{endpoint}
 							</a>
@@ -56,9 +59,9 @@ export const RuleSetSelection = ({restEndpoints, dataSets, layout, openFileUploa
 					<div key={dataSet.name} style={(selectedDataSetInfo && selectedDataSetInfo.name==dataSet.name)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>
 						<a onClick={() => selectDataSet(dataSet)}>
 							{dataSet.type=="LOOKUP" ? (
-									<i className="fas fa-table"></i>
+								<FontAwesomeIcon icon={faTable}/>
 								):(
-									<i className="fas fa-list-alt"></i>
+								<FontAwesomeIcon icon={faListAlt}/>
 								)
 							}
 							&nbsp; {dataSet.name}

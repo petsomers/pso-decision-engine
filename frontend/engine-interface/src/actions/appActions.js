@@ -1,6 +1,7 @@
-import axios from "axios"
+import axios from "axios";
 
 const mapDispatchToProps = (dispatch) => {
+	const axiosConfig = window.axiosConfig;
 	return {
 		onWindowResize: (width, height) => {
 			dispatch({

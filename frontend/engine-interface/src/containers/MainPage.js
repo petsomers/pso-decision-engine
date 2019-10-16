@@ -12,13 +12,12 @@ import { RuleSetDetails} from '../components/RuleSetDetails'
 import { DataSetDetails } from '../components/DataSetDetails'
 import axios from "axios"
 
-class App extends React.Component {
+class MainPage extends React.Component {
 
 	constructor(props) {
 		super();
-		this.state={
-		}
-		util.setAssetRoot("assets/");
+		this.state = {};
+		util.setAssetRoot("engine-interface/assets");
 	}
 
 	componentDidMount() {
@@ -37,7 +36,7 @@ class App extends React.Component {
 	handleResize = ({ width, height }) => this.props.onWindowResize(width, height);
 
 	render() {
-		const mainScreen={marginLeft:(this.props.layout.leftPaneWidth+15)+"px", marginTop:showHeader?"70px":"5px"};
+		const mainScreen={marginLeft:(this.props.layout.leftPaneWidth+15)+"px", marginTop:window.showHeader?"70px":"5px"};
     return (
 			<ResizeAware
     		style={{ position: 'absolute',top:"0px", left:"0px", height:"100%", width:"100%" }}
@@ -142,7 +141,6 @@ const mapStateToProps = (state) => {
 		unitTestsResult: state.appReducer.unitTestsResult,
 		selectedUnitTest: state.appReducer.selectedUnitTest,
 		runNowData: state.appReducer.runNowData,
-		layout: state.appReducer.layout,
 		mainScreen: state.appReducer.mainScreen,
 		errorMessage: state.appReducer.errorMessage,
 		infoMessage: state.appReducer.infoMessage,
@@ -152,4 +150,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(MainPage);

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Spinner, Picklist, PicklistItem, Input } from "react-lightning-design-system";
-import axios from "axios"
+import axios from "axios";
 
 export class FileUpload  extends React.Component {
 	constructor(props) {
@@ -98,7 +98,7 @@ export class FileUpload  extends React.Component {
 	}
 
 	uploadFile(url, fd, onsuccess) {
-		axios.post(url, fd, axiosConfig)
+		axios.post(url, fd, window.axiosConfig)
 			.then(result => {
 				console.log("File upload response", result)
 				if (!result.data.ok) {

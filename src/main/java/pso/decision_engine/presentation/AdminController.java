@@ -31,7 +31,7 @@ public class AdminController {
 		Cookie tokenCookie=new Cookie("token", jwt);
 		tokenCookie.setHttpOnly(true);
 		resp.addCookie(tokenCookie);
-		return "app";
+		return "index";
 	}
 	
 	@RequestMapping(value = "/admin", method = RequestMethod.POST)
