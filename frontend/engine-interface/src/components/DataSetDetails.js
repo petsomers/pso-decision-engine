@@ -2,6 +2,8 @@ import React from "react";
 import { Button } from "react-lightning-design-system";
 import { Table , TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn } from "react-lightning-design-system";
 import { Modal, ModalHeader, ModalFooter, ModalContent } from "react-lightning-design-system";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTable as fasTable, faListAlt as fasListAlt, faSpinner as fasSpinner} from "@fortawesome/free-solid-svg-icons";
 
 export class  DataSetDetails extends React.Component {
 	constructor(props) {
@@ -41,12 +43,12 @@ export class  DataSetDetails extends React.Component {
 			<div style={{display: "inline-block", width: "350px"}}>
 				{selectedDataSetInfo.type=="LOOKUP" ? (
 					<span>
-						<i className="fas fa-table"></i>
+						<FontAwesomeIcon icon={fasTable}/>
 						&nbsp; <b>Lookup Table</b>
 					</span>
 				):(
 					<span>
-						<i className="fas fa-list-alt"></i>
+						<FontAwesomeIcon icon={fasListAlt}/>
 						&nbsp; <b>List</b>
 					</span>
 				)
@@ -116,7 +118,7 @@ export class  DataSetDetails extends React.Component {
 			}
 			{dataSetData.loading &&
 				<div style={{padding: "20px"}}>
-					<i className="fas fa-spinner fa-spin"></i>
+					<FontAwesomeIcon icon={fasSpinner} spin={true}/>
 				</div>
 			}
 			{this.state.deleteConfirmAction &&

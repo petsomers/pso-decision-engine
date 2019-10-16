@@ -1,4 +1,14 @@
 import React from "react";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {
+  faTags as fasTags,
+  faBalanceScale as fasBalanceScale,
+  faCheck as fasCheck,
+  faTimes as fasTimes,
+  faLevelDownAlt as fasLevelDownAlt,
+  faInfo as fasInfo
+} from "@fortawesome/free-solid-svg-icons";
+import {faFileExcel as farFileExcel} from "@fortawesome/free-regular-svg-icons";
 
 export const Rules = ({rules}) => {
   const sheetNumberStyle={display: "inline-block", width: "30px", verticalAlign: "text-top", textAlign: "right"}
@@ -22,7 +32,7 @@ export const Rules = ({rules}) => {
     <div>
       {sheets.map((sheet, index1) => (
         <div key={"sheet"+index1}>
-          <p><i className="far fa-file-excel"></i> &nbsp;&nbsp; <b>Excel Sheet:</b> {sheet.sheetName}</p>
+          <p><FontAwesomeIcon icon={farFileExcel}/> &nbsp;&nbsp; <b>Excel Sheet:</b> {sheet.sheetName}</p>
           {sheet.rules.map((rule, index2) => (
             <div key={index1+"_"+index2} style={{paddingBottom: "20px"}}>
               <div style={sheetNumberStyle}>
@@ -31,32 +41,28 @@ export const Rules = ({rules}) => {
               <div style={ruleItemStyle}>
                 {rule.label!="" &&
                   <div style={conditionStyle}>
-                  <i className="fas fa-tags"></i> &nbsp; {rule.label}
+                    <FontAwesomeIcon icon={fasTags}/> &nbsp; {rule.label}
                   </div>
                 }
                 <div style={conditionStyle}>
-                  <i className="fas fa-balance-scale"></i> &nbsp;&nbsp;<i>{rule.parameterName}</i> <b>{rule.comparator}</b> {rule.value1}
+                  <FontAwesomeIcon icon={fasBalanceScale}/> &nbsp;&nbsp;<i>{rule.parameterName}</i> <b>{rule.comparator}</b> {rule.value1}
                   {rule.value2!="" &&
                     <span> ; {rule.value2}</span>
                   }
                 </div>
                 <div style={resultStyleGreen}>
-                  <i className="fas fa-check"></i> &nbsp;&nbsp;&nbsp;
-                  {rule.positiveResult=="" &&
-                    <i className="fas fa-level-down-alt"></i>
-                  }
+                  <FontAwesomeIcon icon={fasCheck}/> &nbsp;&nbsp;&nbsp;
+                  {rule.positiveResult=="" && <FontAwesomeIcon icon={fasLevelDownAlt}/>}
                   {rule.positiveResult}
                 </div>
                 <div style={resultStyleRed}>
-                  <i className="fas fa-times"></i> &nbsp;&nbsp;&nbsp;&nbsp;
-                  {rule.negativeResult=="" &&
-                    <i className="fas fa-level-down-alt"></i>
-                  }
+                  <FontAwesomeIcon icon={fasTimes}/> &nbsp;&nbsp;&nbsp;&nbsp;
+                  {rule.negativeResult=="" && <FontAwesomeIcon icon={fasLevelDownAlt}/>}
                   {rule.negativeResult}<br />
                   </div>
                   {rule.remark!="" &&
                     <div style={remarkStyle}>
-                      <i className="fas fa-info"></i> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {rule.remark}<br />
+                      <FontAwesomeIcon icon={fasInfo}/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {rule.remark}<br />
                     </div>
                   }
               </div>

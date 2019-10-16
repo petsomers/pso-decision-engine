@@ -1,5 +1,13 @@
 import React from "react";
-import { Table , TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn, Button } from "react-lightning-design-system";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {
+  faTags as fasTags,
+  faBalanceScale as fasBalanceScale,
+  faCheck as fasCheck,
+  faTimes as fasTimes,
+  faExclamationTriangle as fasExclamationTriangle
+} from "@fortawesome/free-solid-svg-icons";
+import {faFileExcel as farFileExcel} from "@fortawesome/free-regular-svg-icons";
 
 export const UnitTestTrace = ({runData}) => {
   const borderedTextStyle={border: "1px", borderStyle: "solid", borderColor: "#CCCAC9", backgroundColor: "#EEEEEE"};
@@ -18,7 +26,7 @@ export const UnitTestTrace = ({runData}) => {
           <tbody>
           <tr style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda"}}>
             <td>
-              <i className="far fa-file-excel"></i> &nbsp;  {t.rule.sheetName}: {t.rule.rowNumber}
+              <FontAwesomeIcon icon={farFileExcel}/> &nbsp;  {t.rule.sheetName}: {t.rule.rowNumber}
             </td>
             <td align="right">
               &nbsp;
@@ -30,13 +38,13 @@ export const UnitTestTrace = ({runData}) => {
           {t.rule.label && t.rule.label!="" &&
             <tr style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda"}}>
               <td colSpan="2">
-                <i className="fas fa-tags"></i> &nbsp; {t.rule.label}
+                <FontAwesomeIcon icon={fasTags}/> &nbsp; {t.rule.label}
               </td>
             </tr>
           }
           <tr style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda"}}>
             <td colSpan="2">
-              <i className="fas fa-balance-scale"></i> &nbsp;
+              <FontAwesomeIcon icon={fasBalanceScale}/> &nbsp;
               {t.rule.parameterName} ( <span style={borderedTextStyle}>{t.parameterValue}</span> )
               &nbsp; {t.rule.comparator} &nbsp;
               {t.rule.value1}
@@ -57,20 +65,20 @@ export const UnitTestTrace = ({runData}) => {
           <tr>
             {t.result==t.rule.positiveResult?(
               <td style={tdResultMatchStyle}>
-                <i className="fas fa-check"></i>  &nbsp; {t.rule.positiveResult} &nbsp;
+                <FontAwesomeIcon icon={fasCheck}/>  &nbsp; {t.rule.positiveResult} &nbsp;
               </td>
             ) : (
               <td style={tdResultNoMatchStyle}>
-                <i className="fas fa-check"></i>  &nbsp; {t.rule.positiveResult} &nbsp;
+                <FontAwesomeIcon icon={fasCheck}/>  &nbsp; {t.rule.positiveResult} &nbsp;
               </td>
             )}
             {t.result==t.rule.negativeResult?(
               <td style={tdResultMatchStyle}>
-                <i className="fas fa-times"></i> &nbsp; {t.rule.negativeResult} &nbsp;
+                <FontAwesomeIcon icon={fasTimes}/> &nbsp; {t.rule.negativeResult} &nbsp;
               </td>
             ) : (
               <td style={tdResultNoMatchStyle}>
-                <i className="fas fa-times"></i>  &nbsp; {t.rule.negativeResult} &nbsp;
+                <FontAwesomeIcon icon={fasTimes}/>  &nbsp; {t.rule.negativeResult} &nbsp;
               </td>
             )}
           </tr>
@@ -82,7 +90,7 @@ export const UnitTestTrace = ({runData}) => {
       }
       {runData.error &&
         <div>
-        <font color="red"><i className="fas fa-exclamation-triangle"></i> &nbsp; Error</font><br />
+        <font color="red"><FontAwesomeIcon icon={fasExclamationTriangle}/> &nbsp; Error</font><br />
         </div>
       }
       {runData.messages && runData.messages.length>0 &&

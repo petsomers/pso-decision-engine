@@ -1,6 +1,8 @@
 import React from "react";
 import { Table , TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn, Button } from "react-lightning-design-system";
 import { UnitTestTrace } from "./UnitTestTrace"
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faCheck as fasCheck, faFrown as fasFrown, faBug as fasBug, faChild as fasChild} from "@fortawesome/free-solid-svg-icons";
 
 export const UnitTests = ({unitTests, runUnitTests, unitTestsResult, selectUnitTest, selectedUnitTest}) => {
 	let utres=unitTestsResult!=null?unitTestsResult.unitTestResults:null;
@@ -17,13 +19,13 @@ export const UnitTests = ({unitTests, runUnitTests, unitTestsResult, selectUnitT
 			</div>
 			{unitTestsResult!=null && unitTestsResult.allTestsPassed &&
 				<span>
-				<b><font color="green" size="+1"><i className="fas fa-check"></i> All Tests Passed</font></b>
+				<b><font color="green" size="+1"><FontAwesomeIcon icon={fasCheck}/>> All Tests Passed</font></b>
 				</span>
 			}
 			{unitTestsResult!=null && !unitTestsResult.allTestsPassed &&
 				<span>
 				<br />
-				<b><font color="red" size="+1"><i className="fas fa-frown"></i>FAILED</font></b>
+				<b><font color="red" size="+1"><FontAwesomeIcon icon={fasFrown}/>>FAILED</font></b>
 				</span>
 			}
 			{unitTestsResult!=null && unitTestsResult.errorMessage &&
@@ -53,16 +55,16 @@ export const UnitTests = ({unitTests, runUnitTests, unitTestsResult, selectUnitT
 								{utres!=null && utres[utnr].passed &&
 										<span>
 												&nbsp;&nbsp;&nbsp;
-												<b><font color="green"><i className="fas fa-check"></i>&nbsp;PASSED</font></b>
+												<b><font color="green"><FontAwesomeIcon icon={fasCheck}/>&nbsp;PASSED</font></b>
 												&nbsp;&nbsp;&nbsp;&nbsp;
-												<a onClick={() => selectUnitTest(utnr)}><i className="fas fa-bug"></i></a>
+												<a onClick={() => selectUnitTest(utnr)}><FontAwesomeIcon icon={fasBug}/></a>
 										</span>
 								}
 								{utres!=null && !utres[utnr].passed &&
 										<span>
-											&nbsp;&nbsp;&nbsp;<b><font color="red"><i className="fas fa-frown"></i>&nbsp;FAILED</font></b>
+											&nbsp;&nbsp;&nbsp;<b><font color="red"><FontAwesomeIcon icon={fasFrown}/>&nbsp;FAILED</font></b>
 											&nbsp;&nbsp;&nbsp;
-											<a onClick={() => selectUnitTest(utnr)}><i className="fas fa-bug"></i></a>
+											<a onClick={() => selectUnitTest(utnr)}><FontAwesomeIcon icon={fasBug}/></a>
 										</span>
 								}
 							</TableRowColumn>
@@ -86,12 +88,12 @@ export const UnitTests = ({unitTests, runUnitTests, unitTestsResult, selectUnitT
 			Unit Test: <b>{unitTest.name}</b>
 			{unitTestResult.passed &&
 					<span>
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><font color="green"><i className="fas fa-check"></i>&nbsp;PASSED</font></b>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><font color="green"><FontAwesomeIcon icon={fasCheck}/>&nbsp;PASSED</font></b>
 					</span>
 			}
 			{!unitTestResult.passed &&
 					<span>
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><font color="red"><i className="fas fa-frown"></i>&nbsp;FAILED</font></b>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><font color="red"><FontAwesomeIcon icon={fasFrown}/>&nbsp;FAILED</font></b>
 					</span>
 			}
 			<div style={{paddingLeft: "40px", width: "70%"}}>
@@ -112,10 +114,10 @@ export const UnitTests = ({unitTests, runUnitTests, unitTestsResult, selectUnitT
 					</TableBody>
 				</Table>
 				<div style={{paddingTop:"10px"}}>
-					<i className="fas fa-child"></i> <b>Expected Result: <font color="green">{unitTest.expectedResult}</font></b>
+					<FontAwesomeIcon icon={fasChild}/> <b>Expected Result: <font color="green">{unitTest.expectedResult}</font></b>
 					{unitTestResult.passed &&
 							<span>
-								&nbsp;<b><font color="green"><i className="fas fa-check"></i>&nbsp;</font></b>
+								&nbsp;<b><font color="green"><FontAwesomeIcon icon={fasCheck}/>&nbsp;</font></b>
 							</span>
 					}
 				</div>

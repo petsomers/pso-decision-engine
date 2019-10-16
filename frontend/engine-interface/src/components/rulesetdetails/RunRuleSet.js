@@ -1,6 +1,8 @@
 import React from "react";
 import { Input, Button } from "react-lightning-design-system";
 import { UnitTestTrace } from "./UnitTestTrace"
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faChild as fasChild, faExclamationTriangle as fasExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 
 export const RunRuleSet = ({inputParameters, runNowData, setRunNowParameterValue, runNow, runNowClearResult}) => {
     return (
@@ -45,13 +47,13 @@ export const RunRuleSet = ({inputParameters, runNowData, setRunNowParameterValue
       <div>
         {runNowData.result.error &&
           <div style={{color:"red", paddingBottom:"20px"}}>
-          <i className="fas fa-exclamation-triangle"></i> &nbsp;
+          <FontAwesomeIcon icon={fasExclamationTriangle}/> &nbsp;
           {runNowData.result.errorMessage}
           </div>
         }
         {!runNowData.result.error && runNowData.result.decision &&
           <div style={{color:"blue", paddingBottom:"20px", fontWeight:"bold", fontSize: "1.85em"}}>
-            <i className="fas fa-child"></i> &nbsp;&nbsp; Decision: {runNowData.result.decision}
+            <FontAwesomeIcon icon={fasChild}/> &nbsp;&nbsp; Decision: {runNowData.result.decision}
           </div>
         }
         <UnitTestTrace runData={runNowData.result.run} />

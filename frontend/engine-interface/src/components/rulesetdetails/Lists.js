@@ -1,23 +1,24 @@
 import React from "react";
 import { List } from 'react-virtualized';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faList as fasList} from "@fortawesome/free-solid-svg-icons";
 
 export const Lists = ({lists}) => {
 
-  const liststyle={
-  			zIndex: "7",
-  			overflowX: "hidden",
-  			overflowY: "scroll",
-  			height: "200px",
-  			width: "400px",
-  			padding: "5px"
-  	}
-
+	const liststyle = {
+		zIndex: "7",
+		overflowX: "hidden",
+		overflowY: "scroll",
+		height: "200px",
+		width: "400px",
+		padding: "5px"
+	};
 
   return (
     <div>
       {Object.keys(lists).map((listName, index1) => (
         <div key={"list_"+index1} style={{paddingBottom: "15px"}}>
-          <i className="fas fa-list"></i> <b>{listName}</b> ({lists[listName].length})
+          <FontAwesomeIcon icon={fasList}/> <b>{listName}</b> ({lists[listName].length})
           <div style={{paddingLeft: "20px"}}>
             {lists[listName].length<10 &&
               <div style={{width:"400px"}}>

@@ -1,19 +1,21 @@
 import React from "react";
 import { Button } from "react-lightning-design-system";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faDotCircle as farDotCircle} from "@fortawesome/free-regular-svg-icons";
 
 export const RuleSetVersionSelection = ({layout, selectedEndpoint, versions, selectVersion, downloadExcel, deleteVersion}) => {
-	const cardStyle= {
+	const cardStyle = {
 		padding: "10px",
 		whiteSpace: "nowrap"
-	}
-	const liveCardStyle={
+	};
+	const liveCardStyle = {
 		padding: "10px",
 		whiteSpace: "nowrap",
 		backgroundColor: '#AAFFAA'
-	}
+	};
   return (
   		<div>
-					<i className="far fa-dot-circle"></i> &nbsp;
+					<FontAwesomeIcon icon={farDotCircle}/> &nbsp;
 					<b>Rest Endpoint:</b> {selectedEndpoint}<br />
 				{versions.map((version, index) => (
 					<div key={version.id} style={version.active?liveCardStyle:cardStyle} className='slds-table slds-table--bordered'>

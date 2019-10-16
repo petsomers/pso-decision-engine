@@ -1,6 +1,9 @@
 import React from "react";
 import { Button, Spinner, Picklist, PicklistItem, Input } from "react-lightning-design-system";
 import axios from "axios";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faListAlt as fasListAlt, faTable as fasTable} from "@fortawesome/free-solid-svg-icons";
+import {faFileExcel as farFileExcel} from "@fortawesome/free-regular-svg-icons";
 
 export class FileUpload  extends React.Component {
 	constructor(props) {
@@ -142,12 +145,12 @@ export class FileUpload  extends React.Component {
 				<br />
 				<Button type="neutral" onClick={() => this.setMode("RULESET")} icon="new" iconAlign="left" label="1. Ruleset Excel File" />
 				<br />
-				<i className="far fa-file-excel"></i> &nbsp;
+				<FontAwesomeIcon icon={farFileExcel}/> &nbsp;
 				<i>The Excel contains the complete RuleSet definitions.</i>
 				<br /><br />
 				<Button type="neutral" onClick={() => this.setMode("LIST")} icon="new" iconAlign="left" label="2. Dataset LIST Text File" />
 				<br />
-				<i className="fas fa-list-alt"></i> &nbsp;
+				<FontAwesomeIcon icon={fasListAlt}/> &nbsp;
 				<i>
 					A Dataset List is a 1 column text file with unique values that can be used in a Rule Condition.<br />
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No header row is required.
@@ -155,7 +158,7 @@ export class FileUpload  extends React.Component {
 				<br /><br />
 				<Button type="neutral" onClick={() => this.setMode("LOOKUP")} icon="new" iconAlign="left" label="3. Dataset LOOKUP Text File" />
 				<br />
-				<i className="fas fa-table"></i> &nbsp;
+				<FontAwesomeIcon icon={fasTable}/> &nbsp;
 				<i>
 					A Dataset Lookup is a multi column text file where the first column contains the key.<br />
 				 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A header row is required. The header names should match the exact parameters names as defined in the Rulesets.
@@ -171,14 +174,14 @@ export class FileUpload  extends React.Component {
 				<div>
 					<h2><b>Ruleset Excel File Upload</b></h2>
 					<br /><br />
-					<i className="far fa-file-excel"></i> &nbsp; <b>Upload Excel File</b><br /><br />
+					<FontAwesomeIcon icon={farFileExcel}/> &nbsp; <b>Upload Excel File</b><br /><br />
 				</div>
 			}
 			{this.state.mode=="LIST" &&
 				<div>
 					<h2><b>Data Set Text File Upload</b></h2>
 					<br /><br />
-					<i className="fas fa-list-alt"></i> &nbsp; <b>Upload Text File</b><br /><br />
+					<FontAwesomeIcon icon={fasListAlt}/> &nbsp; <b>Upload Text File</b><br /><br />
 					<Picklist
 					  label="Select LIST Data Set"
 					  selectedText=""
@@ -207,7 +210,7 @@ export class FileUpload  extends React.Component {
 				<div>
 					<h2><b>Lookup Text File Upload</b></h2>
 					<br /><br />
-					<i className="fas fa-table"></i> &nbsp; <b>Upload Text File</b><br /><br />
+					<FontAwesomeIcon icon={fasTable}/> &nbsp; <b>Upload Text File</b><br /><br />
 					<Picklist
 						label="Select LOOKUP Data Set"
 						selectedText=""
