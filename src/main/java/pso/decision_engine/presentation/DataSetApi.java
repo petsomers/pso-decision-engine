@@ -1,33 +1,28 @@
 package pso.decision_engine.presentation;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.util.Collection;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
-
 import org.apache.commons.collections4.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import pso.decision_engine.model.DataSetInfo;
 import pso.decision_engine.model.DataSetUploadResult;
 import pso.decision_engine.model.ScrollItems;
 import pso.decision_engine.model.enums.DataSetType;
 import pso.decision_engine.service.DataSetService;
 import reactor.core.publisher.Flux;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.util.Collection;
+import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @RestController
 @RequestMapping("/dataset")
@@ -108,7 +103,7 @@ public class DataSetApi {
 		resp.setDateHeader( "Expires", 0 );
 		resp.setContentType("application/octetstream");
 		resp.setHeader("Content-Disposition", "attachment; filename=\""+ dataSetName+".txt\"");
-		OutputStreamWriter ow=new OutputStreamWriter(resp.getOutputStream(), "UTF-8");
+		OutputStreamWriter ow=new OutputStreamWriter(resp.getOutputStream(), UTF_8);
 		f.buffer(100).subscribe( values -> {
 			StringBuilder batch=new StringBuilder();
 			values.forEach(value -> {
@@ -140,7 +135,7 @@ public class DataSetApi {
 		resp.setHeader("Content-Disposition", "attachment; filename=\""+ dataSetName+".txt\"");
 		
 		// write header row
-		OutputStreamWriter ow=new OutputStreamWriter(resp.getOutputStream(), "UTF-8");
+		OutputStreamWriter ow=new OutputStreamWriter(resp.getOutputStream(), UTF_8);
 		ow.write(String.join("\t", columnHeaders));
 		ow.write("\r\n");
 

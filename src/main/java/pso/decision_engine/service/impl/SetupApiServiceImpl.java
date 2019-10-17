@@ -1,35 +1,27 @@
 package pso.decision_engine.service.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 import pso.decision_engine.config.AppConfig;
-import pso.decision_engine.model.ExcelParseResult;
-import pso.decision_engine.model.ExcelParserException;
-import pso.decision_engine.model.Rule;
-import pso.decision_engine.model.RuleSet;
-import pso.decision_engine.model.RuleSetInfo;
+import pso.decision_engine.model.*;
 import pso.decision_engine.persistence.RuleSetDao;
 import pso.decision_engine.service.DataSetService;
 import pso.decision_engine.service.ExcelParserService;
 import pso.decision_engine.service.IdService;
 import pso.decision_engine.service.SetupApiService;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
 public class SetupApiServiceImpl implements SetupApiService {
@@ -60,7 +52,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 	@Override
 	public ExcelParseResult addExcelFile(InputStream in) throws IOException {
 		String id=idService.createShortUniqueId();
-		Path outputFile=Paths.get(appConfig.getDataDirectory(), "temp", id+".xlsx");
+		Path outputFile=Paths.get(appConfig.getTempDataDirectory(), "temp", id+".xlsx");
 		outputFile.toFile().getParentFile().mkdirs();
 		try (OutputStream out=Files.newOutputStream(outputFile)) {
 			StreamUtils.copy(in, out);
@@ -80,18 +72,18 @@ public class SetupApiServiceImpl implements SetupApiService {
 			result.setErrorMessage(e.getMessage());
 		}
 		if (result.isOk()) {
-			Path moveToFile=Paths.get(appConfig.getDataDirectory(), result.getRestEndpoint(), id+".xlsx");
+			Path moveToFile = Paths.get(appConfig.getResultDataDirectory(), result.getRestEndpoint(), id + ".xlsx");
 			moveToFile.toFile().getParentFile().mkdirs();
 			Files.move(outputFile, moveToFile);
-			excelFileLocation=moveToFile;
-			Path jsonFile=Paths.get(appConfig.getDataDirectory(), result.getRestEndpoint(), id+".json");
+			excelFileLocation = moveToFile;
+			Path jsonFile = Paths.get(appConfig.getResultDataDirectory(), result.getRestEndpoint(), id + ".json");
 			mapper.writeValue(jsonFile.toFile(), rs);
 			ruleSetDao.saveRuleSet(rs);
 		} else {
-			Path moveToFile=Paths.get(appConfig.getDataDirectory(), "error", id+".xlsx");
+			Path moveToFile = Paths.get(appConfig.getResultDataDirectory(), "error", id + ".xlsx");
 			moveToFile.toFile().getParentFile().mkdirs();
 			Files.move(outputFile, moveToFile);
-			excelFileLocation=moveToFile;
+			excelFileLocation = moveToFile;
 		}
 		if (excelFileLocation!=null) {
 			File f=excelFileLocation.toFile();
@@ -111,8 +103,8 @@ public class SetupApiServiceImpl implements SetupApiService {
 	
 	@Override
 	public boolean doesExcelFileExists(String restEndpoint, String ruleSetId) {
-		Path file=Paths.get(appConfig.getDataDirectory(), restEndpoint, ruleSetId+".xlsx");
-		File f=file.toFile();
+		Path file = Paths.get(appConfig.getResultDataDirectory(), restEndpoint, ruleSetId + ".xlsx");
+		File f = file.toFile();
 		return f.exists();
 	}
 	
@@ -164,9 +156,9 @@ public class SetupApiServiceImpl implements SetupApiService {
 	@Override
 	public void setActiveRuleSet(String restEndpoint, String ruleSetId) throws IOException {
 		ruleSetDao.setActiveRuleSet(restEndpoint, ruleSetId);
-		Path activeIndicatorFile=Paths.get(appConfig.getDataDirectory(), restEndpoint, "active.txt");
+		Path activeIndicatorFile=Paths.get(appConfig.getResultDataDirectory(), restEndpoint, "active.txt");
 		Files.deleteIfExists(activeIndicatorFile);
-		Files.write(activeIndicatorFile, ruleSetId.getBytes("UTF-8"));
+		Files.write(activeIndicatorFile, ruleSetId.getBytes(UTF_8));
 	}
 	
 	@Override
@@ -198,8 +190,8 @@ public class SetupApiServiceImpl implements SetupApiService {
 	@Override
 	public void deleteRuleSet(String restEndpoint, String ruleSetId) {
 		ruleSetDao.deleteRuleSet(restEndpoint, ruleSetId);
-		Path excelfile=Paths.get(appConfig.getDataDirectory(), restEndpoint, ruleSetId+".xlsx");
-		Path jsonfile=Paths.get(appConfig.getDataDirectory(), restEndpoint, ruleSetId+".json");
+		Path excelfile=Paths.get(appConfig.getTempDataDirectory(), restEndpoint, ruleSetId+".xlsx");
+		Path jsonfile=Paths.get(appConfig.getTempDataDirectory(), restEndpoint, ruleSetId+".json");
 		try {
 			Files.deleteIfExists(excelfile);
 			Files.deleteIfExists(jsonfile);
@@ -214,7 +206,7 @@ public class SetupApiServiceImpl implements SetupApiService {
 		ruleSetDao.deleteRuleSetsWithEndpoint(restEndpoint);
 		
 		// 2. REMOVE ALL FILES from the directory
-		Path dir=Paths.get(appConfig.getDataDirectory(), restEndpoint);
+		Path dir=Paths.get(appConfig.getTempDataDirectory(), restEndpoint);
 		try {
 			Files.list(dir)
 			.filter(Files::isRegularFile)
@@ -239,19 +231,20 @@ public class SetupApiServiceImpl implements SetupApiService {
 		ruleSetDao.deleteRuleSetsWithEndpointSkipId(restEndpoint, activeId);
 		
 		// 2. REMOVE ALL FILES from the directory
-		Path dir=Paths.get(appConfig.getDataDirectory(), restEndpoint);
+		Path tempDir = Paths.get(appConfig.getTempDataDirectory(), restEndpoint);
+		Path resultDir = Paths.get(appConfig.getResultDataDirectory(), restEndpoint);
 		try {
-			Files.list(dir)
-			.filter(Files::isRegularFile)
-			.filter(file -> file.endsWith(".xlsx") || file.endsWith(".json"))
-			.filter(file -> !file.startsWith(activeId))
-			.forEach(file -> {
-				try {
-					Files.deleteIfExists(file);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			});
+			Stream.concat(Files.list(tempDir), Files.list(resultDir))
+					.filter(Files::isRegularFile)
+					.filter(file -> file.endsWith(".xlsx") || file.endsWith(".json"))
+					.filter(file -> !file.startsWith(activeId))
+					.forEach(file -> {
+						try {
+							Files.deleteIfExists(file);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

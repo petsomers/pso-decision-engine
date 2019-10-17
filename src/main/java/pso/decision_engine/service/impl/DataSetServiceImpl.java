@@ -1,5 +1,18 @@
 package pso.decision_engine.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
+import pso.decision_engine.config.AppConfig;
+import pso.decision_engine.model.*;
+import pso.decision_engine.model.enums.DataSetType;
+import pso.decision_engine.persistence.DataSetDao;
+import pso.decision_engine.service.DataSetService;
+import pso.decision_engine.utils.bigfilesort.BigFileSort;
+import pso.decision_engine.utils.bigfilesort.BigFileSortCommand;
+import pso.decision_engine.utils.bigfilesort.BigFileSortResult;
+import reactor.core.publisher.Flux;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,23 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StreamUtils;
-
-import pso.decision_engine.config.AppConfig;
-import pso.decision_engine.model.DataSetInfo;
-import pso.decision_engine.model.DataSetLookupResult;
-import pso.decision_engine.model.DataSetUploadResult;
-import pso.decision_engine.model.ParameterValuesRow;
-import pso.decision_engine.model.ScrollItems;
-import pso.decision_engine.model.enums.DataSetType;
-import pso.decision_engine.persistence.DataSetDao;
-import pso.decision_engine.service.DataSetService;
-import pso.decision_engine.utils.bigfilesort.BigFileSort;
-import pso.decision_engine.utils.bigfilesort.BigFileSortCommand;
-import pso.decision_engine.utils.bigfilesort.BigFileSortResult;
-import reactor.core.publisher.Flux;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
 public class DataSetServiceImpl implements DataSetService {
@@ -50,7 +47,7 @@ public class DataSetServiceImpl implements DataSetService {
 		}
 		
 		String versionId=dataSetDao.createDataSetVersion(dataSetInfo.getId());
-		Path rawOutputFile=Paths.get(appConfig.getDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, versionId+"_raw.txt");
+		Path rawOutputFile=Paths.get(appConfig.getTempDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, versionId+"_raw.txt");
 		rawOutputFile.toFile().getParentFile().mkdirs();
 		try (OutputStream out=Files.newOutputStream(rawOutputFile)) {
 			StreamUtils.copy(in, out);
@@ -67,7 +64,7 @@ public class DataSetServiceImpl implements DataSetService {
 		BigFileSortResult bfsr=BigFileSort.sortAndRemoveDuplicates(c);
 		Path tempOutFile=bfsr.getOutputFile();
 		
-		Path outputFile=Paths.get(appConfig.getDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, versionId+".txt");
+		Path outputFile=Paths.get(appConfig.getTempDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, versionId+".txt");
 		
 		Files.move(tempOutFile, outputFile);
 		setActiveDataSetFile(dataSetName, dataSetType, versionId);
@@ -115,14 +112,14 @@ public class DataSetServiceImpl implements DataSetService {
 	}
 	
 	private void setActiveDataSetFile(String dataSetName, DataSetType dataSetType, String versionId) throws IOException {
-		Path activeIndicatorFile=Paths.get(appConfig.getDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, "active.txt");
+		Path activeIndicatorFile=Paths.get(appConfig.getTempDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, "active.txt");
 		Files.deleteIfExists(activeIndicatorFile);
-		Files.write(activeIndicatorFile, versionId.getBytes("UTF-8"));
+		Files.write(activeIndicatorFile, versionId.getBytes(UTF_8));
 	}
 	
 	private void writeHeaderLine(String dataSetName, DataSetType dataSetType, String versionId, String headerLine) throws IOException {
-		Path activeIndicatorFile=Paths.get(appConfig.getDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, versionId+"_header.txt");
-		Files.write(activeIndicatorFile, headerLine.getBytes("UTF-8"));
+		Path activeIndicatorFile=Paths.get(appConfig.getTempDataDirectory()+"/datasets/"+dataSetType.toString()+"/", dataSetName, versionId+"_header.txt");
+		Files.write(activeIndicatorFile, headerLine.getBytes(UTF_8));
 	}
 
 	

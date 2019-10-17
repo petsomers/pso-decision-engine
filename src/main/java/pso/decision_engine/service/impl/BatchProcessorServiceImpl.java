@@ -1,37 +1,28 @@
 package pso.decision_engine.service.impl;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.function.Function;
-
-import javax.annotation.PostConstruct;
-
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import lombok.Data;
 import pso.decision_engine.config.AppConfig;
 import pso.decision_engine.model.DecisionResult;
 import pso.decision_engine.model.RuleSet;
 import pso.decision_engine.service.RuleSetProcessorService;
 import pso.decision_engine.service.SetupApiService;
+
+import javax.annotation.PostConstruct;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Function;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
 public class BatchProcessorServiceImpl {
@@ -146,7 +137,7 @@ public class BatchProcessorServiceImpl {
 						logger.error("BATCH File: "+p+" error parsing header: "+bfs.getHeaderError());
 						continue PROCESS_LOOP;
 					}
-					Files.lines(newPath, Charset.forName("UTF-8"))
+					Files.lines(newPath, UTF_8)
 					.skip(1) // skip header row
 					.parallel() // multi-core
 					.map(line -> processLine(bfs, line)) // process

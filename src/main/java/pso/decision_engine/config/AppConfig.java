@@ -9,8 +9,11 @@ import lombok.Data;
 @ConfigurationProperties
 @Data
 public class AppConfig {
-	private String dataDirectory;
-	private String databaseEngine="POSTRESQL";
+
+	private String resultDataDirectory;
+	private String tempDataDirectory;
+
+	private String databaseEngine = "POSTGRESQL";
 	private int maxInMemoryListSize;
 	
 	private boolean createTables;

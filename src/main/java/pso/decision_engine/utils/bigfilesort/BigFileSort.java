@@ -1,9 +1,10 @@
 package pso.decision_engine.utils.bigfilesort;
 
+import lombok.Data;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import lombok.Data;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Merge Sort using files
@@ -38,7 +39,7 @@ public class BigFileSort {
 				lastLines.add(lls);
 			}
 			Path outputFile=Paths.get(c.getInputFile().getParent().toString(), c.getOutputFileName()+"."+c.getOutputFileExtension());
-			try(BufferedWriter writer = Files.newBufferedWriter(outputFile, Charset.forName("UTF-8"))) {
+			try(BufferedWriter writer = Files.newBufferedWriter(outputFile, UTF_8)) {
 				if (c.isExtractHeaderLine() && splitFilesResult.getFirstLine()!=null) {
 					result.setHeaderLine(splitFilesResult.getFirstLine());
 				}
@@ -169,7 +170,7 @@ public class BigFileSort {
 	
 	static private void sortAndWriteLinesToFile(BigFileSortCommand c, Path outputFile, List<String> lines) throws IOException {
 		Collections.sort(lines);
-		try(final BufferedWriter writer = Files.newBufferedWriter(outputFile, Charset.forName("UTF-8"))) {
+		try(final BufferedWriter writer = Files.newBufferedWriter(outputFile, UTF_8)) {
 			lines.stream().forEach(sortedline -> {
 				try {
 					writer.write(sortedline);
