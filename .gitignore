@@ -3,5 +3,5 @@
 /.classpath
 /.project
 /.settings
-/src/main/resources/static/js/built
+/src/main/resources/static/engine-interface
 /node_modules

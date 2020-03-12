@@ -47,9 +47,11 @@ public class SecurityFilter implements Filter {
 		// other API's: only session with XSRF token in header will be allowed
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 	    HttpServletResponse response = (HttpServletResponse) servletResponse;
-	    String header = request.getHeader("Authorization");
-	    if (request.getServletPath()!=null && (request.getServletPath().startsWith("/processor") || request.getServletPath().startsWith("/dataset/upload"))) {
-			if (header!=null && (header.equals(processorAuthHeader) || header.equals(adminUserAuthHeader))) {
+	    String authHeader = request.getHeader("Authorization");
+	    if (request.getServletPath()!=null && 
+	    		(request.getServletPath().startsWith("/processor") || request.getServletPath().startsWith("/dataset/upload")
+	    		|| request.getServletPath().startsWith("/dataset/download"))) {
+			if (authHeader!=null && (authHeader.equals(processorAuthHeader) || authHeader.equals(adminUserAuthHeader))) {
 				chain.doFilter(request, response);
 				return;
 			}
@@ -77,7 +79,7 @@ public class SecurityFilter implements Filter {
 	    		}
 	    		
 	    	}
-			if (header!=null && header.equals(adminUserAuthHeader)) {
+			if (authHeader!=null && authHeader.equals(adminUserAuthHeader)) {
 				chain.doFilter(request, response);
 				return;
 			} else {
