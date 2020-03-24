@@ -32,4 +32,5 @@ public class AppConfig {
 	
 	private String sqeUMPublicKey;
 	
+	private boolean disableSecurity;
 }

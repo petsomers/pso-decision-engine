@@ -20,8 +20,8 @@ export const Rules = ({rules}) => {
   let sheets=[];
   let currentRuleSheet="XXXXXXXXXXXXXXXXXXXXX";
   let currentRuleSheetRuleList=[];
-  rules.map((rule, index) => {
-    if (currentRuleSheet!=rule.sheetName) {
+  rules.forEach((rule, index) => {
+    if (currentRuleSheet!==rule.sheetName) {
       currentRuleSheet=rule.sheetName;
       currentRuleSheetRuleList=[];
       sheets.push({sheetName: rule.sheetName, rules:currentRuleSheetRuleList});
@@ -39,28 +39,28 @@ export const Rules = ({rules}) => {
                 {rule.rowNumber}
               </div>
               <div style={ruleItemStyle}>
-                {rule.label!="" &&
+                {rule.label!=="" &&
                   <div style={conditionStyle}>
                     <FontAwesomeIcon icon={fasTags}/> &nbsp; {rule.label}
                   </div>
                 }
                 <div style={conditionStyle}>
                   <FontAwesomeIcon icon={fasBalanceScale}/> &nbsp;&nbsp;<i>{rule.parameterName}</i> <b>{rule.comparator}</b> {rule.value1}
-                  {rule.value2!="" &&
+                  {rule.value2!=="" &&
                     <span> ; {rule.value2}</span>
                   }
                 </div>
                 <div style={resultStyleGreen}>
                   <FontAwesomeIcon icon={fasCheck}/> &nbsp;&nbsp;&nbsp;
-                  {rule.positiveResult=="" && <FontAwesomeIcon icon={fasLevelDownAlt}/>}
+                  {rule.positiveResult==="" && <FontAwesomeIcon icon={fasLevelDownAlt}/>}
                   {rule.positiveResult}
                 </div>
                 <div style={resultStyleRed}>
                   <FontAwesomeIcon icon={fasTimes}/> &nbsp;&nbsp;&nbsp;&nbsp;
-                  {rule.negativeResult=="" && <FontAwesomeIcon icon={fasLevelDownAlt}/>}
+                  {rule.negativeResult==="" && <FontAwesomeIcon icon={fasLevelDownAlt}/>}
                   {rule.negativeResult}<br />
                   </div>
-                  {rule.remark!="" &&
+                  {rule.remark!=="" &&
                     <div style={remarkStyle}>
                       <FontAwesomeIcon icon={fasInfo}/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {rule.remark}<br />
                     </div>

@@ -9,7 +9,7 @@ export const UnitTests = ({unitTests, runUnitTests, unitTestsResult, selectUnitT
 	const runButtonPaneStyle={position: "absolute", right: "15px", top: "135px"};
 	console.log("selectedUnitTest:"+selectedUnitTest);
 	console.log("unitTestsResult: " +unitTestsResult);
-	if (selectedUnitTest==-1) {
+	if (selectedUnitTest===-1) {
 		return (
     <div>
 			<div style={runButtonPaneStyle}>

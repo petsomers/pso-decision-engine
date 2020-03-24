@@ -35,7 +35,7 @@ export const UnitTestTrace = ({runData}) => {
               }
             </td>
           </tr>
-          {t.rule.label && t.rule.label!="" &&
+          {t.rule.label && t.rule.label!=="" &&
             <tr style={{border: "1px", borderStyle: "solid", borderColor: "#dddbda"}}>
               <td colSpan="2">
                 <FontAwesomeIcon icon={fasTags}/> &nbsp; {t.rule.label}
@@ -48,7 +48,7 @@ export const UnitTestTrace = ({runData}) => {
               {t.rule.parameterName} ( <span style={borderedTextStyle}>{t.parameterValue}</span> )
               &nbsp; {t.rule.comparator} &nbsp;
               {t.rule.value1}
-              {t.rule.value2!="" &&
+              {t.rule.value2!=="" &&
                 <span> ; {t.rule.value2}</span>
               }
             </td>
@@ -63,7 +63,7 @@ export const UnitTestTrace = ({runData}) => {
             </tr>
           }
           <tr>
-            {t.result==t.rule.positiveResult?(
+            {t.result===t.rule.positiveResult?(
               <td style={tdResultMatchStyle}>
                 <FontAwesomeIcon icon={fasCheck}/>  &nbsp; {t.rule.positiveResult} &nbsp;
               </td>
@@ -72,7 +72,7 @@ export const UnitTestTrace = ({runData}) => {
                 <FontAwesomeIcon icon={fasCheck}/>  &nbsp; {t.rule.positiveResult} &nbsp;
               </td>
             )}
-            {t.result==t.rule.negativeResult?(
+            {t.result===t.rule.negativeResult?(
               <td style={tdResultMatchStyle}>
                 <FontAwesomeIcon icon={fasTimes}/> &nbsp; {t.rule.negativeResult} &nbsp;
               </td>

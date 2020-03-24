@@ -12,4 +12,5 @@ public class InputParameterInfo  implements Serializable {
 	
 	private ParameterType type;
 	private String defaultValue;
+	private int seqNr;
 }

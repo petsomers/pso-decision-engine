@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "react-lightning-design-system";
-import { Table , TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn } from "react-lightning-design-system";
+import { Table , TableRow, TableBody, TableRowColumn } from "react-lightning-design-system";
 import { Modal, ModalHeader, ModalFooter, ModalContent } from "react-lightning-design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTable as fasTable, faListAlt as fasListAlt, faSpinner as fasSpinner} from "@fortawesome/free-solid-svg-icons";
@@ -41,7 +41,7 @@ export class  DataSetDetails extends React.Component {
 		return (
   	<div>
 			<div style={{display: "inline-block", width: "350px"}}>
-				{selectedDataSetInfo.type=="LOOKUP" ? (
+				{selectedDataSetInfo.type==="LOOKUP" ? (
 					<span>
 						<FontAwesomeIcon icon={fasTable}/>
 						&nbsp; <b>Lookup Table</b>
@@ -61,7 +61,7 @@ export class  DataSetDetails extends React.Component {
 				&nbsp;
 				<Button type="neutral" onClick={() => this.deleteRequest()} icon="delete" iconAlign="left" label="Delete" />
 			</div>
-			{selectedDataSetInfo.type=="LOOKUP" && dataSetData.headers.length>0 &&
+			{selectedDataSetInfo.type==="LOOKUP" && dataSetData.headers.length>0 &&
 				<div>
 				{dataSetData.rows && dataSetData.rows.length>0 &&
 				<Table bordered>
@@ -81,7 +81,7 @@ export class  DataSetDetails extends React.Component {
 					</TableBody>
 				</Table>
 				}
-				{selectedDataSetInfo.type=="LOOKUP" && dataSetData.headers.length>0 && dataSetData.rows>0 &&
+				{selectedDataSetInfo.type==="LOOKUP" && dataSetData.headers.length>0 && dataSetData.rows>0 &&
 					<div><i>No data.</i></div>
 				}
 				{dataSetData.hasMore && !dataSetData.loading &&
@@ -91,7 +91,7 @@ export class  DataSetDetails extends React.Component {
 				}
 				</div>
 			}
-			{selectedDataSetInfo.type=="LIST" &&
+			{selectedDataSetInfo.type==="LIST" &&
 				<div>
 				{dataSetData &&
 					<div>

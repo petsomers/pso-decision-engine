@@ -168,8 +168,8 @@ const appReducer = (state = {
   case "DELETE_RULESET_FULFILLED":
     // remove version from versionlist
     var pos=-1;
-    state.versions.map((version, index) => {
-      if (version.id==state.selectedVersion) {
+    state.versions.forEach((version, index) => {
+      if (version.id===state.selectedVersion) {
         pos=index;
       }
     })
@@ -198,7 +198,7 @@ const appReducer = (state = {
     state = {
       ...state,
       dataSetData: {
-        ... state.dataSetData,
+        ...state.dataSetData,
         headers: [],
         rows:[],
         hasMore:false,
@@ -211,7 +211,7 @@ const appReducer = (state = {
     state = {
       ...state,
       dataSetData: {
-        ... state.dataSetData,
+        ...state.dataSetData,
         loading: true
       }
     }
@@ -231,7 +231,7 @@ const appReducer = (state = {
     state = {
       ...state,
       dataSetData: {
-        ... state.dataSetData,
+        ...state.dataSetData,
         hasMore: action.payload.data.hasMore,
         loading: false,
         rows: state.dataSetData.rows.concat(incomingRows)
@@ -242,7 +242,7 @@ const appReducer = (state = {
   state = {
     ...state,
     dataSetData: {
-      ... state.dataSetData,
+      ...state.dataSetData,
       headers: action.payload.data
     }
   }
@@ -252,7 +252,7 @@ const appReducer = (state = {
     state = {
       ...state,
       dataSetData: {
-        ... state.dataSetData,
+        ...state.dataSetData,
         rows: action.payload.data.items,
         hasMore: action.payload.data.hasMore,
         loading: false
@@ -260,11 +260,11 @@ const appReducer = (state = {
     }
   break;
   case "LOAD_MORE_DATA_SET_DATA_FULFILLED":
-    var incomingRows=action.payload.data.items;
+    incomingRows=action.payload.data.items;
     state = {
       ...state,
       dataSetData: {
-        ... state.dataSetData,
+        ...state.dataSetData,
         hasMore: action.payload.data.hasMore,
         loading: false,
         rows: state.dataSetData.rows.concat(incomingRows)
@@ -281,9 +281,9 @@ const appReducer = (state = {
   break;
   case "DELETE_DATA_SET_FULFILLED":
     // remove version from versionlist
-    var pos=-1;
-    state.dataSets.map((dataSet, index) => {
-      if (state.selectedDataSetInfo.name==dataSet.name) {
+    pos=-1;
+    state.dataSets.forEach((dataSet, index) => {
+      if (state.selectedDataSetInfo.name===dataSet.name) {
         pos=index;
       }
     })
@@ -300,8 +300,8 @@ const appReducer = (state = {
     }
   break;
   case "WINDOW_RESIZE":
-    if (action.payload.height!=state.layout.windowHeight
-      || action.payload.width!=state.layout.windowWidth) {
+    if (action.payload.height!==state.layout.windowHeight
+      || action.payload.width!==state.layout.windowWidth) {
       	state = {
     			...state,
           layout: {
@@ -311,6 +311,7 @@ const appReducer = (state = {
         }
     	}
     break;
+	default: break;
   }
   return state;
 };

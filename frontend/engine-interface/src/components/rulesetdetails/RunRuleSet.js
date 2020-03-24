@@ -5,6 +5,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faChild as fasChild, faExclamationTriangle as fasExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 
 export const RunRuleSet = ({inputParameters, runNowData, setRunNowParameterValue, runNow, runNowClearResult}) => {
+	const parameterList=[...Object.keys(inputParameters)];
+	parameterList.sort((p1, p2) => inputParameters[p1].seqNr < inputParameters[p2].seqNr ? -1:1);
     return (
 <div>
   <div style={{position: "absolute", right: "30px", top: "135px"}}>
@@ -18,7 +20,7 @@ export const RunRuleSet = ({inputParameters, runNowData, setRunNowParameterValue
   {!runNowData.result? (
   <div style={{display: "inline-block", float: "left", width: "200px"}}>
     <u><b>Input Parameters:</b></u><br />
-    {Object.keys(inputParameters).map((parameterName, index) => (
+    {parameterList.map((parameterName, index) => (
       <Input
         key={index}
         value={runNowData.parameterValues[parameterName]}
@@ -30,10 +32,10 @@ export const RunRuleSet = ({inputParameters, runNowData, setRunNowParameterValue
     <div style={{display: "inline-block", float: "left", width: "200px"}}>
       <u><b>Input Parameters:</b></u><br />
       <br />
-      {Object.keys(runNowData.result.run.inputParameters).length==0 &&
+      {parameterList.length===0 &&
         <i>None</i>
       }
-      {Object.keys(runNowData.result.run.inputParameters).map((parameterName, index) => (
+      {parameterList.map((parameterName, index) => (
         <div key={index}>
           <b>{parameterName}</b><br />
           {runNowData.result.run.inputParameters[parameterName]}

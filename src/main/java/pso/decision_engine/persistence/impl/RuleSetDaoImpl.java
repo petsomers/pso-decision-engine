@@ -83,11 +83,12 @@ public class RuleSetDaoImpl implements RuleSetDao {
 				.addValue("ruleSetId", ruleSet.getId())
 				.addValue("parameterName", parameterName)
 				.addValue("parameterType", ipi.getType().toString())
-				.addValue("defaultValue", ipi.getDefaultValue());
+				.addValue("defaultValue", ipi.getDefaultValue())
+				.addValue("seqNr", ipi.getSeqNr());
 		};
 		jdbcTemplate.batchUpdate(
-			"INSERT INTO RuleSetParameters (ruleSetId, parameterName, parameterType, defaultValue) "+
-			"values (:ruleSetId, :parameterName, :parameterType, :defaultValue)", inputParameters);
+			"INSERT INTO RuleSetParameters (ruleSetId, parameterName, parameterType, defaultValue, seqNr) "+
+			"values (:ruleSetId, :parameterName, :parameterType, :defaultValue, :seqNr)", inputParameters);
 		inputParameters=null;
 		
 		MapSqlParameterSource[] rules=new MapSqlParameterSource[ruleSet.getRules().size()];
@@ -245,12 +246,13 @@ public class RuleSetDaoImpl implements RuleSetDao {
 	public Hashtable<String, InputParameterInfo> getRuleSetInputParameters(String ruleSetId) {
 		final Hashtable<String, InputParameterInfo> result=new Hashtable<>();
 		jdbcTemplate.query(
-			"select parameterName, parameterType, defaultValue from RuleSetParameters where ruleSetId=:ruleSetId", 
+			"select parameterName, parameterType, defaultValue, seqNr from RuleSetParameters where ruleSetId=:ruleSetId",
 			new MapSqlParameterSource().addValue("ruleSetId", ruleSetId),
 			(ResultSet rs) -> {
 				InputParameterInfo ipi=new InputParameterInfo();
 				ipi.setType(ComparatorHelper.stringToParameterType(rs.getString("parameterType")));
 				ipi.setDefaultValue(rs.getString("defaultValue"));
+				ipi.setSeqNr(rs.getInt("seqNr"));
 				result.put(rs.getString(1), ipi);
 			});
 		return result;

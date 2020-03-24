@@ -46,7 +46,7 @@ export const RuleSetSelection = ({restEndpoints, dataSets, layout, openFileUploa
 				<div style={restEndpointsTitleStyle}><b>Rest Endpoints</b></div>
 				<div style={restEndpointsStyle} className='slds-table slds-table--bordered'>
 					{restEndpoints.map((endpoint, index) => (
-						<div key={endpoint} style={(selectedEndpoint==endpoint)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>
+						<div key={endpoint} style={(selectedEndpoint===endpoint)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>
 							<FontAwesomeIcon icon={farDotCircle}/> &nbsp;
 							<a onClick={() => selectEndpoint(endpoint)}>
 								{endpoint}
@@ -57,9 +57,9 @@ export const RuleSetSelection = ({restEndpoints, dataSets, layout, openFileUploa
 				<div style={globalListTitleStyle}><b>Datasets (Lists and Lookup Tables) Lists</b></div>
 				<div style={globalListStyle}>
 					{dataSets.map((dataSet, index) => (
-					<div key={dataSet.name} style={(selectedDataSetInfo && selectedDataSetInfo.name==dataSet.name)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>
+					<div key={dataSet.name} style={(selectedDataSetInfo && selectedDataSetInfo.name===dataSet.name)?endPointCardStyleSelected:endPointCardStyle} className='slds-table slds-table--bordered'>
 						<a onClick={() => selectDataSet(dataSet)}>
-							{dataSet.type=="LOOKUP" ? (
+							{dataSet.type==="LOOKUP" ? (
 								<FontAwesomeIcon icon={fasTable}/>
 								):(
 								<FontAwesomeIcon icon={fasListAlt}/>

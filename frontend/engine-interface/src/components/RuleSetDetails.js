@@ -1,11 +1,10 @@
 import React from "react";
-import { Button, Spinner, Tabs, Tab, Modal, ModalHeader, ModalFooter, ModalContent } from "react-lightning-design-system";
+import { Button, Tabs, Tab, Modal, ModalHeader, ModalFooter, ModalContent } from "react-lightning-design-system";
 import { InputParameters } from "./rulesetdetails/InputParameters"
 import { Rules } from "./rulesetdetails/Rules"
 import { Lists } from "./rulesetdetails/Lists"
 import { UnitTests } from "./rulesetdetails/UnitTests"
 import { RunRuleSet }  from "./rulesetdetails/RunRuleSet"
-import axios from "axios"
 
 export class  RuleSetDetails extends React.Component {
 	constructor(props) {
@@ -66,9 +65,9 @@ export class  RuleSetDetails extends React.Component {
 		if (!this.state.confirmAction) return;
 		this.cancelAction();
 		let d=this.props.ruleSetDetails;
-		if (this.state.confirmAction.action=="SET_ACTIVE") {
+		if (this.state.confirmAction.action==="SET_ACTIVE") {
 			this.props.setActive(d.restEndpoint, d.id);
-		} else if (this.state.confirmAction.action=="DELETE") {
+		} else if (this.state.confirmAction.action==="DELETE") {
 			this.props.deleteRuleSet(d.restEndpoint, d.id);
 		}
 	}
@@ -82,7 +81,7 @@ export class  RuleSetDetails extends React.Component {
 		<div>
 			<div style={{display: "inline-block", width: "350px"}}>
 				<b>Ruleset Name:</b> {d.name}<br />
-				{(activeTab=="inputParameters") &&
+				{(activeTab==="inputParameters") &&
 				<div>
 					<b>Id:</b> {d.id}<br />
 					<b>Rest Endpoint:</b> {d.restEndpoint}<br />
@@ -93,7 +92,7 @@ export class  RuleSetDetails extends React.Component {
 			</div>
 			<div style={{display: "inline-block"}}>
 				<b>Upload Date:</b> {d.uploadDate}<br />
-				{(activeTab=="inputParameters") &&
+				{(activeTab==="inputParameters") &&
 				<div>
 					<b># of Input Parameters:</b> {Object.keys(d.inputParameters).length}<br />
 					<b># of Rules:</b> {d.rules.length}<br />
@@ -102,7 +101,7 @@ export class  RuleSetDetails extends React.Component {
 				</div>
 				}
 			</div>
-			{(activeTab=="inputParameters") &&
+			{(activeTab==="inputParameters") &&
 				<div style={{display: "inline-block", paddingLeft: "25px"}}>
 					<Button type="neutral" onClick={() => this.props.downloadExcel()} icon="download" iconAlign="left" label="Download Excel" />
 					<br />
@@ -111,7 +110,7 @@ export class  RuleSetDetails extends React.Component {
 					<Button type="neutral" onClick={() => this.deleteRequest()} icon="delete" iconAlign="left" label="Delete" />
 				</div>
 			}
-			{(activeTab=="inputParameters") &&
+			{(activeTab==="inputParameters") &&
 				<div>
 					<b>Remark:</b> {d.remark}<br />
 				</div>
@@ -124,16 +123,16 @@ export class  RuleSetDetails extends React.Component {
 				<Tab eventKey="runNow" title="Run" />
 			</Tabs>
 			<div style={{backgroundColor: "white"}}>
-				{(activeTab=="inputParameters") &&
+				{(activeTab==="inputParameters") &&
 					<InputParameters inputParameters={d.inputParameters} />
 				}
-				{(activeTab=="rules") &&
+				{(activeTab==="rules") &&
 					<Rules rules={d.rules} />
  				}
-				{(activeTab=="lists") &&
+				{(activeTab==="lists") &&
 					<Lists lists={d.lists} />
  				}
-				{(activeTab=="unitTests") &&
+				{(activeTab==="unitTests") &&
 					<UnitTests
 						unitTests={d.unitTests}
 						unitTestsResult={this.props.unitTestsResult}
@@ -142,7 +141,7 @@ export class  RuleSetDetails extends React.Component {
 						selectedUnitTest={this.props.selectedUnitTest}
 						/>
  				}
-				{(activeTab=="runNow") &&
+				{(activeTab==="runNow") &&
 					<RunRuleSet
 						inputParameters={d.inputParameters}
 						runNowData={this.props.runNowData}

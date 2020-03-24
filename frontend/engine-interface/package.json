@@ -25,6 +25,7 @@
     "redux-thunk": "^2.2.0",
     "svg4everybody": "^2.1.9"
   },
+  "proxy": "http://localhost:8084",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

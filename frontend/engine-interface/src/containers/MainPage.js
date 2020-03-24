@@ -1,6 +1,5 @@
 import React from "react";
 import {connect} from "react-redux";
-import { Route } from 'react-router-dom';
 import ResizeAware from 'react-resize-aware';
 import { util, Spinner, Notification } from "react-lightning-design-system";
 import mapDispatchToProps from "../actions/appActions"
@@ -10,7 +9,6 @@ import { FileUpload } from '../components/FileUpload'
 import { RuleSetVersionSelection } from '../components/RuleSetVersionSelection'
 import { RuleSetDetails} from '../components/RuleSetDetails'
 import { DataSetDetails } from '../components/DataSetDetails'
-import axios from "axios"
 
 class MainPage extends React.Component {
 
@@ -55,7 +53,7 @@ class MainPage extends React.Component {
 						/>
 					</div>
 					<div style={mainScreen}>
-					{this.props.mainScreen=="upload" &&
+					{this.props.mainScreen==="upload" &&
 						<FileUpload
 							selectVersion={(endpoint, versionId) => this.props.selectVersion(endpoint, versionId)}
 							loadEndpoints={() => this.props.loadEndpoints()}
@@ -63,7 +61,7 @@ class MainPage extends React.Component {
 							loadDataSets={() => this.props.loadDataSets()}
 						/>
 					}
-					{this.props.mainScreen=="ruleSetVersionSelection" &&
+					{this.props.mainScreen==="ruleSetVersionSelection" &&
 						<RuleSetVersionSelection
 							layout={this.props.layout}
 							selectedEndpoint={this.props.selectedEndpoint}
@@ -72,7 +70,7 @@ class MainPage extends React.Component {
 							downloadExcel={(restEndpoint, ruleSetId) => this.downloadExcel(restEndpoint, ruleSetId)}
 							/>
 					}
-					{this.props.mainScreen=="ruleSetDetails" &&
+					{this.props.mainScreen==="ruleSetDetails" &&
 						<RuleSetDetails
 							ruleSetDetails={this.props.ruleSetDetails}
 							downloadExcel={() => this.downloadExcel(this.props.ruleSetDetails.restEndpoint, this.props.ruleSetDetails.id)}
@@ -88,7 +86,7 @@ class MainPage extends React.Component {
 							deleteRuleSet={(endpoint, versionId) => this.props.deleteRuleSet(endpoint, versionId)}
 						/>
 					}
-					{this.props.mainScreen=="dataSetDetails" &&
+					{this.props.mainScreen==="dataSetDetails" &&
 						<DataSetDetails
 							selectedDataSetInfo={this.props.selectedDataSetInfo}
 							dataSetData={this.props.dataSetData}
@@ -100,7 +98,7 @@ class MainPage extends React.Component {
 					{this.props.inProgress &&
 						<Spinner />
 					}
-					{(this.props.infoMessage && this.props.infoMessage!="") &&
+					{(this.props.infoMessage && this.props.infoMessage!=="") &&
 						<div style={{position: "fixed", zIndex:"100", right:"50px", bottom:"50px", width:"50%" }}>
 							<Notification
 								type="toast"
@@ -111,7 +109,7 @@ class MainPage extends React.Component {
 						 </Notification>
 						</div>
 					}
-					{(this.props.errorMessage && this.props.errorMessage!="") &&
+					{(this.props.errorMessage && this.props.errorMessage!=="") &&
   				<div style={{position: "fixed", zIndex:"100", right:"50px", bottom:"50px", width:"50%" }}>
     				<Notification
     				  type="alert"

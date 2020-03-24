@@ -27,6 +27,7 @@ public class SpringConfig {
 		registration.addInitParameter("adminPassword", appConfig.getAdminPassword());
 		registration.addInitParameter("processorUserId", appConfig.getProcessorUserId());
 		registration.addInitParameter("processorPassword", appConfig.getProcessorPassword());
+		registration.addInitParameter("disableSecurity", appConfig.isDisableSecurity()?"Y":"N");
 		registration.setOrder(1);
 		return registration;
 	}

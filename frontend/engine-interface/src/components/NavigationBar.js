@@ -11,7 +11,7 @@ export const NavigationBar = ({message, showLogout = true}) => {
     return (
         <div style={logoStyle}>
             {window.showHeader && (
-                <img src={`${process.env.PUBLIC_URL}/logo-small-white.png`}/>
+                <img src={`${process.env.PUBLIC_URL}/logo-small-white.png`} alt="logo"/>
             )}
         </div>
     );

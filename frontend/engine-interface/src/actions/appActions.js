@@ -82,7 +82,7 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		runNow: (endpoint, versionId, parameters) => {
 			var parameterStr="";
-			Object.keys(parameters).map((parameterName, index) => {
+			Object.keys(parameters).forEach((parameterName, index) => {
 				parameterStr+= "&"+parameterName+'='+encodeURIComponent(parameters[parameterName]);
 			});
 			dispatch({type: "SET_INPROGRESS"});
@@ -124,7 +124,7 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		selectDataSet: (dataSetInfo) => {
 			dispatch({type: "SELECT_DATA_SET", payload: dataSetInfo});
-			if (dataSetInfo.type=="LOOKUP") {
+			if (dataSetInfo.type==="LOOKUP") {
 				dispatch({
 					type: "LOAD_DATA_SET_DATA_HEADERS",
 					payload: axios.get("dataset/headers/LOOKUP/"+encodeURIComponent(dataSetInfo.name), axiosConfig)
@@ -142,7 +142,7 @@ const mapDispatchToProps = (dispatch) => {
 			}
 		},
     loadMoreDataSetData: (dataSetInfo, fromKey) => {
-			if (dataSetInfo.type=="LOOKUP") {
+			if (dataSetInfo.type==="LOOKUP") {
 	      dispatch({
 					type: "LOAD_MORE_DATA_SET_DATA",
 					payload: axios.get("dataset/data/LOOKUP/"+encodeURIComponent(dataSetInfo.name)+"?fromKey="+encodeURIComponent(fromKey), axiosConfig)

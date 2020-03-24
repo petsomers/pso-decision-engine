@@ -51,6 +51,7 @@ public class CreateTables {
 			"parameterName VARCHAR(40) NOT NULL, "+
 			"parameterType VARCHAR(10) NOT NULL, "+
 			"defaultValue VARCHAR(100), "+
+			"seqNr INTEGER NOT NULL DEFAULT 1, "+
 			"PRIMARY KEY (ruleSetId, parameterName), "+
 			"FOREIGN KEY (ruleSetId) REFERENCES RuleSet (ruleSetId) ON DELETE CASCADE)",
 			

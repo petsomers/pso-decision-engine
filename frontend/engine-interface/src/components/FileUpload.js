@@ -61,8 +61,8 @@ export class FileUpload  extends React.Component {
 
 	doUpload(event) {
 		var dataSetName=this.state.selectedDataSetName==null?this.state.newDataSetName:this.state.selectedDataSetName;
-		if (dataSetName=="") dataSetName=null;
-		if (this.state.mode=="LIST" || this.state.mode=="LOOKUP") {
+		if (dataSetName==="") dataSetName=null;
+		if (this.state.mode==="LIST" || this.state.mode==="LOOKUP") {
 			if (dataSetName==null) {
 				this.setState({
 					...this.state,
@@ -77,15 +77,14 @@ export class FileUpload  extends React.Component {
 			message: "",
 			inProgress:true
 		});
-		var xhr = new XMLHttpRequest();
     var fd = new FormData();
     fd.append("upload_file", this.state.selectedUploadFile);
-		if (this.state.mode=="RULESET") {
+		if (this.state.mode==="RULESET") {
 			this.uploadFile("setup/form_upload_excel", fd, (data) => {
 				this.props.selectVersion(data.restEndpoint, data.ruleSetId);
 				this.props.loadEndpoints();
 			});
-		} else if (this.state.mode=="LIST" || this.state.mode=="LOOKUP") {
+		} else if (this.state.mode==="LIST" || this.state.mode==="LOOKUP") {
 			this.uploadFile("dataset/form_upload/"+this.state.mode+"/"+encodeURIComponent(dataSetName), fd, () => {
 				this.props.loadDataSets();
 				this.setState({
@@ -170,14 +169,14 @@ export class FileUpload  extends React.Component {
 		      <Button type="brand" onClick={() => this.setMode(null)} icon="left" iconAlign="left" label="Select Another File Type" />
 			  </div>
 			}
-			{this.state.mode=="RULESET" &&
+			{this.state.mode==="RULESET" &&
 				<div>
 					<h2><b>Ruleset Excel File Upload</b></h2>
 					<br /><br />
 					<FontAwesomeIcon icon={farFileExcel}/> &nbsp; <b>Upload Excel File</b><br /><br />
 				</div>
 			}
-			{this.state.mode=="LIST" &&
+			{this.state.mode==="LIST" &&
 				<div>
 					<h2><b>Data Set Text File Upload</b></h2>
 					<br /><br />
@@ -191,7 +190,7 @@ export class FileUpload  extends React.Component {
 					  menuStyle={{maxHeight: "20rem", overflowY: "auto"}}
 					>
 							<PicklistItem key="" label="New Data Set" value="" />
-						{this.props.dataSets.filter(ds => ds.type=="LIST").map((dataSet, index) => (
+						{this.props.dataSets.filter(ds => ds.type==="LIST").map((dataSet, index) => (
 							<PicklistItem key={dataSet.name} label={dataSet.name} value={dataSet.name} />
 						))}
 					</Picklist>
@@ -206,7 +205,7 @@ export class FileUpload  extends React.Component {
 					<br />
 				</div>
 			}
-			{this.state.mode=="LOOKUP" &&
+			{this.state.mode==="LOOKUP" &&
 				<div>
 					<h2><b>Lookup Text File Upload</b></h2>
 					<br /><br />
@@ -220,7 +219,7 @@ export class FileUpload  extends React.Component {
 						menuStyle={{maxHeight: "20rem", overflowY: "auto"}}
 					>
 							<PicklistItem key="" label="New Data Set" value="" />
-						{this.props.dataSets.filter(ds => ds.type=="LOOKUP").map((dataSet, index) => (
+						{this.props.dataSets.filter(ds => ds.type==="LOOKUP").map((dataSet, index) => (
 							<PicklistItem key={dataSet.name} label={dataSet.name} value={dataSet.name} />
 						))}
 					</Picklist>
@@ -248,10 +247,10 @@ export class FileUpload  extends React.Component {
 				<Spinner />
 			}
 			<br /><br />
-			{this.state.errorMessage!="" &&
+			{this.state.errorMessage!=="" &&
 				<div style={{color: "red"}}>{this.state.errorMessage}</div>
 			}
-			{this.state.message!="" &&
+			{this.state.message!=="" &&
 				<div style={{color: "green"}}>{this.state.message}</div>
 			}
 		</div>

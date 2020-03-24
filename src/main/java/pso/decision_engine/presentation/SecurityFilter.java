@@ -21,6 +21,7 @@ public class SecurityFilter implements Filter {
 
 	private final JwtService jwtService;
 	
+	private boolean disableSecurity;
 	private String adminUserAuthHeader;
 	private String processorAuthHeader;
 
@@ -31,6 +32,7 @@ public class SecurityFilter implements Filter {
 	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
+		disableSecurity="Y".equals(filterConfig.getInitParameter("disableSecurity"));
 		adminUserAuthHeader=
 			"Basic "+
 			Base64.getEncoder().encodeToString((filterConfig.getInitParameter("adminUser")+":"+filterConfig.getInitParameter("adminPassword")).getBytes());
@@ -43,6 +45,11 @@ public class SecurityFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
+		if (disableSecurity) {
+			chain.doFilter(servletRequest, servletResponse);
+			return;
+		}
+		
 		// processor API: this will support both a session as basic authentication
 		// other API's: only session with XSRF token in header will be allowed
 		HttpServletRequest request = (HttpServletRequest) servletRequest;

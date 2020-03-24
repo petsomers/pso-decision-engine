@@ -2,7 +2,9 @@ import React from "react";
 import { Table , TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn } from "react-lightning-design-system";
 
 export const InputParameters = ({inputParameters}) => {
-  const tableRowStyle={borderBottom: 'solid',borderBottomWidth: '1px',borderBottomColor:'#CCCCCC'}
+  const parameterList=[...Object.keys(inputParameters)];
+  parameterList.sort((p1, p2) => inputParameters[p1].seqNr < inputParameters[p2].seqNr ? -1:1);
+
   return (
   <div>
     <Table bordered>
@@ -15,7 +17,7 @@ export const InputParameters = ({inputParameters}) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {Object.keys(inputParameters).map((parameterName, index) => (
+        {parameterList.map((parameterName, index) => (
           <TableRow key={"key"+index}>
             <TableRowColumn>{parameterName}</TableRowColumn>
             <TableRowColumn>{inputParameters[parameterName].type}</TableRowColumn>
