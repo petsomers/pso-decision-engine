@@ -15,6 +15,8 @@ import java.util.Date;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,8 @@ import pso.decision_engine.service.JwtService;
 
 @Service
 public class JwtServiceImpl implements JwtService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 	
 	@Autowired
 	private AppConfig appConfig;
@@ -121,6 +125,7 @@ public class JwtServiceImpl implements JwtService {
 			DecodedJWT decodedJWT = sqeUMJwtVerifier.verify(jwt);
 			return decodedJWT.getClaim("user").asString();
 		} catch (JWTVerificationException e) {
+			logger.error("Error validating UM JWT "+jwt,e);
     		return null;
     	}
 	}
