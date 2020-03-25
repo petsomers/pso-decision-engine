@@ -71,10 +71,7 @@ public class SetupApi {
 			resp.sendError(404);;
 			return;
 		}
-		if (!setupService.doesExcelFileExists(restEndpoint, ruleSetId)) {
-			resp.sendError(404);;
-			return;
-		}
+		
 		resp.setHeader("pragma", "no-cache");
 		resp.setHeader( "Cache-Control","no-cache" );
 		resp.setHeader( "Cache-Control","no-store" );
