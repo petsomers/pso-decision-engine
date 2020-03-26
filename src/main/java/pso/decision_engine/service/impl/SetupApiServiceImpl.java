@@ -102,13 +102,6 @@ public class SetupApiServiceImpl implements SetupApiService {
 	}
 	
 	@Override
-	public boolean doesExcelFileExists(String restEndpoint, String ruleSetId) {
-		Path file = Paths.get(appConfig.getResultDataDirectory(), restEndpoint, ruleSetId + ".xlsx");
-		File f = file.toFile();
-		return f.exists();
-	}
-	
-	@Override
 	public String saveRuleSet(RuleSet ruleSet) {
 		String id=idService.createShortUniqueId();
 		ruleSet.setId(id);

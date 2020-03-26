@@ -13,8 +13,6 @@ public interface SetupApiService {
 
 	public ExcelParseResult addExcelFile(InputStream in) throws IOException;
 	
-	boolean doesExcelFileExists(String restEndpoint, String ruleSetId);
-	
 	public void downloadExcel(String restEndpoint, String ruleSetId, OutputStream out)  throws IOException;
 
 	/**
