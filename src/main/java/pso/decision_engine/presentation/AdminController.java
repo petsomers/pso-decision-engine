@@ -30,6 +30,7 @@ public class AdminController {
 		}
 		Cookie tokenCookie=new Cookie("token", jwt);
 		tokenCookie.setHttpOnly(true);
+		tokenCookie.setSecure(true);
 		resp.addCookie(tokenCookie);
 		return "index";
 	}
